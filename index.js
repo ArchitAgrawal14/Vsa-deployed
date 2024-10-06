@@ -55,7 +55,7 @@ const Secret_key = process.env.jwtSecretKey;
 const db = new pg.Client({
   host:process.env.databaseHost,
   password: process.env.databasePassword,
-  database: "vsa",
+  database: "vsa_hyuv",
   port: 5432,
   user: "vsa_hyuv_user",
 });
