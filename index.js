@@ -21,7 +21,7 @@ dotenv.config();
 // import mysql from 'mysql2';
 const app = express();
 const _dirname = dirname(fileURLToPath(import.meta.url));
-const port = 80;
+const port = 3000;
 // iss niche wala ko use kar sakte hai agar hum google ka oauth2 use karna ho toh.
 const CLIENT_ID =
   process.env.googleClientId;
