@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="/style/product_details.css">
+    <title>Product Detail</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        .carousel-inner img {
+            margin: 0 auto;
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        .fs-4, .fs-5 {
+            margin: 15px 0;
+        }
+        h3 {
+            margin-top: 20px;
+            color: #495057;
+        }
+        #testimonials {
+            margin-top: 40px;
+        }
+        .testimonial-heading {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .testimonial-heading span {
+            color: #6c757d;
+            font-size: 18px;
+        }
+        .testimonial-heading h4 {
+            font-weight: 600;
+            margin: 5px 0;
+            color: #343a40;
+        }
+        .testimonial-box-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .testimonial-box {
+            width: 100%;
+            max-width: 600px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .profile {
+            display: flex;
+            align-items: center;
+        }
+        .profile-img img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        .reviews i {
+            color: #ffc107;
+        }
+        .client-comment p {
+            margin-top: 10px;
+            color: #6c757d;
+        }
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            filter: invert(1);
+        }
+        .payment-button {
+            margin-top: 20px;
+        }
+        .carousel-container, .details-container {
+            padding: 0 15px;
+        }
+        .details-container {
+            padding-left: 10%;
+        }
+        .form-select {
+            margin-bottom: 20px;
+        }
+        .color-options span {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+        .color-options span.active {
+            border-color: #000;
+        }
+    </style>
+</head>
+<body>
+    <%- include("header.ejs") %>
+    <div class="container mt-5">
+        <div class="row">
+            <!-- Carousel Column -->
+            <div class="col-md-5 col-lg-4 carousel-container">
+                <% if (itemDetails && itemDetails.length > 0) { %>
+                    <% itemDetails.forEach(item => { %>
+                        <div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img src="<%= item.img %>" class="d-block object-fit-contain" alt="<%= item.name %>">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="<%= item.img1 %>" class="d-block object-fit-contain" alt="<%= item.name %>">
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="<%= item.img2 %>" class="d-block object-fit-contain" alt="<%= item.name %>">
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p class="text-center text-muted">No item details available.</p>
+                <% } %>
+            </div>
+
+            <!-- Item Details Column -->
+            <div class="col-md-7 col-lg-8 details-container text-center">
+                <% if (itemDetails && itemDetails.length > 0) { %>
+                    <% itemDetails.forEach(item => { %>
+                        <div class="container">
+                            <p class="fs-4"><strong><%= item.name %></strong></p>
+                            <p class="fs-5 text-primary">Price: <strong>₹<%= item.price %></strong></p>
+
+                            <!-- Size Selection -->
+                            <h5>Select Size</h5>
+                            <select class="form-select" aria-label="Select size">
+                                <% if (item.sizes && item.sizes.length > 0) { %>
+                                    <% item.sizes.forEach(size => { %>
+                                        <option value="<%= size %>"><%= size %></option>
+                                    <% }) %>
+                                <% } else { %>
+                                    <option value="" disabled>No sizes available</option>
+                                <% } %>
+                            </select>
+
+                            <!-- Color Selection -->
+                            <h5>Select Color</h5>
+                            <div class="color-options">
+                                <% if (item.colors && item.colors.length > 0) { %>
+                                    <% item.colors.forEach(color => { %>
+                                        <span style="background-color: <%= color %>;" title="<%= color %>"></span>
+                                    <% }) %>
+                                <% } else { %>
+                                    <p class="text-muted">No color options available</p>
+                                <% } %>
+                            </div>
+            
+                            <h3>Description</h3>
+                            <p class="fs-5"><%= item.description %></p>
+
+                            <!-- Payment Button -->
+                            <h3>Price: <strong>₹<%= item.price %></strong></h3>
+
+                            <!-- Reviews Section -->
+                            <section id="testimonials" class="container">
+                                <div class="testimonial-heading">
+                                    <span>Reviews</span>
+                                    <h4>Customer Reviews</h4>
+                                </div>
+                                <% if (item.customerReviews && item.customerReviews.length > 0) { %>
+                                    <% item.customerReviews.forEach(customer => { %>
+                                        <div class="testimonial-box-container">
+                                            <div class="testimonial-box">
+                                                <div class="box-top">
+                                                    <div class="profile">
+                                                        <div class="profile-img">
+                                                            <img src="<%= customer.img %>" alt="<%= customer.name %>'s photo">
+                                                        </div>
+                                                        <div class="name-user">
+                                                            <strong><%= customer.name %></strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="reviews">
+                                                        <% for(let i = 0; i < customer.rating; i++) { %>
+                                                            <i class="fas fa-star"></i>
+                                                        <% } %>
+                                                        <% for(let i = customer.rating; i < 5; i++) { %>
+                                                            <i class="far fa-star"></i>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                                <div class="client-comment">
+                                                    <p><%= customer.comments %></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                <% } else { %>
+                                    <p class="text-center text-muted">No reviews available.</p>
+                                <% } %>
+                            </section>
+                        </div>
+                    <% }) %>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-pbfsRGDDaa1ZZRLnhfGGGyTfoAkwJjUnnb3+c33vAzEcfPOiL5dITsIKeqzPM7EC" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-CmMjiGHLrY+LklN9vYYJt1FZVPrkYmgmOZDy4jrKL/QKJ7Skfg2FdAwwvxAqppGe" crossorigin="anonymous"></script>
+</body>
+</html>

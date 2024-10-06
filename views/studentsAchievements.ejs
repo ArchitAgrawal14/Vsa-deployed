@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <title>Students Achievements</title>
+    <style>
+        body {
+            background-color: aliceblue;
+            color: white;
+        }
+        .achievement-card {
+            cursor: pointer;
+            opacity: 1; /* Default opacity */
+            transition: opacity 0.3s ease; /* Smooth transition for opacity */
+        }
+        .hidden {
+            opacity: 0; /* Set opacity to 0 to fade out */
+            transform: translateY(-20px); /* Move the card up */
+            pointer-events: none; /* Prevent interaction when hidden */
+            transition: opacity 0.3s ease, transform 0.3s ease; /* Smooth transition */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <% if (studentsAchievementsData && studentsAchievementsData.length > 0) { %>
+            <div class="mb-4">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search by name" onkeyup="searchFunction()" />
+                <select id="sortSelect" class="form-select mt-2" onchange="sortFunction()">
+                    <option value="default">Sort by name</option>
+                    <option value="asc">A to Z</option>
+                    <option value="desc">Z to A</option>
+                </select>
+            </div>
+            <div class="row" id="achievementList">
+                <% studentsAchievementsData.forEach((achievement) => { %>
+                    <div class="col-lg-4 text-center mb-4" data-name="<%= achievement.student_name.toLowerCase() %>"> <!-- Removed achievement-card class -->
+                        <form action="/studentAchievementDetails" method="POST">
+                            <input type="hidden" name="studentId" value="<%= achievement.stud_id %>">
+                            <button type="submit" class="btn btn-link p-0" style="border: none; background: none;">
+                                <img src="<%= achievement.img %>" alt="<%= achievement.student_name %>" class="bd-placeholder-img rounded-circle" width="140" height="140">
+                                <h2 class="fw-normal text-black"><%= achievement.student_name %></h2>
+                            </button>
+                        </form>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <div class="text-center text-white">No data available</div>
+        <% } %>
+    </div>
+
+    <script>
+        function searchFunction() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const achievementCards = document.querySelectorAll('[data-name]'); // Select elements with data-name attribute
+            achievementCards.forEach(card => {
+                const name = card.getAttribute('data-name');
+                if (name.includes(input)) {
+                    card.classList.remove('hidden'); // Show the card
+                } else {
+                    card.classList.add('hidden'); // Hide the card without affecting layout
+                }
+            });
+        }
+
+        function sortFunction() {
+            const select = document.getElementById('sortSelect');
+            const sortOrder = select.value;
+            const achievementList = document.getElementById('achievementList');
+            const achievementCards = Array.from(achievementList.children);
+
+            achievementCards.sort((a, b) => {
+                const nameA = a.getAttribute('data-name');
+                const nameB = b.getAttribute('data-name');
+
+                if (sortOrder === 'asc') {
+                    return nameA.localeCompare(nameB);
+                } else if (sortOrder === 'desc') {
+                    return nameB.localeCompare(nameA);
+                }
+                return 0; // Default case
+            });
+
+            achievementList.innerHTML = ''; // Clear the existing list
+            achievementCards.forEach(card => achievementList.appendChild(card)); // Append sorted cards
+        }
+    </script>
+</body>
+</html>

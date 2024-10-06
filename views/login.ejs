@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- yaha pe google sign in ke liye hai. -->
+    <meta
+      name="google-signin-client_id"
+      content="910276421704-fi1fghol4445hrmf5t5jg744k7uj8jj0.apps.googleusercontent.com"
+    />
+    <link rel="stylesheet" href="/style/login.css" />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <!--https://boxicons.com/ -->
+    <title>Login</title>
+  </head>
+  <body>
+    <div class="container" id="container">
+      <div class="form-container sign-up">
+        <form
+          action="/SignUp"
+          method="post"
+          class="Form_StyleForSignUp Form_Responsiveness"
+        >
+          <h1 class="SignUp_Text">Create Account</h1>
+          <div class="signUpToolTip">
+            <img
+              src="/icons/error-circle-regular-24.png"
+              alt=""
+              class="Exclam_mark_circle"
+              style="background-color: aliceblue; border-radius: 50%"
+            />
+            <span class="tooltiptext">Email Already Exist's</span>
+          </div>
+          <div class="social-icons">
+            <div class="g-signin2" data-onsuccess="onSignIn"></div>
+            <!-- <a href="#" class="icons"><i class='bx bxl-facebook'></i></a>
+                    <a href="#" class="icons"><i class='bx bxl-github'></i></a>
+                    <a href="#" class="icons"><i class='bx bxl-linkedin'></i></a> -->
+          </div>
+          <span>Register with E-mail</span>
+          <input
+            type="text"
+            name="FullName"
+            class="FullName_Box SignUp_Boxes"
+            placeholder="FullName"
+            required
+          />
+
+          <input
+            type="email"
+            name="SignUp_Email"
+            class="SignUp_Email_Box SignUp_Boxes"
+            placeholder="Email"
+            required
+          />
+
+          <input
+            type="password"
+            name="SignUp_Password"
+            class="SignUp_Password_Box SignUp_Boxes"
+            placeholder="Password"
+            required
+          />
+
+          <input
+            type="number"
+            name="Mobile_number"
+            class="Mobile_number_Box SignUp_Boxes"
+            placeholder="Mobile_number"
+            required
+          />
+          <button type="submit" class="SignUp_Login_button" value="SignUp">
+            Sign Up
+          </button>
+        </form>
+      </div>
+
+      <div class="form-container sign-in">
+        <form
+          action="/Login"
+          method="post"
+          class="Form_Responsiveness Form_Style"
+        >
+          <h1 id="Login_Text">Sign In</h1>
+          <div
+            class="social-icons login_container_text grossAnnualIncome inputBox"
+          >
+            <div class="tooltip-container tipTool">
+              <img
+                src="/icons/error-circle-regular-24.png"
+                alt=""
+                class="Exclam_mark_circle"
+              />
+              <span class="tooltiptext">Incorrect Email or Password</span>
+            </div>
+            <div class="g-signin2" data-onsuccess="onSignIn"></div>
+            <!-- <a href="#" class="icons"><i class='bx bxl-facebook'></i></a>
+                    <a href="#" class="icons"><i class='bx bxl-github'></i></a>
+                    <a href="#" class="icons"><i class='bx bxl-linkedin'></i></a> -->
+          </div>
+          <span>Login With Email & Password</span>
+          <input
+            type="email"
+            name="Email"
+            required
+            class="Email_Box"
+            placeholder="Email"
+          />
+          <input
+            type="password"
+            name="Password"
+            required
+            class="Password_Box"
+            placeholder="Password"
+          />
+          <a href="#">Forget Password?</a>
+          <button type="submit" value="Login" class="SignIn_Login_button">
+            Login
+          </button>
+        </form>
+      </div>
+
+      <div class="toggle-container">
+        <div class="toggle">
+          <div class="toggle-panel toggle-left">
+            <h1>Sign in With ID & Passowrd <br /></h1>
+            <button class="hidden" id="login">Sign In</button>
+          </div>
+          <div class="toggle-panel toggle-right">
+            <h1>Create new account</h1>
+            <button class="hidden" id="register">Sign Up</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const container = document.getElementById("container");
+      const registerBtn = document.getElementById("register");
+      const loginBtn = document.getElementById("login");
+
+      registerBtn.addEventListener("click", () => {
+        container.classList.add("active");
+      });
+
+      loginBtn.addEventListener("click", () => {
+        container.classList.remove("active");
+      });
+    </script>
+    <% if (typeof signUp_ToolTip !== 'undefined') { %>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          if (<%= signUp_ToolTip %>) {
+              document.querySelector(".signUpToolTip").style.visibility = "visible";
+              setTimeout(()=>{
+                  document.querySelector(".signUpToolTip").style.visibility = "hidden";
+              },5000);
+          }
+      });
+    </script>
+    <% } %> <% if (typeof login_toolTip !== 'undefined') { %>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          if (<%= login_toolTip %>) {
+              document.querySelector(".tooltip-container ").style.visibility = "visible";
+              setTimeout(()=>{
+                  document.querySelector(".tooltip-container ").style.visibility = "hidden";
+              },5000);
+          }
+      });
+    </script>
+    <% } %> <% if (typeof login_toolTip1 !== 'undefined') { %>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          if (<%= login_toolTip1 %>) {
+              document.querySelector(".tooltip-container ").style.visibility = "visible";
+              document.querySelector(".tooltiptext").textContent = "User Does not exist ,Kindly SignUp";
+              setTimeout(()=>{
+                  document.querySelector(".tooltip-container ").style.visibility = "hidden";
+              },5000);
+          }
+      });
+    </script>
+    <% } %>
+
+    <!-- yaha pe mera banaya hua login page hai. -->
+    <!-- <body>
+    <div class="Left_Container">
+        <form action="/Login" method="post" class="Form_Responsiveness Form_Style">
+            <div class="login_container_text grossAnnualIncome inputBox">
+                <h2 id="Login_Text">Login</h2>
+                <div class="tooltip-container tipTool">
+                    <img src="/icons/error-circle-regular-24.png" alt="" class="Exclam_mark_circle" >
+                    <span class="tooltiptext">Incorrect Email or Password</span>
+                </div>
+            </div>
+            <div>
+                <label for="Email" aria-placeholder="Email" class="Email_Text Text_responsiveness">Email</label>
+                <input type="text" name="Email" required class="Email_Box" placeholder="Email">
+                <label for="Password" class="Password_Text Text_responsiveness">Password</label>
+                <input type="text" name="Password" required class="Password_Box" placeholder="Password">
+                <input type="submit" value="Login" class="SignIn_Login_button">   
+            </div>
+            <form action="/SignUp" method="post">
+                <a href="SignUp.html" class="SignUp_Link">SignUp</a>
+            </form>
+        </form>
+         <p class="Below_SignInText">OR</p>
+        <div class="SignIn_Using_Apps">
+            <div><a href=""><img src="icons/Google logo.png" alt="Login using Google" class="App_signIn"></a></div>
+            <div><a href=""><img src="icons/insta logo.jpg" alt="Login using Instagram" class="App_signIn"></a></div>
+            <div><a href=""><img src="icons/facebook logo.png" alt="Login using facebook" class="App_signIn"></a></div>
+            <div><a href=""><img src="icons/X logo.jpg" alt="Login using Instagram" class="App_signIn"></a></div>
+            </div> -->
+    <!--     
+    </div>
+<div class="Right_Container">
+    <form action="/SignUp" method="post" class="Form_StyleForSignUp Form_Responsiveness" >
+        <h2 class="SignUp_Text">SignUp</h2>
+            <div class="signUpToolTip">
+                <img src="/icons/error-circle-regular-24.png" alt="" class="Exclam_mark_circle" style="background-color: aliceblue; border-radius: 50%;">
+                <span class="tooltiptext">Email Already Exist's</span>
+            </div>
+        <label for="FullName" aria-placeholder="FullName" class="FullName_Text" id="SignUp_Texts">Full Name</label>
+        <input type="text" name="FullName" class="FullName_Box SignUp_Boxes" placeholder="FullName" required>
+
+        <label for="SignUp_Email" aria-placeholder="SignUp_Email" class="SignUp_Email_Text" id="SignUp_Texts">Email</label>
+        <input type="text" name="SignUp_Email" class="SignUp_Email_Box SignUp_Boxes" placeholder="Email" required>
+
+        <label for="SignUp_Password" aria-placeholder="SignUp_Password" class="SignUp_Password_Text" id="SignUp_Texts">Password</label>
+        <input type="text" name="SignUp_Password" class="SignUp_Password_Box SignUp_Boxes" placeholder="Password" required>
+
+        <label for="Mobile_number" aria-placeholder="Mobile_number" class="Mobile_number_Text" id="SignUp_Texts">Mobile Number</label>
+        <input type="number" name="Mobile_number" class="Mobile_number_Box SignUp_Boxes" placeholder="Mobile_number" required>
+        <input type="submit" class="SignUp_Login_button" value="SignUp">
+    </form>   
+</div> -->
+    <!-- if (typeof signUp_ToolTip !== 'undefined') { %>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if ( signUp_ToolTip %>) {
+                document.querySelector(".signUpToolTip").style.visibility = "visible";
+                setTimeout(()=>{
+                    document.querySelector(".signUpToolTip").style.visibility = "hidden";
+                },5000);
+            }
+        });
+    </script>
+    } %>
+     if (typeof login_toolTip !== 'undefined') { %>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                if ( login_toolTip %>) {
+                    document.querySelector(".tooltip-container ").style.visibility = "visible";
+                    setTimeout(()=>{
+                        document.querySelector(".tooltip-container ").style.visibility = "hidden";
+                    },5000);
+                }
+            });
+        </script>
+        } %>
+         if (typeof login_toolTip1 !== 'undefined') { %>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    if ( login_toolTip1 %>) {
+                        document.querySelector(".tooltip-container ").style.visibility = "visible";
+                        document.querySelector(".tooltiptext").textContent = "User Does not exist ,Kindly SignUp";
+                        setTimeout(()=>{
+                            document.querySelector(".tooltip-container ").style.visibility = "hidden";
+                        },5000);
+                    }
+                });
+            </script>
+            } %> -->
+    <!-- yaha pe google se sign in ka hai. -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script>
+      console.log("Google Platform script loaded");
+      function onSignIn(googleUser) {
+        console.log("Google Sign-In successful");
+        var id_token = googleUser.getAuthResponse().id_token;
+        var basicUserInfo = googleUser.getBasicProfile();
+
+        // Send the token to your server
+        fetch("/auth/google", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id_token: id_token,
+            googleId: basicUserInfo.getId(),
+            googleName: basicUserInfo.getName(),
+            googleProfileImg: basicUserInfo.getImageUrl(),
+            googleEmail: basicUserInfo.getEmail(),
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("Response from server:", data);
+            if (data.success) {
+              window.location.href = data.redirect; // Redirect based on server response
+            } else {
+              console.error("Error:", data.message);
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update Shop</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/style/shop.css" />
+    <style>
+      body {
+        background-color: #f8f9fa;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1050;
+      }
+
+      .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden; /* Ensures content does not overflow */
+      }
+
+      .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .card-img-top {
+        height: 200px; /* Adjust height as needed */
+        object-fit: cover; /* Ensures the image covers the card while maintaining aspect ratio */
+        width: 100%; /* Ensures the image fills the width of the card */
+      }
+
+      .card-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+
+      .card-text {
+        color: #6c757d;
+        font-size: 0.9rem;
+      }
+
+      .btn-primary {
+        background-color: #007bff;
+        border: none;
+        transition: background-color 0.3s ease;
+      }
+
+      .btn-primary:hover {
+        background-color: #0056b3;
+      }
+
+      .container {
+        margin-top: 30px;
+      }
+
+      .row {
+        justify-content: center;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .card {
+          margin-bottom: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body style="background-color: light">
+    <header>
+      <div class="px-3 py-3 border-bottom bg-light">
+        <div class="container">
+          <div
+            class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start"
+          >
+            <a
+              href=""
+              class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-black text-decoration-none"
+            >
+              <img
+                src="icons/VSA_logo.png"
+                alt="VSA logo"
+                class="bi me-2"
+                height="70"
+                width="100"
+                role="img"
+                aria-label="Vaibhav Skating Academy"
+              />
+              VAIBHAV SKATING ACADEMY
+            </a>
+            <ul
+              class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small"
+            >
+              <li>
+                <a href="/addNewItem" class="nav-link text-black"
+                  >Add new item</a
+                >
+              </li>
+              <li>
+                <a href="/adminDashboard" class="nav-link text-black"
+                  >Admin dashboard</a
+                >
+              </li>
+              <li>
+                <% if(Login) { %>
+                <div class="dropdown">
+                  <a
+                    href="#"
+                    class="btn btn-secondary dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <%= Login %>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a class="dropdown-item" href="/Profile">Profile</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="/Password_change"
+                        >Change Password</a
+                      >
+                    </li>
+                    <li><a class="dropdown-item" href="/Logout">LogOut</a></li>
+                  </ul>
+                </div>
+                <% } else { %>
+                <a href="/newLogin" class="nav-link text-black">Login</a>
+                <% } %>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <% if(toastForNewsLetter) { %>
+    <div
+      class="toast align-items-center text-bg-primary border-0 show"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+    >
+      <div class="d-flex">
+        <div class="toast-body">Process Successfully completed.</div>
+        <button
+          type="button"
+          class="btn-close btn-close-white me-2 m-auto"
+          data-bs-dismiss="toast"
+          aria-label="Close"
+        ></button>
+      </div>
+    </div>
+    <% } %>
+
+    <div class="container">
+      <% if(items_data && items_data.length > 0) { %>
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        <% items_data.forEach((item) => { %>
+        <div class="col">
+          <div class="card h-100">
+            <a
+              href="#"
+              class="detailsOfProduct"
+              data-item-type="<%= item.item_type %>"
+              data-item-id="<%= item.item_id %>"
+            >
+              <img
+                src="<%= item.img %>"
+                class="card-img-top"
+                alt="<%= item.name %>"
+              />
+            </a>
+            <div class="card-body">
+              <h5 class="card-title"><%= item.name %></h5>
+              <h4 class="card-title">₹<%= item.price %></h4>
+              <p class="card-text"><%= item.description %></p>
+            </div>
+            <div class="card-footer d-flex justify-content-between">
+              <a
+                href="/updateItemForShop"
+                class="btn btn-primary updateItem"
+                data-item-type="<%= item.item_type %>"
+                data-item-id="<%= item.item_id %>"
+                >Update</a
+              >
+              <a
+                href="/deleteItemFromShop"
+                class="btn btn-danger deleteItem"
+                data-item-type="<%= item.item_type %>"
+                data-item-id="<%= item.item_id %>"
+                >Delete</a
+              >
+            </div>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+      <% } else { %>
+      <div class="alert alert-info text-center">
+        No items available in the shop.
+      </div>
+      <% } %>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const updateItem = document.querySelectorAll(".updateItem");
+        const deleteItem = document.querySelectorAll(".deleteItem");
+
+        updateItem.forEach((button) => {
+          button.addEventListener("click", async (event) => {
+            event.preventDefault();
+            const item_type = button.getAttribute("data-item-type");
+            const item_id = button.getAttribute("data-item-id");
+
+            try {
+              const response = await fetch("/updateItemForShop", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ item_id, item_type }),
+              });
+
+              const contentType = response.headers.get("content-type");
+              if (contentType && contentType.includes("application/json")) {
+                const data = await response.json();
+                console.log("Item data received from server:", data);
+
+                if (data.success) {
+                  window.location.href = `/updateItemForShop?item_id=${item_id}&item_type=${item_type}`;
+                } else {
+                  alert("Failed to load item update page.");
+                }
+              } else {
+                const html = await response.text();
+                document.open();
+                document.write(html);
+                document.close();
+              }
+            } catch (error) {
+              console.log("Error:", error);
+            }
+          });
+        });
+
+        deleteItem.forEach((button) => {
+          button.addEventListener("click", async (event) => {
+            event.preventDefault();
+            const item_id = button.getAttribute("data-item-id");
+            const item_type = button.getAttribute("data-item-type");
+
+            const confirmDelete = confirm(
+              "Are you sure you want to delete this item?"
+            );
+            if (!confirmDelete) {
+              return; // If the user cancels, don't proceed with the deletion
+            }
+
+            try {
+              const response = await fetch("/deleteItemFromShop", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ item_id, item_type }),
+              });
+
+              if (response.ok) {
+                console.log("Item successfully sent to server for deletion");
+                window.location.href = `/editShop`;
+              } else {
+                console.error("Failed to delete item");
+              }
+            } catch (error) {
+              console.log("Error:", error);
+            }
+          });
+        });
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const decrementButton = document.getElementById("decrement-btn");
+        const incrementButton = document.getElementById("increment-btn");
+        const quantityInput = document.getElementById("quantity-input");
+
+        decrementButton.addEventListener("click", function () {
+          let currentValue = parseInt(quantityInput.value);
+          if (currentValue > 1) {
+            quantityInput.value = currentValue - 1;
+          }
+        });
+
+        incrementButton.addEventListener("click", function () {
+          let currentValue = parseInt(quantityInput.value);
+          quantityInput.value = currentValue + 1;
+        });
+      });
+    </script>
+  </body>
+</html>

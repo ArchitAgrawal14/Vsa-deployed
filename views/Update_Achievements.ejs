@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Achievements</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .form-floating {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .form-floating input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #fff;
+        }
+
+        .form-floating label {
+            position: absolute;
+            top: 0;
+            left: 10px;
+            padding: 0 5px;
+            background-color: #fff;
+            pointer-events: none;
+            transition: all 0.4s ease; /* Slowed down animation */
+            color: #6c757d; /* Adjust as needed */
+        }
+
+        .form-floating input:focus,
+        .form-floating input:not(:placeholder-shown) {
+            padding-top: 1.5rem;
+        }
+
+        .form-floating input:focus + label,
+        .form-floating input:not(:placeholder-shown) + label {
+            top: -0.75rem;
+            left: 10px;
+            font-size: 0.75rem;
+            color: #6c757d; /* Adjust as needed */
+        }
+
+        .form-floating-button {
+            width: 100%;
+        }
+
+        form input[type="submit"] {
+            width: 100%; /* Full width */
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        form input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        form input[type="file"] {
+            padding: 3px;
+        }
+
+        form input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        form input[type="number"]::-webkit-outer-spin-button,
+        form input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            form {
+                padding: 15px;
+            }
+
+            form input[type="text"],
+            form input[type="number"],
+            form input[type="file"],
+            form input[type="submit"] {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            form input[type="submit"] {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <form action="/AddAchievements" method="post" enctype="multipart/form-data">
+        <div class="form-floating">
+            <input type="text" name="placeName" id="placeName" placeholder=" " required>
+            <label for="placeName">Enter name of the city</label>
+        </div>
+        <div class="form-floating">
+            <input type="number" name="medalsWon" id="medalsWon" placeholder=" " required>
+            <label for="medalsWon">Medals Won</label>
+        </div>
+        <div class="form-floating">
+            <input type="text" name="description" id="description" placeholder=" " required>
+            <label for="description">Description</label>
+        </div>
+        <div class="form-floating">
+            <input type="file" name="imageTaken" id="imageTaken" accept="image/*" required>
+            <label for="imageTaken">Image Taken</label>
+        </div>
+        <input type="submit" value="Submit" class="form-floating-button">
+    </form>
+</body>
+</html>

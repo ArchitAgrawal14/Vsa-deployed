@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h3 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .form-floating {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .form-floating input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #fff;
+        }
+
+        .form-floating label {
+            position: absolute;
+            top: 0;
+            left: 10px;
+            padding: 0 5px;
+            background-color: #fff;
+            pointer-events: none;
+            transition: all 0.4s ease;
+            color: #6c757d;
+        }
+
+        .form-floating input:focus,
+        .form-floating input:not(:placeholder-shown) {
+            padding-top: 1.5rem;
+        }
+
+        .form-floating input:focus + label,
+        .form-floating input:not(:placeholder-shown) + label {
+            top: -0.75rem;
+            left: 10px;
+            font-size: 0.75rem;
+            color: #6c757d;
+        }
+
+        form input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        form input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        form input[type="file"] {
+            padding: 3px;
+        }
+
+        form input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        form input[type="number"]::-webkit-outer-spin-button,
+        form input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            form {
+                padding: 15px;
+            }
+
+            form input[type="text"],
+            form input[type="number"],
+            form input[type="file"],
+            form input[type="submit"] {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            form input[type="submit"] {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <% if (item_data) { %>
+        <form action="/completeUpdationOfItem" method="post">
+            <input type="hidden" name="item_id" value="<%= item_data.item_id %>">
+            <input type="hidden" name="item_type" value="<%= item_data.item_type %>">
+
+            <div class="form-floating">
+                <input type="text" name="Change_itemName" id="Change_itemName" placeholder=" " required>
+                <label for="Change_itemName">Change Item Name</label>
+            </div>
+
+            <div class="form-floating">
+                <input type="text" name="ChangeItemDescription" id="ChangeItemDescription" placeholder=" " required>
+                <label for="ChangeItemDescription">Change Description</label>
+            </div>
+
+            <div class="form-floating">
+                <input type="number" name="addQuantity" id="addQuantity" placeholder=" " required>
+                <label for="addQuantity">Add Quantity</label>
+            </div>
+
+            <div class="form-floating">
+                <input type="number" name="ChangeItemPrice" id="ChangeItemPrice" placeholder=" " required>
+                <label for="ChangeItemPrice">Change Price</label>
+            </div>
+
+            <input type="submit" value="Submit">
+        </form>
+    <% } %>
+</body>
+</html>

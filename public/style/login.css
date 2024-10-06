@@ -1,0 +1,877 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+/* .Left_Container{
+    height: 100%;
+    width: 50%;
+    background-color:white;
+    position: absolute;
+    left: 0%;
+    top: 0%;
+}
+.Form_Style{
+    margin-top:130px ;
+    margin-left: 118px;
+    margin-right: 118px;
+}
+#Login_Text{
+    padding-bottom: 15px;
+}
+.SignUp_Text{
+    padding-bottom: 15px;
+    padding-left: 10px;
+    display: inline-block;
+}
+.SignIn_Using_Apps{
+    display: flex;
+    justify-content: center;
+}
+.Below_SignInText{
+    display: flex;
+    justify-content: center;
+    color: grey;
+}
+.App_signIn{
+    margin: 20px;
+    height:40px ;
+    width:40px;
+}
+.Email_Text{
+   font-weight: bold;
+} */
+/* yaha niche attribute with a specific value(Email) selector use hua hai iska format aesa hota hai ([attribute|="value"]) */
+/* [value|="Email"]{
+    color:grey;
+}
+.Email_Box{
+    height: 25px;
+    width: 400px;
+    border-radius: 15px;
+    margin-bottom: 25px;
+    margin-right: 25px;
+    border: 2px solid whitesmoke;
+}
+.Password_Text{
+    font-weight: bold;
+}
+/* yaha niche attribute with a specific value(Password) selector use hua hai iska format aesa hota hai ([attribute|="value"]) */
+/* [value|="Password"]{
+    color: grey;
+}
+.Password_Box{
+    height: 25px;
+    border-radius: 15px;
+    width: 400px;
+    margin-bottom: 25px;
+    margin-right: 25px;
+    border: 2px solid whitesmoke;
+
+}
+.SignIn_Login_button{
+    background: linear-gradient(300deg, #00bfff, #ff4c68, #ef8172);
+    background-size: 180% 180%;
+    animation:both 8s ease infinite;
+    color: whitesmoke;
+    border-radius: 15px;
+    padding-left: 100px;
+    padding-right:100px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    width: 400px;
+    border: 2px solid whitesmoke;
+    cursor: pointer;
+}
+.SignIn_Login_button:hover{
+    border-color: black;
+}
+.SignUp_Link{
+    margin-left: 43%;
+}
+/* yaha se right container ka chalu hai */
+/* .Right_Container{
+    position: absolute;
+    height: auto;
+    width: 50%;
+    background-color:black;
+    color: white;
+    right: 0%;
+    top: 0%;
+    bottom: 0%;
+}
+.Form_StyleForSignUp{
+    margin-top:100px ;
+    margin-left: 120px;
+    margin-right: 100px;
+}
+.SignUp_Boxes{
+    height: 25px;
+    width: 400px;
+    border-radius: 15px;
+    margin-bottom: 25px;
+    margin-right: 25px;
+    border: 2px solid whitesmoke;
+    margin-left:10px ;
+}
+.SignUp_Boxes:hover{
+    border-color: #ff4c68;
+}
+#SignUp_Texts{
+    display: block;
+    margin-left: 15px;
+    font-weight: bold;
+}
+
+.SignUp_Login_button{
+    background: linear-gradient(300deg, #00bfff, #ff4c68, #ef8172);
+    background-size: 180% 180%;
+    animation:both 8s ease infinite;
+    color: whitesmoke;
+    border-radius: 15px;
+    padding-left: 100px;
+    padding-right:100px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    margin-left: 10px;
+    width: 400px;
+    border: 2px solid whitesmoke;
+    cursor: pointer;
+    border-color: black;
+}
+.SignUp_Login_button:hover{
+    border-color: white;
+}
+/* yaha se responsiveness chalu hai. */
+/* yaha pe Form ki hai. */
+/* @media(min-width:992px){
+    .Form_Responsiveness{
+        margin-top:130px ;
+        margin-left: 118px;
+        margin-right: 118px;
+}
+}
+@media(min-width:768px) and (max-width:992px){
+    .Form_Responsiveness{
+        margin-top:130px ;
+        margin-left: 12%;
+        margin-right: 12%;
+    }
+}
+
+@media(min-width:600px) and (max-width:768px){
+    .Form_Responsiveness{
+        margin-top:130px ;
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+}
+@media(min-width:360px) and (max-width:600px){
+    .Form_Responsiveness{
+        margin-top:130px ;
+        margin-left: 8%;
+        margin-right: 8%;
+    }
+}
+@media(min-width:100px) and (max-width:360px){
+    .Form_Responsiveness{
+        margin-top:130px ;
+        margin-left: 0px;
+        margin-right: 6%;
+    }
+}
+
+@media(max-width:100px){
+    .Form_Responsiveness{
+        margin-top:130px ;
+        margin-left: 0px;
+        margin-right: 4%;
+    }
+}  */
+/* yaha pe signup button ki hai. */
+/* @media(min-width:992px){
+    .SignIn_Login_button{
+        padding-left: 100px;
+        padding-right:100px;
+        margin-top: 25px;
+        margin-bottom: 25px;
+        margin-right: 25px;
+        width: 400px;
+
+}
+}
+@media(min-width:768px) and (max-width:992px){
+    .SignIn_Login_button{
+        padding-left: 85px;
+        padding-right: 85px;
+        margin-top: 22px;
+        margin-bottom: 22px;
+        margin-right: 22px;
+        width: 330px;
+        
+    }
+}
+
+@media(min-width:600px) and (max-width:768px){
+    .SignIn_Login_button{
+        padding-left: 70px;
+        padding-right: 70px;
+        margin-top: 19px;
+        margin-bottom: 19px;
+        margin-right: 19px;
+        width: 260px;
+        
+    }
+}
+@media(min-width:360px) and (max-width:600px){
+    .SignIn_Login_button{
+        padding-left: 55px;
+        padding-right: 55px;
+        margin-top: 16px;
+        margin-bottom: 16px;
+        margin-right: 16px;
+        width: 160px;
+        
+    }
+}
+@media(min-width:100px) and (max-width:360px){
+    .SignIn_Login_button{
+        padding-left: 55px;
+        padding-right: 55px;
+        margin-top: 16px;
+        margin-bottom: 16px;
+        margin-right: 16px;
+        width: 160px;
+        margin-left: 50%;
+        
+    }
+}
+
+@media(max-width:100px){
+    .SignIn_Login_button{
+        padding-left: 25px;
+        padding-right: 25px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        margin-right: 10px;
+        width: 50px;
+        margin-left: 50%;
+    }
+} */
+/* yaha se Password_Box ki hai. */
+/*@media(min-width:992px){
+    .Password_Box{
+        width: 400px;
+        margin-bottom: 25px;
+        margin-right: 25px;
+}
+}
+@media(min-width:768px) and (max-width:992px){
+    .Password_Box{
+        margin-bottom: 22px;
+        margin-right: 22px;
+        width: 330px;
+    }
+}
+
+@media(min-width:600px) and (max-width:768px){
+    .Password_Box{
+        margin-bottom: 19px;
+        margin-right: 19px;
+        width: 260px;
+    }
+}
+@media(min-width:360px) and (max-width:600px){
+    .Password_Box{
+        margin-bottom: 16px;
+        margin-right: 16px;
+        width: 160px;
+    }
+}
+@media(min-width:100px) and (max-width:360px){
+    .Password_Box{
+        margin-bottom: 16px;
+        margin-right: 16px;
+        width: 160px;
+        margin-left: 50%;
+    }
+}
+
+@media(max-width:100px){
+    .Password_Box{
+        margin-bottom: 13px;
+        margin-right: 13px;
+        width: 140px;
+        margin-left: 50%;
+    }
+} */ */
+
+/* yaha se .Email_Text ki hai. */
+
+/* @media(min-width:992px){
+    .Email_Box{
+        width: 400px;
+        margin-bottom: 25px;
+        margin-right: 25px;
+}
+}
+@media(min-width:768px) and (max-width:992px){
+    .Email_Box{
+        margin-bottom: 22px;
+        margin-right: 22px;
+        width: 330px;
+    }
+}
+
+@media(min-width:600px) and (max-width:768px){
+    .Email_Box{
+        margin-bottom: 19px;
+        margin-right: 19px;
+        width: 260px;
+    }
+}
+@media(min-width:360px) and (max-width:600px){
+    .Email_Box{
+        margin-bottom: 16px;
+        margin-right: 16px;
+        width: 160px;
+    }
+}
+@media(min-width:100px) and (max-width:360px){
+    .Email_Box{
+        margin-bottom: 16px;
+        margin-right: 16px;
+        width: 160px;
+        margin-left: 50%;
+    }
+}
+
+@media(max-width:100px){
+    .Email_Box{
+        margin-bottom: 13px;
+        margin-right: 13px;
+        width: 140px;
+        margin-left: 50%;
+    }
+}
+/* yaha pe email and passwosrd text ka hai responsiveness. */
+/* @media(min-width:100px) and (max-width:360px){
+    .Text_responsiveness{
+        margin-left: 50%;
+    }
+}
+
+@media(max-width:100px){
+    .Text_responsiveness{
+        margin-left: 50%;
+    }
+} */
+/* yaha pe login text ka hai. */
+/* @media(min-width:100px) and (max-width:360px){
+    #Login_Text{
+        margin-left: 50%;
+    }
+}
+
+@media(max-width:100px){
+    #Login_Text{
+        margin-left: 50%;
+    }
+}
+ */
+/* yaha pe .Below_SignInText ka hai. */
+/* @media(min-width:100px) and (max-width:360px){
+    .Below_SignInText{
+        margin-left: 100%;
+    }
+}
+
+@media(max-width:100px){
+    .Below_SignInText{
+        margin-left: 110%;
+    }
+}
+@media(min-width:100px) and (max-width:360px){
+    .SignIn_Using_Apps{
+        margin-left: 100%;
+    }
+}
+
+@media(max-width:100px){
+    .SignIn_Using_Apps{
+        margin-left: 110%;
+    }
+} */
+/* yaha pe signUp link ki responsiveness hai. */
+/* @media(min-width:992px){
+    .SignUp_Link{
+        visibility: hidden;
+}
+}
+@media(min-width:768px) and (max-width:992px){
+    .SignUp_Link{
+        visibility: hidden;
+    }
+}
+
+@media(min-width:600px) and (max-width:768px){
+    .SignUp_Link{
+        visibility: hidden;
+    }
+}
+@media(min-width:360px) and (max-width:600px){
+    .SignUp_Link{
+        visibility: hidden;
+    }
+}
+@media(min-width:100px) and (max-width:360px){
+    .SignUp_Link{
+        margin-left: 90%;
+    }
+}
+
+@media(max-width:100px){
+    .SignUp_Link{
+        margin-left: 100%;
+    }
+} */
+
+/* yaha se app ke dwara sign wale ka responsiveness hai. */
+
+/* @media(min-width:992px){
+    .App_signIn{
+        margin: 20px;
+        height:40px ;
+        width:40px;
+}
+}
+@media(min-width:768px) and (max-width:992px){
+    .App_signIn{
+        margin: 17px;
+        height: 37px ;
+        width: 37px;
+    }
+}
+
+@media(min-width:600px) and (max-width:768px){
+    .App_signIn{
+        margin: 14px;
+        height: 34px ;
+        width: 34px;
+    }
+}
+@media(min-width:360px) and (max-width:600px){
+    .App_signIn{
+        margin: 11px;
+        height: 31px ;
+        width: 31px;
+    }
+}
+@media(min-width:100px) and (max-width:360px){
+    .App_signIn{
+        margin: 11px;
+        height: 31px ;
+        width: 31px;
+    }
+} */ */
+
+/* yaha se right conatiner ka responsiveness hai. */
+/* @media(min-width:100px) and (max-width:360px){
+    .Right_Container{
+        visibility: hidden;
+    }
+}
+
+@media(max-width:100px){
+    .Right_Container{
+        visibility: hidden;
+    }
+} */
+/* yaha pe se signup boxes ki responsiveness hai. */
+/* @media(min-width:992px){
+    .SignUp_Boxes{
+        width: 400px;
+        margin-bottom: 25px;
+        margin-right: 25px;
+}
+}
+@media(min-width:768px) and (max-width:992px){
+    .SignUp_Boxes{
+        margin-bottom: 22px;
+        margin-right: 22px;
+        width: 330px;
+    }
+}
+
+@media(min-width:600px) and (max-width:768px){
+    .SignUp_Boxes{
+        margin-bottom: 19px;
+        margin-right: 19px;
+        width: 260px;
+    }
+}
+@media(min-width:360px) and (max-width:600px){
+    .SignUp_Boxes{
+        margin-bottom: 16px;
+        margin-right: 16px;
+        width: 140px;
+    }
+}
+@media(min-width:100px) and (max-width:360px){
+    .SignUp_Boxes{
+        padding-left: 5px;
+        padding-right: 55px;
+        margin-top: 16px;
+        margin-bottom: 16px;
+        margin-right: 16px;
+        width: 140px;
+    }
+}
+
+@media(max-width:100px){
+    .SignUp_Boxes{
+        padding-left: 5px;
+        padding-right: 55px;
+        margin-top: 16px;
+        margin-bottom: 16px;
+        margin-right: 16px;
+        width: 140px;
+    }
+}
+/* yaha pe se signup button ki hai. */
+/* @media(min-width:992px){
+    .SignUp_Login_button{
+        padding-left: 100px;
+        padding-right:100px;
+        margin-top: 25px;
+        margin-bottom: 25px;
+        margin-right: 25px;
+        width: 400px;
+
+}
+}
+@media(min-width:768px) and (max-width:992px){
+    .SignUp_Login_button{
+        padding-left: 85px;
+        padding-right: 85px;
+        margin-top: 22px;
+        margin-bottom: 22px;
+        margin-right: 22px;
+        width: 330px;
+        
+    }
+}
+
+@media(min-width:600px) and (max-width:768px){
+    .SignUp_Login_button{
+        padding-left: 70px;
+        padding-right: 70px;
+        margin-top: 19px;
+        margin-bottom: 19px;
+        margin-right: 19px;
+        width: 260px;
+        
+    }
+}
+@media(min-width:360px) and (max-width:600px){
+    .SignUp_Login_button{
+        padding-left: 55px;
+        padding-right: 55px;
+        margin-top: 16px;
+        margin-bottom: 16px;
+        margin-right: 16px;
+        width: 160px;
+        
+    }
+}
+@media(min-width:100px) and (max-width:360px){
+    .SignUp_Login_button{
+        padding-left: 55px;
+        padding-right: 55px;
+        margin-top: 16px;
+        margin-bottom: 16px;
+        margin-right: 16px;
+        width: 200px;
+    }
+}
+
+@media(max-width:100px){
+    .SignUp_Login_button{
+        padding-left: 55px;
+        padding-right: 55px;
+        margin-top: 16px;
+        margin-bottom: 16px;
+        margin-right: 16px;
+        width: 180px;
+    }
+} */
+
+/* yaha pe login text ka hai. */
+/* .login_container_text{
+    display: inline-block;
+}
+.login_container_text h2,
+.login_container_text svg{
+    display: inline-block;
+    vertical-align: middle;
+    visibility: hidden;
+}
+.login_container_text h2{
+    margin-right: 8px;
+    visibility: visible;
+}
+.login_container_text svg:hover{
+ cursor: pointer;
+
+} */ 
+/* yaha pe login ka tooltip ka hai. */
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body{
+    background-color: rgba(0, 0, 0, 0.795);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.container{
+    background-color: #fff;
+    border-radius: 30px;
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
+    position: relative;
+    overflow: hidden;
+    width: 768px;
+    max-width: 100%;
+    min-height: 480px;
+}
+
+.container p{
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0.3px;
+    margin: 20px 0;
+}
+
+.container span{
+    font-size: 12px;
+}
+
+.container a{
+    color: #333;
+    font-size: 13px;
+    text-decoration: none;
+    margin: 15px 0 10px;
+}
+
+.container button{
+    background-color: rgb(255, 13, 13);
+    color: #fff;
+    font-size: 12px;
+    padding: 10px 45px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.container button.hidden{
+    background-color: transparent;
+    border-color: #fff;
+}
+
+.container form{
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 40px;
+    height: 100%;
+}
+
+.container input{
+    background-color: #eee;
+    border:none;
+    margin: 8px 0;
+    padding: 10px 15px;
+    font-size: 13px;
+    border-radius: 8px;
+    width: 100%;
+    outline: none;
+}
+
+.form-container{
+    position: absolute;
+    top: 0;
+    height: 100%;
+    transition: all 0.6s ease-in-out;
+}
+
+.sign-in{
+    left: 0;
+    width: 50%;
+    z-index: 2;
+}
+
+.container.active .sign-in{
+    transform: translateX(100%);
+}
+
+.sign-up{
+    left: 0;
+    width: 50%;
+    opacity: 0;
+    z-index: 1;
+}
+
+.container.active .sign-up{
+    transform: translateX(100%);
+    opacity: 1;
+    z-index: 5;
+    animation: move 0.6s;
+}
+
+@keyframes move{
+    0%, 49.99%{
+        opacity: 0;
+        z-index: 1;
+    }
+    50%, 100%{
+        opacity: 1;
+        z-index: 5;
+    }
+}
+
+.social-icons{
+    margin: 20px 0;
+}
+
+.social-icons a{
+    border: 1px solid #ccc;
+    border-radius: 20%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 3px;
+    width: 40px;
+    height: 40px;
+}
+
+.toggle-container{
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    transition: all 0.6s ease-in-out;
+    border-radius: 20px;
+    z-index: 1000;
+}
+
+.container.active .toggle-container{
+    transform: translateX(-100%);
+    border-radius: 20px;
+}
+
+.toggle{
+    background-color: rgba(255, 4, 4, 0.952);
+    height: 100%;
+    color: #fff;
+    position: relative;
+    left: -100%;
+    height: 100%;
+    width: 200%;
+    transform: translateX(0);
+    transition: all 0.6s ease-in-out;
+}
+
+.container.active .toggle{
+    transform: translateX(50%);
+}
+
+.toggle-panel{
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 7px;
+    text-align: center;
+    top: 0;
+    transform: translateX(0);
+    transition: all 0.6s ease-in-out;
+}
+
+.toggle-left{
+    transform: translateX(-200%);
+}
+
+.container.active .toggle-left{
+    transform: translateX(0);
+}
+
+.toggle-right{
+    right: 0;
+    transform: translateX(0);
+}
+
+
+.Exclam_mark_circle {
+    cursor: pointer;
+    height: 20px;
+    width: 20px;
+}
+
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+    visibility: hidden;
+}
+.signUpToolTip{
+    position: relative;
+    display: inline-block;
+    visibility: hidden;
+}
+.showTooltip{
+    visibility: visible;
+}
+.tooltiptext {
+    visibility: hidden;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
+    white-space: nowrap; /* Prevents the tooltip from wrapping */
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip-container:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+.signUpToolTip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}

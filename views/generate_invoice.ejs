@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Select Items for Invoice</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
+      h1 {
+        text-align: center;
+        margin: 20px 0;
+      }
+
+      .container {
+        padding: 0 20px;
+      }
+
+      .form-group {
+        position: relative;
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1rem;
+        padding: 1rem;
+        outline: none;
+        background-color: transparent;
+        color: #333;
+        transition: border-color 0.5s;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus {
+        border-color: #4facfe;
+      }
+
+      .form-group label {
+        position: absolute;
+        top: 50%;
+        left: 1rem;
+        transform: translateY(-50%);
+        transition: transform 0.5s, color 0.5s;
+        pointer-events: none;
+        background-color: transparent;
+        padding: 0 0.25rem;
+        color: #555;
+      }
+
+      .form-group input:focus ~ label,
+      .form-group input:not(:placeholder-shown) ~ label,
+      .form-group textarea:focus ~ label,
+      .form-group textarea:not(:placeholder-shown) ~ label {
+        transform: translateY(-2.5rem) scale(0.75);
+        background-color: #fff;
+        padding: 0 0.25rem;
+        color: #555;
+      }
+
+      .category-items {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+      }
+
+      .item {
+        border: 2px solid transparent;
+        border-radius: 8px;
+        padding: 10px;
+        text-align: center;
+        background-color: #f9f9f9;
+        transition: border-color 0.3s;
+        cursor: pointer;
+      }
+
+      .item.selected {
+        border: 2px solid blue;
+      }
+
+      .item img {
+        width: 100%;
+        height: auto;
+        border-radius: 4px;
+      }
+
+      .item p {
+        margin: 10px 0 0;
+      }
+
+      button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background-color: blue;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: darkblue;
+        cursor: pointer;
+      }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+      <h1>Select Items for Invoice</h1>
+      <form id="items-form">
+        <div class="form-group">
+          <input type="text" name="customer_name" required placeholder=" " />
+          <label for="customer_name">Customer Name</label>
+        </div>
+        <div class="form-group">
+          <input type="email" name="customer_email" required placeholder=" " />
+          <label for="customer_email">Customer Email</label>
+        </div>
+        <div class="form-group">
+          <input type="text" name="customer_number" required placeholder=" " />
+          <label for="customer_number">Customer Number</label>
+        </div>
+
+        <% if (item_data) { %>
+          <% Object.keys(item_data).forEach((category) => { %>
+            <h2><%= category.charAt(0).toUpperCase() + category.slice(1) %></h2>
+            <div class="category-items">
+              <% item_data[category].forEach((item) => { %>
+                <div
+                  class="item"
+                  data-item-type="<%= item.item_type %>"
+                  data-item-id="<%= item.item_id %>"
+                  data-item-price="<%= item.price %>"
+                  data-item-name="<%= item.name %>"
+                >
+                  <input type="checkbox" />
+                  <img src="<%= item.img %>" alt="<%= item.name %>" />
+                  <p><%= item.price %></p>
+                </div>
+              <% }) %>
+            </div>
+          <% }) %>
+          <button type="button" id="generate-invoice">Generate Invoice</button>          
+          <button type="button" id="generate-bill">Generate Bill</button>          
+        <% } %>
+      </form>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const items = document.querySelectorAll(".item");
+
+        items.forEach((item) => {
+          item.addEventListener("click", (event) => {
+            if (event.target.tagName !== "INPUT") {
+              const checkbox = item.querySelector('input[type="checkbox"]');
+              checkbox.checked = !checkbox.checked;
+              item.classList.toggle("selected", checkbox.checked);
+            }
+          });
+        });
+
+        document
+          .getElementById("generate-invoice")
+          .addEventListener("click", (event) => {
+            event.preventDefault(); // Prevent the default form submission
+
+            const selectedItems = [];
+            const checkboxes = document.querySelectorAll(
+              ".item input[type='checkbox']:checked"
+            );
+
+            checkboxes.forEach((checkbox) => {
+              const item = checkbox.closest(".item");
+              const itemId = item.getAttribute("data-item-id");
+              const itemType = item.getAttribute("data-item-type");
+              const itemPrice = item.getAttribute("data-item-price");
+              const itemName = item.getAttribute("data-item-name");
+
+              selectedItems.push({
+                item_name: itemName,
+                item_id: itemId,
+                item_type: itemType,
+                price: itemPrice,
+              });
+            });
+
+            const formData = new FormData(document.getElementById("items-form"));
+            const data = {
+              items: selectedItems,
+              customer_name: formData.get("customer_name"),
+              customer_email: formData.get("customer_email"),
+              customer_number: formData.get("customer_number"),
+            };
+
+            fetch("/generateInvoice", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            })
+            .then((response) => {
+              if (response.ok) {
+                return response.blob(); // Convert the response to a blob
+              }
+              throw new Error('Network response was not ok.');
+            })
+            .then((blob) => {
+              // Create a URL for the blob and trigger a download
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'Invoice_VSA.pdf';
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+              window.URL.revokeObjectURL(url); // Clean up the URL object
+            })
+            .catch((error) => {
+              console.error('Error:', error);
+            });
+          });
+          document
+          .getElementById("generate-bill")
+          .addEventListener("click", (event) => {
+            event.preventDefault(); // Prevent the default form submission
+
+            const selectedItems = [];
+            const checkboxes = document.querySelectorAll(
+              ".item input[type='checkbox']:checked"
+            );
+
+            checkboxes.forEach((checkbox) => {
+              const item = checkbox.closest(".item");
+              const itemId = item.getAttribute("data-item-id");
+              const itemType = item.getAttribute("data-item-type");
+              const itemPrice = item.getAttribute("data-item-price");
+              const itemName = item.getAttribute("data-item-name");
+
+              selectedItems.push({
+                item_name: itemName,
+                item_id: itemId,
+                item_type: itemType,
+                price: itemPrice,
+              });
+            });
+
+            const formData = new FormData(document.getElementById("items-form"));
+            const data = {
+              items: selectedItems,
+              customer_name: formData.get("customer_name"),
+              customer_email: formData.get("customer_email"),
+              customer_number: formData.get("customer_number"),
+            };
+
+            fetch("/generateBill", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            })
+            .then((response) => {
+              if (response.ok) {
+                return response.blob(); // Convert the response to a blob
+              }
+              throw new Error('Network response was not ok.');
+            })
+            .then((blob) => {
+              // Create a URL for the blob and trigger a download
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'Bill_VSA.pdf';
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+              window.URL.revokeObjectURL(url); // Clean up the URL object
+            })
+            .catch((error) => {
+              console.error('Error:', error);
+            });
+          });
+      });
+    </script>
+</body>
+</html>

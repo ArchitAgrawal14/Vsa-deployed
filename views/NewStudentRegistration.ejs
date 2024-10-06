@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Student</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            height: 15px; /* Adjust the height */
+            padding: 10px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+        }
+        .btn-submit {
+            width: 100%;
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 16px;
+            color: #ffffff;
+            cursor: pointer;
+        }
+        .btn-submit:hover {
+            background-color: #0056b3;
+        }
+        .toast {
+            background-color: #28a745;
+            color: #ffffff;
+            border-radius: 8px;
+        }
+        .toast-body {
+            font-size: 16px;
+        }
+        .toast-container {
+            display: none; /* Initially hidden */
+        }
+        .toast-container.show {
+            display: block; /* Show when the class 'show' is added */
+        }
+    </style>
+</head>
+<body>
+    <!-- Toast Container -->
+    <% if (typeof toastMessage !== 'undefined') { %>
+        <div id="toast-container" class="position-fixed bottom-0 end-0 p-3 toast-container <%= toastMessage ? 'show' : '' %>">
+            <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto">Message</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    <% if (toastMessage === true) { %>Successfully added student<% } %>
+                    <% if (toastMessage === 'e') { %>Student already exists in the database.<% } %>
+                    <% if (toastMessage === false) { %>Couldn't add student. Try again later.<% } %>
+                </div>
+            </div>
+        </div>
+    <% } %>
+
+    <div class="form-container">
+        <h1>Register New Student</h1>
+        <form action="/addStudent" method="post">
+            <div class="form-group">
+                <label for="studentName">Enter Student Name</label>
+                <input type="text" id="studentName" class="form-control" name="Student_Name" required>
+            </div>
+            <div class="form-group">
+                <label for="motherName">Enter Mother's Name</label>
+                <input type="text" id="motherName" class="form-control" name="Mother_name" required>
+            </div>
+            <div class="form-group">
+                <label for="fatherName">Enter Father's Name</label>
+                <input type="text" id="fatherName" class="form-control" name="Father_name" required>
+            </div>
+            <div class="form-group">
+                <label for="mobileNumber">Enter Mobile Number</label>
+                <input type="text" id="mobileNumber" class="form-control" name="mobile_number" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Enter Email</label>
+                <input type="email" id="email" class="form-control" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="feeStructure">Enter Fee Structure</label>
+                <select id="feeStructure" name="feeStructure" class="form-select" required>
+                    <option value="type1">Something</option>
+                    <option value="type2">Something</option>
+                    <option value="type3">Something</option>
+                    <option value="type4">Something</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="groupAddedOn">Enter Group Name</label>
+                <select id="groupAddedOn" name="groupAddedOn" class="form-select" required>
+                    <option value="group1">High performance-1</option>
+                    <option value="group2">High performance-2</option>
+                    <option value="group3">Intermediate</option>
+                    <option value="group4">Beginner</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="skateType">Enter Skate Type</label>
+                <select id="skateType" name="skate_type" class="form-select" required>
+                    <option value="Tenacity">Tenacity</option>
+                    <option value="Quads">Quads</option>
+                    <option value="Inline">Inline</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="feePaid">Fees Paid</label>
+                <input type="number" id="feePaid" class="form-control" name="feePaid" required>
+            </div>
+            <button type="submit" class="btn-submit">Register</button>
+        </form>
+    </div>
+
+    
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toastElement = document.getElementById('toast');
+            if (toastElement) {
+                const toast = new bootstrap.Toast(toastElement);
+                toast.show();
+            }
+        });
+    </script>
+</body>
+</html>

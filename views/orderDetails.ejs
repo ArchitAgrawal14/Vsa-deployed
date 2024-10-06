@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order details</title>
+</head>
+<body>
+    <%if(toastForNewsLetter){%>
+        <div
+          class="toast align-items-center text-bg-primary border-0"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+        >
+          <div class="d-flex">
+            <div class="toast-body">Process Successfully completed.</div>
+            <button
+              type="button"
+              class="btn-close btn-close-white me-2 m-auto"
+              data-bs-dismiss="toast"
+              aria-label="Close"
+            ></button>
+          </div>
+        </div>
+        <%}%>
+    <%if(order_data && order_data>0){%>
+        <%order_data.forEach((order)=>{%>
+            <h3>Order id:<br><%=order.order_id%></h3>
+            <h3>Payment id:<br><%=order.payment_id%></h3>
+            <h3>Customer Email:<br><%=order.email%></h3>
+            <h3>Customer Name:<br><%=order.name%></h3>
+            <h3>Customer Mobile Number:<br><%=order.mobile_number%></h3>
+            <h3>Address:<br><%=order.address%></h3>
+            <h3>Zip code:<br><%=order.zip_code%></h3>
+            <h3>City:<br><%=order.city%></h3>
+            <h3>State:<br><%=order.state%></h3>
+            <h3>Item Id:<br><%=order.item_id%></h3>
+            <h3>Amount:<br><%=order.price%></h3>
+            <h3>Quantity:<br><%=order.quantity%></h3>
+            <h3>Status:<br><%=order.status%></h3>
+            <h3>Order Date:<br><%=order.created_at%></h3>
+        <%})%>
+        <form action="/changeStatus" method="post">
+            <label for="orderStatusChange">Change order status:</label>
+            <input type="hidden"  value="<%= order_data[0].order_id %>" name="orderId">
+            <select name="orderStatusChange" id="orderStatusChange">
+                <option value="Pending" style="background-color: red;">Pending</option>
+                <option value="Packed" style="background-color: lightyellow;">Packed</option>
+                <option value="Dispatched" style="background-color: yellow;">Dispatched</option>
+                <option value="Delivered" style="background-color: lightgreen;">Delivered</option>
+            </select>
+            <button type="submit">Submit</button>
+        </form>
+        <form action="/downloadOrderDetails" method="post">
+            <input type="hidden"  value="<%= order_data[0].order_id %>" name="orderId">
+            <button type="submit">Download</button>
+        </form>
+
+    <%}else{%>
+        <h1>Order id did not match</h1>
+        <%}%>
+</body>
+</html>

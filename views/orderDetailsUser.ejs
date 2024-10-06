@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .order-details {
+            margin: 20px auto;
+            max-width: 1200px;
+        }
+        .order-item {
+            margin-bottom: 20px;
+        }
+        .order-item img {
+            max-width: 100%;
+            height: auto;
+        }
+        .order-summary {
+            margin-top: 20px;
+            border-top: 2px solid #dee2e6;
+            padding-top: 15px;
+        }
+        .card-body p {
+            margin: 0;
+        }
+        .card-footer {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container order-details">
+        <h1 class="my-4">Order Details</h1>
+
+        <% if (order.length > 0) { %>
+            <% order.forEach((item, index) => { %>
+                <div class="order-item card mb-4">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="<%= itemDetails[index].img %>" class="card-img-top" alt="<%= itemDetails[index].name %>">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title"><%= itemDetails[index].name %></h5>
+                                <p class="card-text"><strong>Quantity:</strong> <%= item.quantity %></p>
+                                <p class="card-text"><strong>Price:</strong> $<%= item.price %></p>
+                                <p class="card-text"><strong>Total:</strong> $<%= item.quantity * item.price %></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+
+            <div class="order-summary">
+                <h3>Order Summary</h3>
+                <p><strong>Total Items:</strong> <%= order.length %></p>
+                <p><strong>Order Total:</strong> $<%= order.reduce((total, item) => total + (item.quantity * item.price), 0) %></p>
+            </div>
+        <% } else { %>
+            <p class="text-center">No details available for this order.</p>
+        <% } %>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Header</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+      /* Transparent Header */
+      .transparent-header {
+        position: relative;
+        height: 100px;
+        top: 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 50px;
+        background-color: rgba(0, 174, 239); /* Keeps the background invisible */
+        z-index: 100; /* Ensures it's above other elements */
+      }
+
+      .transparent-header .logo img {
+        max-height: 50px;
+      }
+
+      .transparent-header .navigation {
+        position: relative;
+      }
+
+      .transparent-header .navigation ul {
+        list-style: none;
+        display: flex;
+        gap: 30px;
+        transition: all 0.3s ease;
+        justify-content: center; /* Centering items horizontally */
+        align-items: center; /* Centering items vertically */
+      }
+
+      .transparent-header .navigation ul li {
+        display: inline-block;
+        text-align: center;
+        position: relative; /* Make the dropdown relative to its parent */
+      }
+
+      .transparent-header .navigation ul li a {
+        text-decoration: none;
+        font-size: 1rem;
+        color: white; /* Adjust this according to your design */
+        transition: color 0.3s ease;
+      }
+
+      .transparent-header .navigation ul li a:hover {
+        color: #ddd; /* Adjust hover effect */
+      }
+
+      /* Dropdown styles */
+      .dropdown-menu {
+        visibility: hidden; /* Keep the dropdown menu invisible by default */
+        opacity: 0; /* Make it fully transparent */
+        position: absolute; /* Position absolutely within the dropdown */
+        top: 100%; /* Position below the toggle */
+        left: 0; /* Align to the left of the toggle */
+        background-color: white; /* Background color of the dropdown */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Add some shadow for effect */
+        z-index: 1000; /* Ensure it appears above other elements */
+        transition: visibility 0s, opacity 0.3s ease; /* Smooth transition */
+        padding: 0; /* Remove padding from dropdown */
+        margin: 0; /* Remove margin from dropdown */
+        width: max-content; /* Adjust width to fit items */
+      }
+
+      .dropdown-menu li {
+        list-style: none; /* Remove bullet points */
+        display: block; /* Ensure list items stack vertically */
+      }
+
+      .dropdown-menu li a {
+        display: block; /* Make the links block elements for full width */
+        padding: 10px 15px; /* Add padding for better click area */
+        text-decoration: none; /* Remove underline */
+        color: #333; /* Set link color */
+        transition: background-color 0.3s ease; /* Add transition for hover effect */
+      }
+
+      .dropdown-menu li a:hover {
+        background-color: #f0f0f0; /* Change background on hover */
+      }
+
+      .dropdown:hover .dropdown-menu {
+        visibility: visible; /* Show the dropdown menu on hover */
+        opacity: 1; /* Make it fully opaque */
+      }
+
+      .transparent-header .cta-button {
+        padding: 10px 25px;
+        background-color: #fff;
+        color: #333;
+        border: none;
+        border-radius: 20px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .transparent-header .cta-button:hover {
+        background-color: #ddd;
+      }
+
+      /* Button to Reveal the Navigation */
+      .menu-button {
+        display: none;
+        padding: 10px 20px;
+        background-color: #fff;
+        color: #333;
+        border: none;
+        border-radius: 20px;
+        font-size: 1rem;
+        cursor: pointer;
+        position: absolute;
+        right: 10px;
+        top: 20px;
+        z-index: 101;
+      }
+
+      /* Hide the navigation on smaller screens */
+      @media (max-width: 768px) {
+        .transparent-header {
+          justify-content: flex-start;
+          padding: 10px 20px;
+        }
+
+        .transparent-header .logo {
+          margin-right: auto;
+        }
+
+        .transparent-header .navigation ul {
+          position: fixed;
+          top: 0;
+          right: -100%; /* Move off-screen initially */
+          height: 100vh;
+          width: 60%;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          background-color: rgba(0, 0, 0, 0); /* white background for mobile menu */
+          transition: right 0.3s ease;
+          gap: 20px;
+        }
+
+        .transparent-header .navigation ul li {
+          text-align: center;
+        }
+
+        /* Show the navigation when hovering over the menu button */
+        .menu-button:hover + .navigation ul {
+          right: 0; /* Slide in the menu */
+        }
+
+        /* Hide the menu again when mouse leaves the navigation area */
+        .navigation ul:hover {
+          right: 0; /* Keep the menu visible while hovering over it */
+        }
+
+        .navigation ul:not(:hover) {
+          right: -100%; /* Hide the menu again if not hovered */
+        }
+
+        /* Menu button visibility */
+        .menu-button {
+          display: inline-block;
+        }
+
+        /* Close button for optional manual closing of the menu */
+        .navigation ul .close-button {
+          top: 20px;
+          right: 20px;
+          left: auto;
+        }
+      }
+
+      /* Ensure logo remains visible */
+      .transparent-header .logo {
+        z-index: 102;
+      }
+
+      /* Close button inside the navigation (optional for mobile) */
+      .close-button {
+        display: none;
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        padding: 10px;
+        background-color: #fff;
+        color: #333;
+        border-radius: 50%;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+
+      @media (max-width: 768px) {
+        .close-button {
+          display: block;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="transparent-header">
+      <div class="logo">
+        <img src="/icons/VSA_logo.png" alt="Logo" />
+        <!-- Add your logo here -->
+      </div>
+
+      <!-- Menu Button (visible on smaller screens) -->
+      <button class="menu-button">☰</button>
+
+      <nav class="navigation">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/Cart">Cart</a></li>
+          <li><a href="/Shop">Shop</a></li>
+          <li class="nav-item dropdown">
+            <% if(Login) { %>
+              <a
+                class="btn btn-primary dropdown-toggle"
+                href="#"
+                role="button"
+                id="navbarDropdown"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <%= Login %>
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="/Profile">Profile</a></li>
+                <li><a class="dropdown-item" href="/Orders">Orders</a></li>
+                <li><a class="dropdown-item" href="/Password_change">Change Password</a></li>
+                <li><a class="dropdown-item" href="/Logout">LogOut</a></li>
+              </ul>
+            <% } else { %>
+              <a href="/newLogin" class="nav-link text-white">Login</a>
+            <% } %>
+          </li>
+          
+        </ul>
+      </nav>
+
+      <div class="cta">
+        <!-- <button class="cta-button">Sign in</button> -->
+      </div>
+    </header>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mark Attendance</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 50px;
+        }
+        .table th, .table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .mark-all-btns {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center">Mark Attendance</h2>
+
+        <!-- Buttons to mark all as Present or Absent -->
+        <div class="mark-all-btns text-center">
+            <button type="button" class="btn btn-success" onclick="markAll('present')">Mark All Present</button>
+            <button type="button" class="btn btn-danger" onclick="markAll('absent')">Mark All Absent</button>
+        </div>
+
+        <!-- Attendance table -->
+        <form id="attendanceForm" action="/confirmAttendance" method="POST">
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Mother Name</th>
+                        <th>Mark</th>
+                        <!-- <th>Absent</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (stud_data && stud_data.length > 0) { %>
+                        <% stud_data.forEach((stud) => { %>
+                            <tr>
+                                <td><%= stud.stud_id %></td>
+                                <td><%= stud.student_name %></td>
+                                <td><%= stud.mother_name %></td>
+                                <td>
+                                    <input type="radio" name="attendance_<%= stud.stud_id %>" value="Present"> Present
+                                    <input type="radio" name="attendance_<%= stud.stud_id %>" value="Absent"> Absent
+                                </td>
+                                
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="5">No students available</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+
+            <!-- Submit button -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Submit Attendance</button>
+            </div>
+        </form>
+
+        <!-- Toast notification -->
+        <div class="toast" id="attendanceToast" style="position: fixed; top: 20px; right: 20px; z-index: 1050;" data-autohide="true" data-delay="3000">
+            <div class="toast-header">
+                <strong class="mr-auto">Attendance Status</strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body">
+                Attendance saved for today!
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <script>
+        // Load stored attendance from localStorage on page load
+        window.onload = function() {
+            const currentDate = new Date().toLocaleDateString();
+            const savedDate = localStorage.getItem('attendanceDate');
+            const savedAttendance = localStorage.getItem('attendanceData');
+
+            // If the saved date matches today's date, populate the form with the saved attendance
+            if (savedDate === currentDate && savedAttendance) {
+                const attendanceData = JSON.parse(savedAttendance);
+                for (const studentId in attendanceData) {
+                    const attendance = attendanceData[studentId];
+                    document.querySelector(`input[name="attendance[${studentId}]"][value="${attendance}"]`).checked = true;
+                }
+            }
+        }
+
+        // Mark all students as present or absent
+        function markAll(status) {
+            const radios = document.querySelectorAll('input[type="radio"]');
+            radios.forEach((radio) => {
+                if (status === 'present' && radio.value === 'Present') {
+                    radio.checked = true;
+                } else if (status === 'absent' && radio.value === 'Absent') {
+                    radio.checked = true;
+                }
+            });
+        }
+
+        // Show toast notification after form is submitted
+        document.getElementById("attendanceForm").onsubmit = function() {
+            $('#attendanceToast').toast('show');
+        };
+    </script>
+</body>
+</html>

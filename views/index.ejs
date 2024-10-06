@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VSA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="index.css"> -->
+</head>
+<style>
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+/* Dropdown styles */
+.dropdown-menu {
+        visibility: hidden; /* Keep the dropdown menu invisible by default */
+        opacity: 0; /* Make it fully transparent */
+        position: absolute; /* Position absolutely within the dropdown */
+        top: 100%; /* Position below the toggle */
+        left: 0; /* Align to the left of the toggle */
+        background-color: skyblue; /* Background color of the dropdown */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Add some shadow for effect */
+        z-index: 1000; /* Ensure it appears above other elements */
+        transition: visibility 0s, opacity 0.3s ease; /* Smooth transition */
+        padding: 0; /* Remove padding from dropdown */
+        margin: 0; /* Remove margin from dropdown */
+        width: max-content; /* Adjust width to fit items */
+      }
+
+      .dropdown-menu li {
+        list-style: none; /* Remove bullet points */
+        display: block; /* Ensure list items stack vertically */
+      }
+
+      .dropdown-menu li a {
+        display: block; /* Make the links block elements for full width */
+        padding: 10px 15px; /* Add padding for better click area */
+        text-decoration: none; /* Remove underline */
+        color: #333; /* Set link color */
+        transition: background-color 0.3s ease; /* Add transition for hover effect */
+      }
+
+      .dropdown-menu li a:hover {
+        background-color: blue; /* Change background on hover */
+      }
+
+      .dropdown:hover .dropdown-menu {
+        visibility: visible; /* Show the dropdown menu on hover */
+        opacity: 1; /* Make it fully opaque */
+      }
+
+body {
+    background-color: #f5f5f5;
+    min-height: 100vh;
+}
+/* Transparent Header */
+.transparent-header {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 50px;
+    background-color: transparent; /* Keeps the background invisible */
+    z-index: 100; /* Ensures it's above other elements */
+}
+
+.transparent-header .logo img {
+    max-height: 50px;
+}
+
+.transparent-header .navigation {
+    position: relative;
+}
+
+.transparent-header .navigation ul {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+    transition: all 0.3s ease;
+    justify-content: center; /* Centering items horizontally */
+    align-items: center; /* Centering items vertically */
+}
+
+.transparent-header .navigation ul li {
+    display: inline-block;
+    text-align: center;
+}
+
+.transparent-header .navigation ul li a {
+    text-decoration: none;
+    font-size: 1rem;
+    color: white; /* Adjust this according to your design */
+    transition: color 0.3s ease;
+}
+
+.transparent-header .navigation ul li a:hover {
+    color: #ddd; /* Adjust hover effect */
+}
+
+.transparent-header .cta-button {
+    padding: 10px 25px;
+    background-color: #fff;
+    color: #333;
+    border: none;
+    border-radius: 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.transparent-header .cta-button:hover {
+    background-color: #ddd;
+}
+
+/* Button to Reveal the Navigation */
+.menu-button {
+    display: none;
+    padding: 10px 20px;
+    background-color: #fff;
+    /* margin-left: -10px; */
+    color: #333;
+    border: none;
+    border-radius: 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    top: 20px;
+    z-index: 101;
+}
+
+.menu-button:hover + .navigation ul {
+    right: 0;
+}
+
+/* Hide the navigation on smaller screens */
+@media (max-width: 768px) {
+    .transparent-header {
+        justify-content: flex-start;
+        padding: 10px 20px;
+    }
+
+    .transparent-header .logo {
+        margin-right: auto;
+    }
+
+    .transparent-header .navigation ul {
+        position: fixed;
+        top: 0;
+        right: -100%; /* Move off-screen initially */
+        height: 100vh;
+        width: 60%;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0, 0, 0, 0); /*white background for mobile menu */
+        transition: right 0.3s ease;
+        gap: 20px;
+    }
+
+    .transparent-header .navigation ul li {
+        text-align: center;
+    }
+
+    /* Show the navigation when hovering over the menu button */
+    .menu-button:hover + .navigation ul {
+        right: 0; /* Slide in the menu */
+    }
+
+    /* Hide the menu again when mouse leaves the navigation area */
+    .navigation ul:hover {
+        right: 0; /* Keep the menu visible while hovering over it */
+    }
+
+    .navigation ul:not(:hover) {
+        right: -100%; /* Hide the menu again if not hovered */
+    }
+
+    /* Menu button visibility */
+    .menu-button {
+        display: inline-block;
+    }
+
+    /* Close button for optional manual closing of the menu */
+    .navigation ul .close-button {
+        top: 20px;
+        right: 20px;
+        left: auto;
+    }
+}
+
+/* Ensure logo remains visible */
+.transparent-header .logo {
+    z-index: 102;
+}
+
+/* Close button inside the navigation (optional for mobile) */
+.close-button {
+    display: none;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 10px;
+    background-color: #fff;
+    color: #333;
+    border-radius: 50%;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .close-button {
+        display: block;
+    }
+}
+/* Container for block section */
+.blocks-section {
+    width: 100%;
+    padding: 40px 0;
+    background-color: #f5f5f5;
+}
+/* Hero Section */
+.hero-section {
+    position: relative;
+    background-image: url('/images/sky.webp'); /* Use the image of the girl with a snowy background */
+    background-size: cover;
+    background-position: center;
+    height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 50px;
+    color: white;
+}
+
+.hero-content {
+    max-width: 50%;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+
+.hero-description {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+.cta-button {
+    padding: 12px 30px;
+    background-color: #fff;
+    color: #333;
+    border: none;
+    border-radius: 25px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+    background-color: #ddd;
+}
+
+/* Ski Information Card */
+.ski-info-card {
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    max-width: 300px;
+    text-align: center;
+}
+
+.ski-info-card h3 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.ski-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ski-details .location {
+    font-size: 1.1rem;
+    color: #666;
+}
+
+.ski-details .rating {
+    text-align: right;
+}
+
+.ski-details p {
+    margin: 5px 0;
+}
+
+/* Media Query for Small Screens */
+@media (max-width: 768px) {
+    .hero-section {
+        flex-direction: column;
+        height: auto;
+        padding: 20px;
+    }
+
+    .hero-content {
+        max-width: 100%;
+        text-align: center;
+    }
+
+    .ski-info-card {
+        margin-top: 30px;
+        max-width: 100%;
+    }
+}
+
+/* Container for text and blocks */
+.blocks-section .container {
+    text-align: center;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.blocks-section h1 {
+    font-size: 2.5rem;
+    color: #333;
+}
+
+.blocks-section .subtitle {
+    font-size: 1.2rem;
+    color: #666;
+    margin-top: 10px;
+}
+
+.blocks-section .description {
+    font-size: 1rem;
+    color: #999;
+    margin-bottom: 40px;
+}
+
+/* Block grid */
+.blocks-section .blocks {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr; /* Four equal columns */
+    gap: 20px;
+}
+
+/* Individual block styling */
+.blocks-section .block {
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    background-size: cover; /* Ensure the background image covers the block */
+    background-position: center; /* Center the background image */
+}
+
+.blocks-section .block:hover {
+    transform: translateY(-10px);
+}
+
+/* Add specific classes for each block's background */
+.block-community {
+    background-image: url('/images/WhatsApp Image 2024-07-29 at 16.57.35.jpeg');
+}
+
+.block-fashion {
+    background-image: url('/images/our coach.jpg');
+}
+
+.block-gear {
+    background-image: url('/images/WhatsApp Image 2024-07-29 at 16.57.54.jpeg');
+}
+
+.block-training {
+    background-image: url('/images/WhatsApp Image 2024-08-06 at 12.24.34.jpeg');
+}
+
+.block-subscription {
+    background-image: url('/images/1727790220158-krishna2.jpg');
+}
+
+.blocks-section .block-text {
+    padding: 20px;
+}
+
+.blocks-section .block-text h3 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.blocks-section .block-text p {
+    font-size: 0.9rem;
+    color: #777;
+    line-height: 1.4;
+}
+
+/* Larger blocks */
+.blocks-section .block.large {
+    grid-column: span 1;
+}
+
+/* Small blocks in the second column */
+.blocks-section .small-column {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 20px;
+}
+
+.blocks-section .block.small {
+    grid-row: span 1;
+    height: 200px;
+}
+
+.blocks-section .block.small .block-image {
+    width: 100px;
+    height: 100px;
+}
+
+/* Media Queries for Responsiveness */
+
+/* For small screens (mobile) */
+@media (max-width: 768px) {
+    .blocks-section h1 {
+        font-size: 2rem;
+    }
+    
+    .blocks-section .subtitle {
+        font-size: 1rem;
+    }
+    
+    .blocks-section .description {
+        font-size: 0.9rem;
+    }
+    
+    .blocks-section .blocks {
+        grid-template-columns: 1fr; /* Single column layout on mobile */
+    }
+    
+    .blocks-section .block-image {
+        width: 100px;
+        height: 100px;
+    }
+}
+
+/* For tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .blocks-section .blocks {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on tablet screens */
+    }
+    
+    .blocks-section h1 {
+        font-size: 2.2rem;
+    }
+    
+    .blocks-section .subtitle {
+        font-size: 1.1rem;
+    }
+}
+
+/* For desktop */
+@media (min-width: 1025px) {
+    .blocks-section .blocks {
+        grid-template-columns: 1fr 1fr 1fr 1fr; /* 4 columns on desktop */
+    }
+    
+    .blocks-section h1 {
+        font-size: 2.5rem;
+    }
+}
+
+</style>
+<body>
+    <header class="transparent-header">
+        <div class="logo">
+          <img src="/icons/VSA_logo.png" alt="Logo" />
+          <!-- Add your logo here -->
+        </div>
+  
+        <!-- Menu Button (visible on smaller screens) -->
+        <button class="menu-button">☰</button>
+  
+        <nav class="navigation">
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/Cart">Cart</a></li>
+            <li><a href="/Shop">Shop</a></li>
+            <li class="nav-item dropdown">
+                <% if(Login) { %>
+                  <a
+                    class="btn btn-primary dropdown-toggle"
+                    href="#"
+                    role="button"
+                    id="navbarDropdown"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <%= Login %>
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="/Profile">Profile</a></li>
+                    <li><a class="dropdown-item" href="/Orders">Orders</a></li>
+                    <li><a class="dropdown-item" href="/Password_change">Change Password</a></li>
+                    <li><a class="dropdown-item" href="/Logout">LogOut</a></li>
+                  </ul>
+                <% } else { %>
+                  <a href="/newLogin" class="nav-link text-white">Login</a>
+                <% } %>
+              </li>
+          </ul>
+        </nav>
+  
+        <div class="cta">
+          <!-- <button class="cta-button">Sign in</button> -->
+        </div>
+      </header>
+    <div class="hero-section">
+        <div class="hero-content">
+            <h1>Join us on skating journey.</h1>
+            <p class="hero-description">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptatem incidunt eaque deserunt dolore officia laborum modi magni quod, ex inventore facere, sint quasi. Cupiditate obcaecati nulla ut porro numquam fuga!.</p>
+            <button class="cta-button">Get to know</button>
+        </div>
+        
+        <div class="ski-info-card">
+            <h3>Curated Skating Shop</h3>
+            <div class="ski-details">
+                <div class="location">
+                    <p><strong>Satna</strong><br>Satna</p>
+                </div>
+                <div class="rating">
+                    <p>4.8 ⭐</p>
+                    <p><strong>Hey</strong><br>Join us</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <section class="blocks-section">
+        <div class="container">
+            <h1>Beginner’s Guide to Skating Journey</h1>
+            <p class="subtitle">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Fugit quis explicabo qui eligendi deleniti aliquam quidem,!</p>
+            <p class="description">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sapiente vero corrupti unde impedit iste nisi odio repellat laborum dignissimos id!.</p>
+            
+            <div class="blocks">
+                <div class="block large block-community" onclick="window.location='/achievements'">
+                    <div class="block-text">
+                        <h3 class="text-white">Our Academys Achievements</h3>
+                        <p class="text-white">2.6k <br> Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure ipsam sapiente id? Inventore, corporis suscipit?.</p>
+                    </div>
+                </div>
+                
+                <div class="small-column">
+                    <div class="block small block-fashion" onclick="window.location='/StudentsAchievements'">
+                        <div class="block-text">
+                            <h3 class="text-white">OurStudent</h3>
+                            <p class="text-white">x20 <br>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non similique repudiandae asperiores?.</p>
+                        </div>
+                    </div>
+                    <div class="block small block-gear" onclick="window.location='/Shop'">
+                        <div class="block-text">
+                            <h3 class="text-white">Visit Shop</h3>
+                            <p class="text-white">Lorem ipsum dolor sit amet consectetur adipisicing elit. Non similique repudiandae asperiores?.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="block large block-training" onclick="window.location='#'">
+                    <div class="block-text">
+                        <h3 class="text-white">Something</h3>
+                        <p class="text-white">48% <br> Lorem ipsum dolor sit amet consectetur adipisicing elit. Non similique repudiandae asperiores?.</p>
+                    </div>
+                </div>
+                
+                <div class="block large block-subscription" onclick="window.location='#'">
+                    <div class="block-text">
+                        <h3 class="text-white">Something</h3>
+                        <p class="text-white">756 <br>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non similique repudiandae asperiores?.</p>
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </section>
+    <footer class="py-5">
+        <div class="row">
+          <div class="col-6 col-md-2 mb-3">
+            <h5 class="text-primary">Section</h5>
+            <ul class="nav flex-column">
+              <li class="nav-item mb-2"><a href="/" class="nav-link p-0 text-body-secondary">Home</a></li>
+              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Features</a></li>
+              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
+              <li class="nav-item mb-2"><a href="/FAQ" class="nav-link p-0 text-body-secondary">FAQs</a></li>
+              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
+            </ul>
+          </div>
+    
+          <div class="col-6 col-md-2 mb-3">
+            <h5 class="text-primary">Section</h5>
+            <ul class="nav flex-column">
+              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Home</a></li>
+              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Features</a></li>
+              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
+              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">FAQs</a></li>
+              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
+            </ul>
+          </div>
+    
+          <div class="col-6 col-md-2 mb-3" >
+            <h5 class="text-primary">Section</h5>
+            <ul class="nav flex-column">
+              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Home</a></li>
+              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Features</a></li>
+              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
+              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">FAQs</a></li>
+              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
+            </ul>
+          </div>
+    
+            <!-- yaha pe admin ke liye hai -->
+          <!-- <div class="col-md-5 offset-md-1 mb-3">
+                <h5>Create News letter</h5>
+                <p>Click on this to create</p>
+                <div class="d-flex flex-column flex-sm-row w-100 gap-2">
+                  <a href="/Create_newsLetter" class="btn btn-primary" type="submit">Create</a>
+                </div>
+            </div>   -->
+          <div class="col-md-5 offset-md-1 mb-3">
+            <form action="/subscribedToNewsLetter" method="post" class="text-primary">
+              <h5>Subscribe to our newsletter</h5>
+              <p>Monthly digest of what's new and exciting from us.</p>
+              <div class="d-flex flex-column flex-sm-row w-100 gap-2">
+                <label for="newsletter1" class="visually-hidden">Email address</label>
+                <input id="newsletter1" type="text" name="Email" class="form-control" placeholder="Email address">
+                <button class="btn btn-primary" type="submit">Subscribe</button>
+              </div>
+            </form>
+          </div>
+        </div>
+    
+        <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
+          <p class="text-primary">© 2024 Company, Inc. All rights reserved.</p>
+          <ul class="list-unstyled d-flex">
+            <li class="ms-3"><a class="text-body-secondary" href="#"><img src="icons/X logo.jpg" alt="" class="bi" width="24" height="24"></a></li>
+            <li class="ms-3"><a class="text-body-secondary" target="_blank" href="https://instagram.com/vaibhavskatingacademy?igshid=NGVhN2U2NjQ0Yg=="><img src="icons/insta logo.jpg" alt="" class="bi" width="24" height="24"></a></li>
+            <li class="ms-3"><a class="text-body-secondary" href="#"><img src="icons/facebook logo.png" alt="" class="bi" width="24" height="24"></a></li>
+            <li class="ms-3"><a class="text-body-secondary" href="#"><img src="icons/linkedIn_logo.jpg" alt="" class="bi" width="24" height="24"></a></li>
+            <li class="ms-3"><a class="text-body-secondary" href="#"><img src="icons/youtube_logo.jpg" alt="" class="bi" width="24" height="24"></a></li>
+             
+          </ul>
+        </div>
+      </footer>
+</body>
+</html>

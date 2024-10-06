@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style/achievements.css">
+    <title>Achievements</title>
+</head>
+<style>
+    body{
+        background-color: aliceblue;
+    }
+</style>
+<body>
+
+    <!-- Toast for newsletter notification -->
+    <% if (toastForNewsLetter) { %>
+        <div class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">Process Successfully completed.</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    <% } %>
+
+    <!-- If achievements data exists and is greater than 0, display achievements -->
+    <% if (achievementData && achievementData.length > 0) { %>
+        <div class="wrapper">
+            <div class="cols">
+                <!-- Loop through achievementData to display each achievement -->
+                <% achievementData.forEach(function(achievement) { %>
+                    <div class="col" ontouchstart="this.classList.toggle('hover');">
+                        <div class="container">
+                            <!-- Front side with background image and brief info -->
+                            <div class="front" style="background-image: url('<%= achievement.img %>')">
+                                <div class="inner">
+                                    <p><%= achievement.name %></p>
+                                    <span>Medals Won: <%= achievement.medals_won %></span>
+                                </div>
+                            </div>
+                            <!-- Back side with full description -->
+                            <div class="back">
+                                <div class="inner">
+                                    <p><%= achievement.description %></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    <% } else { %>
+        <!-- If no achievements found, display a message -->
+        <p>No achievements found.</p>
+    <% } %>
+
+</body>
+</html>

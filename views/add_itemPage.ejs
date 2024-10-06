@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Item</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .floating-label {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .floating-label input,
+        .floating-label select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: transparent;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .floating-label input:focus,
+        .floating-label select:focus {
+            border-color: #007bff;
+        }
+
+        .floating-label input:focus~label,
+        .floating-label input:not(:placeholder-shown)~label,
+        .floating-label select:focus~label,
+        .floating-label select:not([value=""])~label {
+            transform: translateY(-1.5rem) scale(0.85);
+            padding-left: 5px;
+            padding-right: 5px;
+            background-color: #fff;
+        }
+
+        .floating-label label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #666;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            background-color: transparent;
+        }
+
+        input[type="file"] {
+            padding: 0;
+            border: none;
+            margin-bottom: 15px;
+        }
+
+        form input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        form input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <form action="/completeAddingNewItem" method="post" enctype="multipart/form-data">
+        <input type="file" name="itemsImage" placeholder="Select image" required>
+        <input type="file" name="itemsImage1" placeholder="Select second image" required>
+        <input type="file" name="itemsImage2" placeholder="Select third image" required>
+
+        <div class="floating-label">
+            <input type="text" name="itemsName" placeholder=" " required>
+            <label>Enter Name</label>
+        </div>
+
+        <div class="floating-label">
+            <input type="text" name="itemsDescription" placeholder=" " required>
+            <label>Enter Description</label>
+        </div>
+
+        <div class="floating-label">
+            <input type="text" name="itemsItemId" placeholder=" " required>
+            <label>Enter ID</label>
+        </div>
+
+        <div class="floating-label">
+            <input type="text" name="itemsPrice" placeholder=" " required>
+            <label>Price</label>
+        </div>
+
+        <div class="floating-label">
+            <input type="text" name="itemsQuantity" placeholder=" " required>
+            <label>Quantity</label>
+        </div>
+
+        <div class="floating-label">
+            <select name="itemsItemType" required>
+                <option value="" disabled selected>Select Item Type</option>
+                <option value="skates">Skates</option>
+                <option value="helmets">Helmets</option>
+                <option value="skinsuits">Skinsuits</option>
+                <option value="wheels">Wheels</option>
+                <option value="accessories">Accessories</option>
+            </select>
+            <label>Select Item Type</label>
+        </div>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

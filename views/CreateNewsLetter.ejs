@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <title>Create Newsletter</title>
+    <style>
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            padding: 1rem;
+            outline: none;
+            background-color: transparent;
+            color: #333;
+            transition: border-color 0.5s;
+            width: 100%;
+            resize: none;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #4facfe;
+        }
+
+        .form-group input:focus ~ label,
+        .form-group input:not(:placeholder-shown) ~ label,
+        .form-group textarea:focus ~ label,
+        .form-group textarea:not(:placeholder-shown) ~ label {
+            transform: translateY(-1.8rem) scale(0.75);
+            background-color: #fff;
+            padding: 0 0.25rem;
+            color: #555;
+        }
+
+        .form-group label {
+            position: absolute;
+            top: 50%;
+            left: 1rem;
+            transform: translateY(-50%);
+            transition: transform 0.5s, color 0.5s;
+            pointer-events: none;
+            background-color: transparent;
+            padding: 0 0.25rem;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <form action="/NewsLetter_Sending" method="post">
+        <div class="form-group">
+            <input type="text" id="exampleFormControlInput1" name="Title" required placeholder=" ">
+            <label for="exampleFormControlInput1">Title</label>
+        </div>
+        <div class="form-group">
+            <textarea id="exampleFormControlTextarea1" rows="7" name="Description" required placeholder=" "></textarea>
+            <label for="exampleFormControlTextarea1">Description</label>
+        </div>
+        <input type="submit" name="Send" id="" class="btn btn-primary">
+    </form>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
