@@ -57,7 +57,7 @@ const db = new pg.Client({
   password: process.env.databasePassword,
   database: "vsa",
   port: 5432,
-  user: "postgres",
+  user: "vsa_hyuv_user",
 });
 
 // Create the connection to the database
