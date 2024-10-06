@@ -21,7 +21,7 @@ dotenv.config();
 // import mysql from 'mysql2';
 const app = express();
 const _dirname = dirname(fileURLToPath(import.meta.url));
-const port = 3000;
+const port = 80;
 // iss niche wala ko use kar sakte hai agar hum google ka oauth2 use karna ho toh.
 const CLIENT_ID =
   process.env.googleClientId;
@@ -56,7 +56,7 @@ const db = new pg.Client({
   host:process.env.databaseHost,
   password: process.env.databasePassword,
   database: "vsa",
-  port: 4000,
+  port: 5432,
   user: "postgres",
 });
 
