@@ -52,12 +52,15 @@ app.use((req, res, next) => {
 
 const Secret_key = process.env.jwtSecretKey;
 
-const db = new pg.Client({
-  host:process.env.databaseHost,
-  password: process.env.databasePassword,
-  database: "vsa_hyuv",
-  port: 5432,
-  user: "vsa_hyuv_user",
+const db = new Client({
+  host: process.env.databaseHost,       // Fetch from env
+  user: process.env.DATABASE_USER,       // Fetch from env
+  password: process.env.databasePassword, // Fetch from env
+  database: process.env.DATABASE_NAME || "vsa_hyuv",  // Fetch from env with a fallback
+  port: process.env.DATABASE_PORT || 5432,  // Fetch from env with default 5432
+  ssl: {
+    rejectUnauthorized: false,  // Necessary for connecting to Render-hosted PostgreSQL
+  },
 });
 
 // Create the connection to the database
