@@ -62,12 +62,19 @@ const Secret_key = process.env.jwtSecretKey;
 //   user: "postgres",
 // });
 //Database_url mei internal server ka link dala jaata hai
+// const db = new pg.Client({
+//   host: process.env.databaseHost,       // Fetch from env
+//   user: process.env.DATABASE_USER,       // Fetch from env
+//   password: process.env.databasePassword, // Fetch from env
+//   database: process.env.DATABASE_NAME || "vsa",  // Fetch from env with a fallback
+//   port: process.env.DATABASE_PORT || 4000 // Fetch from env with default 5432
+// });
 const db = new pg.Client({
   host: process.env.databaseHost,       // Fetch from env
   user: process.env.DATABASE_USER,       // Fetch from env
   password: process.env.databasePassword, // Fetch from env
-  database: process.env.DATABASE_NAME || "vsa",  // Fetch from env with a fallback
-  port: process.env.DATABASE_PORT || 4000 // Fetch from env with default 5432
+  database: process.env.DATABASE_NAME || "vsa_hyuv",  // Fetch from env with a fallback
+  port: process.env.DATABASE_PORT || 5432 // Fetch from env with default 5432
 });
 
 // Create the connection to the database
