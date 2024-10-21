@@ -115,14 +115,14 @@
                                 <div class="input-group-prepend">
                                     <button class="btn btn-outline-secondary" type="button" id="decrement-btn">-</button>
                                 </div>
-                                <input type="text" class="form-control text-center" id="quantity-input" value="1">
+                                <input type="text" class="form-control text-center" id="quantity-input" value="1" >
                                 <div class="input-group-append">
                                     <button class="btn btn-outline-secondary" type="button" id="increment-btn">+</button>
                                 </div>
                             </div>
                             <p class="card-text"><%= item.description %></p>
                             <div class="button-container">
-                            <a href="/Buy_Now" class="btn btn-primary buyNow" data-item-type="<%= item.item_type %>" data-item-id="<%= item.item_id %>">Buy Now</a>
+                            <a href="/CheckOut" class="btn btn-primary buyNow" data-item-type="<%= item.item_type %>" data-item-id="<%= item.item_id %>">Check Out</a>
                             <a href="/AddToCart" class="btn btn-primary addItemsToCart" data-item-type="<%= item.item_type %>" data-item-id="<%= item.item_id %>">Add to cart</a>
                             </div>
                         </div>
@@ -183,78 +183,11 @@
         });
     </script>
     
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-          const buyButton = document.querySelectorAll(".buyNow");
           const addItemsToCartButton = document.querySelectorAll(".addItemsToCart");
           const productDetailslink = document.querySelectorAll(".detailsOfProduct");
-  
-          buyButton.forEach(button => {
-              button.addEventListener("click", async (event) => {
-                  event.preventDefault();
-                  const item_type = button.getAttribute("data-item-type");
-                  const item_id = button.getAttribute("data-item-id");
-                  const quantity = button.closest(".card").querySelector("#quantity-input").value;
-  
-                  try {
-                      const response = await fetch("/Buy_Now", {
-                          method: "post",
-                          headers: {
-                              'Content-Type': 'application/json',
-                          },
-                          body: JSON.stringify({ item_id, item_type, quantity }),
-                      });
-  
-                      const data = await response.json();
-  
-                      const options = {
-                          "key": "YOUR_RAZORPAY_KEY_ID",
-                          "amount": data.amount,
-                          "currency": data.currency,
-                          "name": "Vaibhav Skating Academy",
-                          "description": "Test Transaction",
-                          "image": "/icons/VSA_logo.png",
-                          "order_id": data.id,
-                          "handler": async function (response) {
-                              const paymentResponse = await fetch('/payment_success', {
-                                  method: 'POST',
-                                  headers: {
-                                      'Content-Type': 'application/json'
-                                  },
-                                  body: JSON.stringify(response)
-                              });
-  
-                              const paymentData = await paymentResponse.json();
-  
-                              if (paymentData.success) {
-                                  window.location.href = "/Buy_Now";
-                              } else {
-                                  alert('Payment failed. Please try again.');
-                              }
-                          },
-                          "prefill": {
-                              "name": data.full_name,
-                              "email": data.email,
-                              "contact": data.mobile_number
-                          },
-                          "notes": {
-                              "address": data.address
-                          },
-                          "theme": {
-                              "color": "#3399cc"
-                          }
-                      };
-  
-                      const rzp1 = new Razorpay(options);
-                      rzp1.open();
-  
-                  } catch (error) {
-                      console.log("Could not buy item", error);
-                  }
-              });
-          });
-  
+
           addItemsToCartButton.forEach(button => {
               button.addEventListener("click", async (event) => {
                   event.preventDefault();

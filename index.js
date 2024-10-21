@@ -2,6 +2,7 @@ import express, { query } from "express";
 import bodyParser from "body-parser";
 import * as admin from "./admin.js";
 import Razorpay from "razorpay";
+import cors from "cors";
 import multer from "multer";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
@@ -13,7 +14,7 @@ import bcrypt from "bcryptjs";
 import axios from "axios";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import {  OAuth2Client } from "google-auth-library";
+import {  auth, OAuth2Client } from "google-auth-library";
 import dotenv from 'dotenv';
 import passport from 'passport';
 import  './googleauth.js'; 
@@ -21,7 +22,8 @@ dotenv.config();
 // import mysql from 'mysql2';
 const app = express();
 const _dirname = dirname(fileURLToPath(import.meta.url));
-const port = 3000;
+const port =process.env.SERVER_PORT;
+// const port=3000;
 // iss niche wala ko use kar sakte hai agar hum google ka oauth2 use karna ho toh.
 const CLIENT_ID =
   process.env.googleClientId;
@@ -52,12 +54,20 @@ app.use((req, res, next) => {
 
 const Secret_key = process.env.jwtSecretKey;
 
+// const db = new pg.Client({
+//   host:process.env.databaseHost,
+//   password: process.env.databasePassword,
+//   database: "vsa",
+//   port: 4000,
+//   user: "postgres",
+// });
+//Database_url mei internal server ka link dala jaata hai
 const db = new pg.Client({
-  host:process.env.databaseHost,
-  password: process.env.databasePassword,
-  database: "vsa",
-  port: 4000,
-  user: "postgres",
+  host: process.env.databaseHost,       // Fetch from env
+  user: process.env.DATABASE_USER,       // Fetch from env
+  password: process.env.databasePassword, // Fetch from env
+  database: process.env.DATABASE_NAME || "vsa",  // Fetch from env with a fallback
+  port: process.env.DATABASE_PORT || 4000 // Fetch from env with default 5432
 });
 
 // Create the connection to the database
@@ -80,12 +90,28 @@ const db = new pg.Client({
 // export default connection;
 
 // below is the middle ware to prevent caching of authenticated pages iske wajah se back button dabane per re logged in page pe nhi jayega
+
 app.use((req, res, next) => {
   res.set("Cache-Control", "no-store");
   next();
 });
+app.use(cors(
+  {origin:"http://localhost:3000",
+      credentials:true,
+      allowHeaders:"Content-Type"
+  }
+));
+  
+  app.options("/google", cors());
+  app.get("/google", cors(), passport.authenticate("google",{
+  
+      scope:['profile']
+  
+  }));
+
 //Header part endpoints starts here
 //this below is for signup
+
 app.post("/SignUp", async (req, res) => {
     const { FullName, SignUp_Email, SignUp_Password, Mobile_number } = req.body;
     const saltRounds = 10;
@@ -100,7 +126,6 @@ app.post("/SignUp", async (req, res) => {
         `SELECT * FROM users WHERE email=$1;`,
         [SignUp_Email]
       );
-  
       console.log("Duplicate check result:", duplicateCheck.rows);
   
       if (duplicateCheck.rows.length > 0) {
@@ -112,7 +137,7 @@ app.post("/SignUp", async (req, res) => {
   
         // Insert user with verification token and 'isVerified' flag set to false
         await db.query(
-          "INSERT INTO users (full_name, email, password_entered, mobile_number,admin, verification_token, is_verified) VALUES ($1, $2, $3, $4, $5, $6)",
+          "INSERT INTO users (full_name, email, password_entered, mobile_number,admin, verification_token, is_verified) VALUES ($1, $2, $3, $4, $5, $6,$7)",
           [FullName, SignUp_Email, hashedPassword, Mobile_number,false, verificationToken, false]
         );
   
@@ -331,24 +356,7 @@ app.get("/Shop", authenticateUser, async (req, res) => {
       console.log("Sucessfully opened shop without user logged in");
     }
 });
-// yaha pe buy karne ke liye hai.
-app.get("/Buy_Now", authenticateUser, async (req, res) => {
-    if (req.user) {
-      const firstName = req.user.fullName.split(" ")[0];
-      const purchasedItem = await db.query(
-        "SELECT * FROM orders WHERE email=$1",
-        [req.user.Email]
-      );
-      if (purchasedItem.rows.length > 0) {
-        res.render("checkout.ejs", {
-          Login: firstName,
-          purchasing_item: purchasedItem,
-        });
-      }
-    }
-});
-  
-  // Endpoint to handle payment success
+
 app.post("/payment_success", async (req, res) => {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
       req.body;
@@ -398,7 +406,24 @@ app.post("/payment_success", async (req, res) => {
         .json({ success: false, error: "Signature verification failed" });
     }
 });
+// yaha pe buy karne ke liye hai.
+// app.get("/Buy_Now", authenticateUser, async (req, res) => {
+//     if (req.user) {
+//       const firstName = req.user.fullName.split(" ")[0];
+//       const purchasedItem = await db.query(
+//         "SELECT * FROM orders WHERE email=$1",
+//         [req.user.Email]
+//       );
+//       if (purchasedItem.rows.length > 0) {
+//         res.render("checkOutPage.ejs", {
+//           Login: firstName,
+//           purchasing_item: purchasedItem,
+//         });
+//       }
+//     }
+// });
   
+  // Endpoint to handle payment success  
 app.post("/Buy_Now", authenticateUser, async (req, res) => {
     const { item_id, item_type, quantity } = req.body;
   
@@ -494,7 +519,10 @@ app.post("/Buy_Now", authenticateUser, async (req, res) => {
         .json({ error: "An error occurred while processing your purchase." });
     }
 });
-  
+
+app.get("/CheckOut",authenticateUser,(req,res)=>{
+  res.render("checkOutPage.ejs");
+})  
 app.get("/productDetails", async (req, res) => {
   try {
     let firstName = null;
@@ -597,15 +625,16 @@ app.get("/Skates", (req, res) => {
     console.log("Successfully redirected to shop");
 });
   
-app.get("/AddToCart", authenticateUser, async (req, res) => {
-    // console.log(req.user);
-    const user = req.user;
-    // console.log(user);
-    if (user === null) {
-      res.render("login.ejs");
-    }
-  });
-  app.post("/AddToCart", authenticateUser, async (req, res) => {
+// app.get("/AddToCart", authenticateUser, async (req, res) => {
+
+//     // console.log(req.user);
+//     const user = req.user;
+//     // console.log(user);
+//     if (user === null) {
+//       res.render("login.ejs");
+//     }
+//   });
+app.post("/AddToCart", authenticateUser, async (req, res) => {
     if (!req.user || !req.user.Email) {
         res.render("login.ejs");
     }
@@ -685,7 +714,7 @@ app.get("/AddToCart", authenticateUser, async (req, res) => {
         console.error("Error in /AddToCart:", error);
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }
-  });
+});
   
 app.get("/Cart", authenticateUser, async (req, res) => {
     try {
@@ -1112,30 +1141,36 @@ if(req.user){
 }
 })
 //yaha pe footer ka hai
-app.use("/FAQ", authenticateUser, async (req, res) => {
-    const firstName = req.user.fullName.split(" ")[0];
+app.use("/FAQ", authenticateUser,async (req, res) => {
+  if(req.user){
     try {
+      const firstName = req.user.fullName.split(" ")[0];
       const { rows: FAQ_data } = await db.query("SELECT * FROM faq");
-      res.render("FAQ.ejs", { FAQ_data: FAQ_data, Login: firstName });
+      res.render("FAQ.ejs", { FAQ_data: FAQ_data, Login:firstName});
     } catch (error) {
       console.log("Unable to fetch FAQ's data");
     }
+  }else{
+    const { rows: FAQ_data } = await db.query("SELECT * FROM faq");
+    res.render("FAQ.ejs", { FAQ_data: FAQ_data, Login:null});
+  }
 });
-
+//Admin panel funtionnality starts here
 //yaha pe newsletter ka hai
 app.post("/subscribedToNewsLetter", authenticateUser, async (req, res) => {
     if (req.user) {
       try {
-        const Email = req.body;
+        const {Email} = req.body;
+        console.log(Email);
         if (Email) {
           const checkDuplicateEmail_forNewsLetter = await db.query(
             "SELECT * FROM news_letter_subscriber WHERE email=$1",
             [Email]
           );
-          if (checkDuplicateEmail_forNewsLetter) {
-            res.render("/");
+          if (checkDuplicateEmail_forNewsLetter.rows.length>0) {
+            // res.render("/");
             res.send("Email already exist");
-            console("Email already exist");
+            console.log("Email already exist");
           } else {
             await db.query(
               "INSERT INTO news_letter_subscriber(email) VALUES($1)",
@@ -1912,6 +1947,36 @@ const storage = multer.diskStorage({
       return false;
     }
   }
+  //admin panel functionality ends here
+  //new functionlaity starts here
+  //functionality for tours booking starts here
+  // app.get("/BookMyTour",authenticateUser,async(req,res)=>{
+  //   if(req.user){
+  //     try {
+  //       const firstName =req.user.fullName.split(" ")[0] ;
+  //       const data =await db.query("Select * from tours where status=$1",["Active"]);
+  //       const result=data.rows;
+  //       res.render("ToursBooking.ejs",{
+  //         tours_data:result,
+  //         Login:firstName,
+  //       })
+  //     } catch (error) {
+  //           console.log("Unable to fetch tours data from database");
+  //     }
+  //   }else{
+  //     const data =await db.query("Select * from tours where status=$1",["Active"]);
+  //     const result=data.rows;
+  //     res.render("ToursBooking.ejs",{
+  //       tours_data:result,
+  //       Login:null,
+  //     })
+  //   }
+  // })
+  // app.post("/CompleteTourBooking",authenticateUser,(req,res)=>{
+
+  // })
+  
+  //functionality for tours booking ends here
 db.connect();
 app.listen(port, () => {
   console.log(`Listening on port:${port}`);

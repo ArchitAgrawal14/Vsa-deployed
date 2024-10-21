@@ -11,6 +11,62 @@
     crossorigin="anonymous"
   />
   <title>Cart</title>
+  <style>   
+    /* Style for Buy Now and Add to Cart buttons */
+.btn.buyNow, .btn.removeItemsFromCart {
+background-color: #007bff; /* Match surrounding color (e.g., a blue theme) */
+border: none;
+color: white;
+font-size: 1rem;
+padding: 10px 15px;
+border-radius: 30px;
+text-transform: uppercase;
+font-weight: bold;
+box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+transition: all 0.3s ease;
+display: inline-block;
+margin: 10px auto; /* Adds space between buttons */
+}
+
+/* Center the buttons */
+.button-container {
+text-align: center;
+}
+
+/* Hover and active effects */
+.btn.buyNow:hover, .btn.removeItemsFromCart:hover {
+background-color: #0056b3; /* Darker blue on hover */
+transform: translateY(-2px); /* Subtle lift effect */
+}
+
+.btn.buyNow:active, .btn.removeItemsFromCart:active {
+background-color: #004085; /* Darkest blue on active click */
+transform: translateY(1px); /* Slight depression on click */
+}
+
+    #toast {
+        background-color: #007bff;
+        color: white;
+    }
+    .toast-header {
+        background-color: #0056b3;
+        color: white;
+    }
+    .toast .btn-close {
+        color: white;
+    }
+    .toast-body {
+        color: white;
+    }
+    .card {
+        transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .card.hide {
+        opacity: 0;
+        transform: translateY(20px);
+        pointer-events: none;
+    }    
+</style>
 </head>
 <body>
   <%- include("header.ejs") %>
@@ -38,6 +94,7 @@
               </div>
               
               <p class="card-text"><%= addItem.description %></p>
+              <div class="button-container">
               <a
                 href="/Buy_Now"
                 class="btn btn-primary buyNow"
@@ -50,6 +107,7 @@
                 data-item-type="<%= addItem.item_type %>"
                 data-item-id="<%= addItem.item_id %>"
               >Remove from cart</a>
+              </div>
             </div>
           </div>
         </div>

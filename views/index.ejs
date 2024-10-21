@@ -193,6 +193,13 @@ body {
         left: auto;
     }
 }
+/* media query for return policy */
+@media (max-width: 600px) {
+  #returnPolicyPopup div {
+    width: 90%;  /* Increase the width for very small screens */
+    padding: 15px;  /* Reduce padding to save space */
+  }
+}
 
 /* Ensure logo remains visible */
 .transparent-header .logo {
@@ -530,7 +537,7 @@ body {
         <div class="hero-content">
             <h1>Join us on skating journey.</h1>
             <p class="hero-description">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptatem incidunt eaque deserunt dolore officia laborum modi magni quod, ex inventore facere, sint quasi. Cupiditate obcaecati nulla ut porro numquam fuga!.</p>
-            <button class="cta-button">Get to know</button>
+            <button class="cta-button" onclick="window.location='/achievements'">Get to know</button>
         </div>
         
         <div class="ski-info-card">
@@ -583,82 +590,15 @@ body {
                     </div>
                 </div>
                 
-                <div class="block large block-subscription" onclick="window.location='#'">
+                <div class="block large block-subscription" onclick="window.location='/Membership'">
                     <div class="block-text">
-                        <h3 class="text-white">Something</h3>
+                        <h3 class="text-white">Membership</h3>
                         <p class="text-white">756 <br>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non similique repudiandae asperiores?.</p>
                     </div>
                 </div>
             </div>            
         </div>
     </section>
-    <footer class="py-5">
-        <div class="row">
-          <div class="col-6 col-md-2 mb-3">
-            <h5 class="text-primary">Section</h5>
-            <ul class="nav flex-column">
-              <li class="nav-item mb-2"><a href="/" class="nav-link p-0 text-body-secondary">Home</a></li>
-              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Features</a></li>
-              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
-              <li class="nav-item mb-2"><a href="/FAQ" class="nav-link p-0 text-body-secondary">FAQs</a></li>
-              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
-            </ul>
-          </div>
-    
-          <div class="col-6 col-md-2 mb-3">
-            <h5 class="text-primary">Section</h5>
-            <ul class="nav flex-column">
-              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Home</a></li>
-              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Features</a></li>
-              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
-              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">FAQs</a></li>
-              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
-            </ul>
-          </div>
-    
-          <div class="col-6 col-md-2 mb-3" >
-            <h5 class="text-primary">Section</h5>
-            <ul class="nav flex-column">
-              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Home</a></li>
-              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Features</a></li>
-              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
-              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">FAQs</a></li>
-              <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
-            </ul>
-          </div>
-    
-            <!-- yaha pe admin ke liye hai -->
-          <!-- <div class="col-md-5 offset-md-1 mb-3">
-                <h5>Create News letter</h5>
-                <p>Click on this to create</p>
-                <div class="d-flex flex-column flex-sm-row w-100 gap-2">
-                  <a href="/Create_newsLetter" class="btn btn-primary" type="submit">Create</a>
-                </div>
-            </div>   -->
-          <div class="col-md-5 offset-md-1 mb-3">
-            <form action="/subscribedToNewsLetter" method="post" class="text-primary">
-              <h5>Subscribe to our newsletter</h5>
-              <p>Monthly digest of what's new and exciting from us.</p>
-              <div class="d-flex flex-column flex-sm-row w-100 gap-2">
-                <label for="newsletter1" class="visually-hidden">Email address</label>
-                <input id="newsletter1" type="text" name="Email" class="form-control" placeholder="Email address">
-                <button class="btn btn-primary" type="submit">Subscribe</button>
-              </div>
-            </form>
-          </div>
-        </div>
-    
-        <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
-          <p class="text-primary">© 2024 Company, Inc. All rights reserved.</p>
-          <ul class="list-unstyled d-flex">
-            <li class="ms-3"><a class="text-body-secondary" href="#"><img src="icons/X logo.jpg" alt="" class="bi" width="24" height="24"></a></li>
-            <li class="ms-3"><a class="text-body-secondary" target="_blank" href="https://instagram.com/vaibhavskatingacademy?igshid=NGVhN2U2NjQ0Yg=="><img src="icons/insta logo.jpg" alt="" class="bi" width="24" height="24"></a></li>
-            <li class="ms-3"><a class="text-body-secondary" href="#"><img src="icons/facebook logo.png" alt="" class="bi" width="24" height="24"></a></li>
-            <li class="ms-3"><a class="text-body-secondary" href="#"><img src="icons/linkedIn_logo.jpg" alt="" class="bi" width="24" height="24"></a></li>
-            <li class="ms-3"><a class="text-body-secondary" href="#"><img src="icons/youtube_logo.jpg" alt="" class="bi" width="24" height="24"></a></li>
-             
-          </ul>
-        </div>
-      </footer>
+    <%-include("footer.ejs")%>
 </body>
 </html>

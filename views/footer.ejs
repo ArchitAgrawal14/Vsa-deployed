@@ -3,80 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <title>Footer</title>
 </head>
+<style>
+  .ContactUsDiv {
+    background-color: #f8f9fa; /* Light background color */
+    border: 1px solid #ddd; /* Border for definition */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
+
+.ContactUsDiv h2 {
+    font-size: 2rem; /* Larger heading size */
+    font-weight: bold; /* Bold text */
+}
+
+.ContactUsDiv p {
+    font-size: 1rem; /* Normal paragraph size */
+}
+
+.ContactUsDiv .lead {
+    font-size: 1.2rem; /* Slightly larger size for emphasis */
+}
+
+/* Responsive icons */
+.ContactUsDiv i {
+    color: #007bff; /* Primary color for icons */
+}
+
+/* Media Queries for Responsive Design */
+@media (max-width: 768px) {
+    .ContactUsDiv {
+        padding: 20px; /* Padding for smaller screens */
+    }
+}
+
+</style>
 <body>
+  <div class="ContactUsDiv container my-5 p-4 bg-light rounded shadow">
+    <h2 class="text-center text-primary mb-4">Contact Us</h2>
+    <p class="lead text-center">
+        You can reach us at:
+    </p>
+    <div class="row">
+        <div class="col-md-4 text-center mb-3">
+            <i class="fas fa-envelope fa-2x text-primary mb-2"></i>
+            <p>Email: <a href="mailto:info@vaibhavskatingacademy.com" class="text-body-secondary">info@vaibhavskatingacademy.com</a></p>
+        </div>
+        <div class="col-md-4 text-center mb-3">
+            <i class="fas fa-phone fa-2x text-primary mb-2"></i>
+            <p>Phone: <a href="tel:+919301139998" class="text-body-secondary">+91 9301139998</a></p>
+        </div>
+        <div class="col-md-4 text-center mb-3">
+            <i class="fas fa-map-marker-alt fa-2x text-primary mb-2"></i>
+            <p>Address: <a href="https://maps.app.goo.gl/MSeH18NH33EmMJVF7" target="_blank" class="text-body-secondary">1234 Example St, City, Country</a><br>
+            </p>
+        </div>
+    </div>
+    <p class="text-center">
+        Office Hours: Mon-Fri, 9:00 AM - 6:00 PM
+    </p>
+    <p class="text-center">
+        Feel free to contact us with any inquiries!
+    </p>
+</div>
   <div class="px-3 py-3 border-bottom gradient-background">
   <div class="container">
-  <footer class="py-5">
-    <div class="row">
-      <div class="col-6 col-md-2 mb-3">
-        <h5 class="text-white">Section</h5>
-        <ul class="nav flex-column">
-          <li class="nav-item mb-2"><a href="/" class="nav-link p-0 text-body-secondary">Home</a></li>
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Features</a></li>
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
-          <li class="nav-item mb-2"><a href="/FAQ" class="nav-link p-0 text-body-secondary">FAQs</a></li>
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
-        </ul>
-      </div>
-
-      <div class="col-6 col-md-2 mb-3">
-        <h5 class="text-white">Section</h5>
-        <ul class="nav flex-column">
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Home</a></li>
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Features</a></li>
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">FAQs</a></li>
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
-        </ul>
-      </div>
-
-      <div class="col-6 col-md-2 mb-3" >
-        <h5 class="text-white">Section</h5>
-        <ul class="nav flex-column">
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Home</a></li>
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Features</a></li>
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">FAQs</a></li>
-          <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
-        </ul>
-      </div>
-
-        <!-- yaha pe admin ke liye hai -->
-      <!-- <div class="col-md-5 offset-md-1 mb-3">
-            <h5>Create News letter</h5>
-            <p>Click on this to create</p>
-            <div class="d-flex flex-column flex-sm-row w-100 gap-2">
-              <a href="/Create_newsLetter" class="btn btn-primary" type="submit">Create</a>
+    <footer class="py-5">
+      <div class="row">
+          <div class="col-6 col-md-2 mb-3">
+              <h5 class="text-primary">For Visitors</h5>
+              <ul class="nav flex-column">
+                <li class="nav-item mb-2"><a href="/" class="nav-link p-0 text-body-secondary">Home</a></li>
+                <li class="nav-item mb-2"><a href="/contactUs"  id="ContactUsLink" class="nav-link p-0 text-body-secondary">Contact Us</a></li>
+                <li class="nav-item mb-2"><a href="/returnPolicy" id="returnPolicyLink" class="nav-link p-0 text-body-secondary">Return Policy</a></li>
+                <li class="nav-item mb-2"><a href="/FAQ" class="nav-link p-0 text-body-secondary">FAQs</a></li>
+                <li class="nav-item mb-2"><a href="/aboutUs" class="nav-link p-0 text-body-secondary">About</a></li>
+              </ul>
             </div>
-        </div>   -->
-      <div class="col-md-5 offset-md-1 mb-3">
-        <form action="/subscribedToNewsLetter" method="post" class="text-white">
-          <h5>Subscribe to our newsletter</h5>
-          <p>Monthly digest of what's new and exciting from us.</p>
-          <div class="d-flex flex-column flex-sm-row w-100 gap-2">
-            <label for="newsletter1" class="visually-hidden">Email address</label>
-            <input id="newsletter1" type="text" name="Email" class="form-control" placeholder="Email address">
-            <button class="btn btn-primary" type="submit">Subscribe</button>
-          </div>
-        </form>
-      </div>
-    </div>
+            
+            <!-- Popup modal  for return policy-->
+<div id="returnPolicyPopup"  style="display: none; position: fixed; top: 0; left: 0; height: 100%; width: 100%;  justify-content: center; align-items: center; z-index: 1000;">
+  <div style="background-color: white; padding: 20px; box-shadow: 0px 0px 10px rgba(0,0,0,0.5); width: 80%; max-width: 500px; max-height: 80vh; overflow-y: auto;" >
+    <h2>Return Policy</h2>
+   <ol>
+      <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe, repudiandae eius tenetur a reprehenderit libero animi. Aut quasi, nulla ipsum deleniti a rerum similique, nam laboriosam pariatur soluta dolores reprehenderit.</li>
+      <li>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Suscipit perferendis reprehenderit cumque fugit aliquam dolore cupiditate voluptatibus laborum hic? Aperiam eos vel fuga nulla obcaecati porro assumenda facilis eius nostrum!</li>
+      
+      <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe, repudiandae eius tenetur a reprehenderit libero animi. Aut quasi, nulla ipsum deleniti a rerum similique, nam laboriosam pariatur soluta dolores reprehenderit.</li>
+      <li>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Suscipit perferendis reprehenderit cumque fugit aliquam dolore cupiditate voluptatibus laborum hic? Aperiam eos vel fuga nulla obcaecati porro assumenda facilis eius nostrum!</li>
+      
+      <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe, repudiandae eius tenetur a reprehenderit libero animi. Aut quasi, nulla ipsum deleniti a rerum similique, nam laboriosam pariatur soluta dolores reprehenderit.</li>
+      <li>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Suscipit perferendis reprehenderit cumque fugit aliquam dolore cupiditate voluptatibus laborum hic? Aperiam eos vel fuga nulla obcaecati porro assumenda facilis eius nostrum!</li>
+   </ol>
+   <button id="closePopup" style="display: block; margin: 20px auto; padding: 10px 20px; background-color: #87CEEB; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: background-color 0.3s ease;"  onmouseover="this.style.backgroundColor='#5db8e5';" 
+   onmouseout="this.style.backgroundColor='#87CEEB';">
+      Close
+    </button>
+  </div>
+</div>
+<div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
+<!-- Popup modal  for return policy ends here-->           
+        
+        <!-- Contact Us Popup -->
+        <div id="contactUsPopup"  style="display: none; position: fixed; top: 0; left: 0; height: 100%; width: 100%;  justify-content: center; align-items: center; z-index: 1000;">
+          <div style="background-color: white; padding: 20px; box-shadow: 0px 0px 10px rgba(0,0,0,0.5); width: 80%; max-width: 500px; max-height: 80vh; overflow-y: auto;">
+            <h2>Contact Us</h2>
+            <p>
+              You can reach us at:<br>
+              Email: info@vaibhavskatingacademy.com<br>
+              Phone: +91 9301139998<br>
+              Address: 1234 Example St, City, Country<br>
+              Office Hours: Mon-Fri, 9:00 AM - 6:00 PM<br>
+              <br>
+              Feel free to contact us with any inquiries!
+            </p>
+            <button id="closeContactPopup" style="display: block; margin: 20px auto; padding: 10px 20px; background-color: #87CEEB; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='#5db8e5';" 
+            onmouseout="this.style.backgroundColor='#87CEEB';">
+Close
+</button>
 
-    <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
-      <p class="text-white">© 2024 Company, Inc. All rights reserved.</p>
-      <ul class="list-unstyled d-flex">
-        <li class="ms-3"><a class="text-body-secondary" target="_blank" href="https://x.com/vaibhavskating"><img src="icons/X logo.jpg" alt="" class="bi" width="24" height="24"></a></li>
-        <li class="ms-3"><a class="text-body-secondary" target="_blank" href="https://www.instagram.com/vaibhavskatingacademy?igsh=MWFyeDQwamozc3kzNQ%3D%3D&utm_source=qr"><img src="icons/insta logo.jpg" alt="" class="bi" width="24" height="24"></a></li>
-        <li class="ms-3"><a class="text-body-secondary" target="_blank" href="#"><img src="icons/facebook logo.png" alt="" class="bi" width="24" height="24"></a></li>
-        <li class="ms-3"><a class="text-body-secondary" target="_blank" href="#"><img src="icons/linkedIn_logo.jpg" alt="" class="bi" width="24" height="24"></a></li>
-        <li class="ms-3"><a class="text-body-secondary" target="_blank" href="https://youtube.com/@vaibhavskatingacademy2986?si=p0SfAinyjSgrdstE"><img src="icons/youtube_logo.jpg" alt="" class="bi" width="24" height="24"></a></li>
-         
-      </ul>
-    </div>
-  </footer>
+          </div>
+        </div>
+        
+        <!-- Overlay -->
+        <div id="contactOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
+        
+          <!-- popup for contact us ends here -->
+        <div class="col-6 col-md-2 mb-3">
+          <h5 class="text-primary">Services</h5>
+          <ul class="nav flex-column">
+            <li class="nav-item mb-2"><a href="/Volunteer" class="nav-link p-0 text-body-secondary">Volunteer</a></li>
+            <li class="nav-item mb-2"><a href="/WorkWithUs" class="nav-link p-0 text-body-secondary">Work with us</a></li>
+            <li class="nav-item mb-2"><a href="/Membership" class="nav-link p-0 text-body-secondary">Membership</a></li>
+            <li class="nav-item mb-2"><a href="/Athelete Training" class="nav-link p-0 text-body-secondary">Athelete Training</a></li>
+            <li class="nav-item mb-2"><a href="/BookMyTour" class="nav-link p-0 text-body-secondary">Book My Tour</a></li>
+          </ul>
+        </div>
+  
+        <div class="col-6 col-md-2 mb-3" >
+          <h5 class="text-primary">Section</h5>
+          <ul class="nav flex-column">
+            <li class="nav-item mb-2"><a href="/BookFreeTrialSession" class="nav-link p-0 text-body-secondary">Book free trial session</a></li>
+            <li class="nav-item mb-2"><a href="/TermsAndCondition" id="TermsAndConditionLink"  class="nav-link p-0 text-body-secondary">Terms and condition</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">FAQs</a></li>
+            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li>
+          </ul>
+        </div>    
+        
+           <!-- Popup modal  for Terms and condition policy-->
+<div id="termsAndConditionPopup"  style="display: none; position: fixed; top: 0; left: 0; height: 100%; width: 100%;  justify-content: center; align-items: center; z-index: 1000;">
+  <div style="background-color: white; padding: 20px; box-shadow: 0px 0px 10px rgba(0,0,0,0.5); width: 80%; max-width: 500px; max-height: 80vh; overflow-y: auto;" >
+    <h2>Terms and Condition :</h2>
+   <ol>
+      <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe, repudiandae eius tenetur a reprehenderit libero animi. Aut quasi, nulla ipsum deleniti a rerum similique, nam laboriosam pariatur soluta dolores reprehenderit.</li>
+      <li>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Suscipit perferendis reprehenderit cumque fugit aliquam dolore cupiditate voluptatibus laborum hic? Aperiam eos vel fuga nulla obcaecati porro assumenda facilis eius nostrum!</li>
+      
+      <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe, repudiandae eius tenetur a reprehenderit libero animi. Aut quasi, nulla ipsum deleniti a rerum similique, nam laboriosam pariatur soluta dolores reprehenderit.</li>
+      <li>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Suscipit perferendis reprehenderit cumque fugit aliquam dolore cupiditate voluptatibus laborum hic? Aperiam eos vel fuga nulla obcaecati porro assumenda facilis eius nostrum!</li>
+      
+      <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe, repudiandae eius tenetur a reprehenderit libero animi. Aut quasi, nulla ipsum deleniti a rerum similique, nam laboriosam pariatur soluta dolores reprehenderit.</li>
+      <li>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Suscipit perferendis reprehenderit cumque fugit aliquam dolore cupiditate voluptatibus laborum hic? Aperiam eos vel fuga nulla obcaecati porro assumenda facilis eius nostrum!</li>
+   </ol>
+   <button id="closeTermsPopup" style="display: block; margin: 20px auto; padding: 10px 20px; background-color: #87CEEB; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: background-color 0.3s ease;"  onmouseover="this.style.backgroundColor='#5db8e5';" 
+   onmouseout="this.style.backgroundColor='#87CEEB';">
+      Close
+    </button>
+  </div>
+</div>
+<div id="termsOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
+           <!-- Popup modal  for Terms and condition policy ends here--> 
+        <div class="col-md-5 offset-md-1 mb-3">
+          <form action="/subscribedToNewsLetter" method="post" class="text-primary">
+            <h5>Subscribe to our newsletter</h5>
+            <p>Monthly digest of what's new and exciting from us.</p>
+            <div class="d-flex flex-column flex-sm-row w-100 gap-2">
+              <label for="newsletter1" class="visually-hidden">Email address</label>
+              <input id="newsletter1" type="text" name="Email" class="form-control" placeholder="Email address">
+              <button class="btn btn-primary" type="submit">Subscribe</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+    
+      <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
+        <p class="text-primary">© 2024 Company, Inc. All rights reserved.</p>
+        <ul class="list-unstyled d-flex">
+          <li class="ms-3"><a class="text-body-secondary" target="_blank" href="https://x.com/vaibhavskating"><img src="icons/X logo.jpg" alt="X link" class="bi" width="24" height="24"></a></li>
+          <li class="ms-3"><a class="text-body-secondary" target="_blank" href="https://instagram.com/vaibhavskatingacademy?igshid=NGVhN2U2NjQ0Yg=="><img src="icons/insta logo.jpg" alt="instagram link" class="bi" width="24" height="24"></a></li>
+          <li class="ms-3"><a class="text-body-secondary" target="_blank" href="https://www.facebook.com/vaibhavskating?mibextid=LQQJ4d"><img src="icons/facebook logo.png" alt="Facebook link" class="bi" width="24" height="24"></a></li>
+          <li class="ms-3"><a class="text-body-secondary" target="_blank" href="#"><img src="icons/linkedIn_logo.jpg" alt="LinkedIn link" class="bi" width="24" height="24"></a></li>
+          <li class="ms-3"><a class="text-body-secondary" target="_blank" href="https://youtube.com/@vaibhavskatingacademy2986?si=p0SfAinyjSgrdstE"><img src="icons/youtube_logo.jpg" alt="Youtube link" class="bi" width="24" height="24"></a></li>
+           
+        </ul>
+      </div>
+      
+    </footer>  
 </div>
 </div>
+<script>
+  //for return policy
+  document.getElementById('returnPolicyLink').addEventListener('click', function(event) {
+event.preventDefault(); // Prevent the default link behavior
+
+// Show the popup and overlay
+document.getElementById('returnPolicyPopup').style.display = 'flex';
+document.getElementById('overlay').style.display = 'block';
+
+// Optionally set a timer to automatically close the popup after 5 seconds
+setTimeout(function() {
+closePopup();
+}, 5000); // 5 seconds
+});
+
+document.getElementById('closePopup').addEventListener('click', function() {
+closePopup();
+});
+
+function closePopup() {
+// Hide the popup and overlay
+document.getElementById('returnPolicyPopup').style.display = 'none';
+document.getElementById('overlay').style.display = 'none';
+}
+
+
+</script>
+<!-- for contact us popup -->
+<script>
+// Event listener for the "Contact Us" link
+  document.getElementById('ContactUsLink').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent the default link behavior
+  
+    // Show the Contact Us popup and overlay
+    document.getElementById('contactUsPopup').style.display = 'flex';
+    document.getElementById('contactOverlay').style.display = 'block';
+  });
+  
+  // Event listener for the close button in the Contact Us popup
+  document.getElementById('closeContactPopup').addEventListener('click', function() {
+    closeContactPopup();
+  });
+  
+  // Function to close the Contact Us popup
+  function closeContactPopup() {
+    document.getElementById('contactUsPopup').style.display = 'none';
+    document.getElementById('contactOverlay').style.display = 'none';
+  }
+  </script>
+  <!-- for terms and condition popup -->
+  <script>
+      // Event listener for the "Terms and condition" link
+        document.getElementById('TermsAndConditionLink').addEventListener('click', function(event) {
+          event.preventDefault(); // Prevent the default link behavior
+        
+          // Show the Terms and condition popup and overlay
+          document.getElementById('termsAndConditionPopup').style.display = 'flex';
+          document.getElementById('termsOverlay').style.display = 'block';
+        });
+        
+        // Event listener for the close button in the Terms and condition popup
+        document.getElementById('closeTermsPopup').addEventListener('click', function() {
+          closeTermsPopup();
+        });
+        
+        // Function to close the Terms and condition popup
+        function closeTermsPopup() {
+          document.getElementById('termsAndConditionPopup').style.display = 'none';
+          document.getElementById('termsOverlay').style.display = 'none';
+        }
+        </script>
 </body>
 </html>
