@@ -875,3 +875,41 @@ body{
     visibility: visible;
     opacity: 1;
 }
+@media (max-width: 493px) {
+    .container {
+        width: 95%; /* Make container width responsive */
+        padding: 20px; /* Add padding for smaller screens */
+    }
+
+    .container p {
+        font-size: 12px; /* Slightly smaller font size */
+    }
+
+    .container span {
+        font-size: 10px; /* Decrease span font size */
+    }
+
+    .container a {
+        font-size: 11px; /* Slightly smaller link font size */
+    }
+
+    .container button {
+        font-size: 11px; /* Decrease button font size */
+        padding: 8px 30px; /* Adjust button padding for smaller screens */
+    }
+
+    .container input {
+        font-size: 12px; /* Decrease input font size */
+        padding: 8px; /* Adjust padding for inputs */
+    }
+
+    .social-icons a {
+        width: 30px; /* Make social icons smaller */
+        height: 30px; /* Make social icons smaller */
+    }
+
+    .Exclam_mark_circle {
+        height: 18px; /* Adjust size of exclamation mark circle */
+        width: 18px; /* Adjust size of exclamation mark circle */
+    }
+}
