@@ -70,6 +70,19 @@
         .toast-container.show {
             display: block; /* Show when the class 'show' is added */
         }
+        .custom-select {
+    height: 40px; /* Increased height */
+    padding: 10px; /* Ensure text is visible */
+    font-size: 16px; /* Increase font size for better readability */
+    border-radius: 8px; /* Consistent border radius */
+    border: 1px solid #ced4da; /* Border styling */
+}
+
+.form-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+}
+
     </style>
 </head>
 <body>
@@ -115,7 +128,7 @@
             </div>
             <div class="form-group">
                 <label for="feeStructure">Enter Fee Structure</label>
-                <select id="feeStructure" name="feeStructure" class="form-select" required>
+                <select id="feeStructure" name="feeStructure" class="form-select custom-select" required>
                     <option value="type1">Something</option>
                     <option value="type2">Something</option>
                     <option value="type3">Something</option>
@@ -124,24 +137,25 @@
             </div>
             <div class="form-group">
                 <label for="groupAddedOn">Enter Group Name</label>
-                <select id="groupAddedOn" name="groupAddedOn" class="form-select" required>
-                    <option value="group1">High performance-1</option>
-                    <option value="group2">High performance-2</option>
-                    <option value="group3">Intermediate</option>
-                    <option value="group4">Beginner</option>
+                <select id="groupAddedOn" name="groupAddedOn" class="form-select custom-select" required>
+                    <option value="High_performance-1">High performance-1</option>
+                    <option value="High_performance-2">High performance-2</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Beginner">Beginner</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="skateType">Enter Skate Type</label>
-                <select id="skateType" name="skate_type" class="form-select" required>
+                <select id="skateType" name="skate_type" class="form-select custom-select" required>
                     <option value="Tenacity">Tenacity</option>
                     <option value="Quads">Quads</option>
                     <option value="Inline">Inline</option>
                 </select>
             </div>
+            
             <div class="form-group">
                 <label for="feePaid">Fees Paid</label>
-                <input type="number" id="feePaid" class="form-control" name="feePaid" required>
+                <input type="number" id="feePaid" class="form-control" name="feePaid">
             </div>
             <button type="submit" class="btn-submit">Register</button>
         </form>
