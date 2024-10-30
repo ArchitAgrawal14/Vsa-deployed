@@ -102,11 +102,11 @@ app.use(cors(
 ));
   
   app.options("/google", cors());
-  app.get("/google", cors(), passport.authenticate("google",{
+app.get("/google", cors(), passport.authenticate("google",{
   
       scope:['profile']
   
-  }));
+}));
 
 //Header part endpoints starts here
 //this below is for signup
@@ -521,13 +521,12 @@ app.post("/Buy_Now", authenticateUser, async (req, res) => {
 
 app.get("/CheckOut",authenticateUser,(req,res)=>{
   res.render("checkOutPage.ejs");
-})  
-app.get("/productDetails", async (req, res) => {
+});
+
+app.get("/productDetails", authenticateUser ,async (req, res) => {
   try {
-    let firstName = null;
     if (req.user) {
-      firstName = req.user.fullName.split(" ")[0];
-    }
+    const firstName = req.user.fullName.split(" ")[0];
 
     const { item_id, item_type } = req.query;
 
@@ -548,13 +547,23 @@ app.get("/productDetails", async (req, res) => {
     }
 
     res.render("product_Details.ejs", { itemDetails: result, Login: firstName });
+  }else{
+    const { item_id, item_type } = req.query;
+
+    const data = await db.query(`SELECT * FROM stock_${item_type} WHERE item_id=$1`, [item_id]);
+    const result = data.rows;
+
+    if (!result.length) {
+      return res.status(404).send("Item not found");
+    }
+    res.render("product_Details.ejs", { itemDetails: result, Login: null });
+  }
   } catch (error) {
     console.error("Error fetching item for displaying product details:", error);
     res.status(500).send("An error occurred while fetching the item.");
   }
 });
 
-  
 app.post("/productDetails", authenticateUser, async (req, res) => {
     try {
       if (req.user) {
@@ -624,97 +633,253 @@ app.get("/Skates", (req, res) => {
     console.log("Successfully redirected to shop");
 });
   
-// app.get("/AddToCart", authenticateUser, async (req, res) => {
-
-//     // console.log(req.user);
-//     const user = req.user;
-//     // console.log(user);
-//     if (user === null) {
-//       res.render("login.ejs");
+// app.post("/AddToCart", authenticateUser, async (req, res) => {
+//     if (!req.user || !req.user.Email) {
+//         res.render("login.ejs");
 //     }
-//   });
+  
+//     try {
+//         const userResult = await db.query(`SELECT * FROM users WHERE email=$1`, [
+//             req.user.Email,
+//         ]);
+  
+//         if (userResult.rows.length === 0) {
+//             console.log("User not found:", req.user.Email);
+//             res.render("login.ejs");
+//         }
+  
+//         const user = userResult.rows[0];
+//         const userId = user.user_id;
+  
+//         if (!userId) {
+//             console.log("User ID is null");
+//             return res.status(500).send("User ID is null");
+//         }
+  
+//         const { item_id, item_type, quantity } = req.body;
+//         console.log("Item details:", { item_id, item_type, quantity });
+  
+//         const itemResult = await db.query(
+//             `SELECT * FROM stock_${item_type} WHERE item_id=$1`,
+//             [item_id]
+//         );
+//         if (itemResult.rows.length === 0) {
+//             console.log("Item not found:", { item_id, item_type });
+//             return res.status(404).send("Item not found");
+//         }
+  
+//         const item = itemResult.rows[0];
+//         const availableItemQuantity = item.quantity;
+  
+//         const itemCheckInCart = await db.query(
+//             "SELECT * FROM cart WHERE user_id=$1 AND item_id=$2",
+//             [userId, item_id]
+//         );
+  
+//         if (itemCheckInCart.rows.length === 0) {
+//             const insertQuantity =
+//                 quantity <= availableItemQuantity ? quantity : availableItemQuantity;
+//             await db.query(
+//                 "INSERT INTO cart (user_id, img, name, description, item_id, price, quantity) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+//                 [
+//                     userId,
+//                     item.img,
+//                     item.name,
+//                     item.description,
+//                     item.item_id,
+//                     item.price,
+//                     insertQuantity,
+//                 ]
+//             );
+//             console.log(
+//                 "Item added to cart successfully with quantity:",
+//                 insertQuantity
+//             );
+//         } else {
+//             const existingQuantity = itemCheckInCart.rows[0].quantity;
+//             const newQuantity = Math.min(
+//                 existingQuantity + parseInt(quantity),
+//                 availableItemQuantity
+//             );
+//             await db.query(
+//                 "UPDATE cart SET quantity=$1 WHERE user_id=$2 AND item_id=$3",
+//                 [newQuantity, userId, item_id]
+//             );
+//             console.log("Item quantity updated in cart to:", newQuantity);
+//         }
+  
+//         res.status(200).json({ success: true, message: "Item added to cart successfully" });
+//     } catch (error) {
+//         console.error("Error in /AddToCart:", error);
+//         res.status(500).json({ success: false, message: "Internal Server Error" });
+//     }
+// });
+
+// app.post("/AddToCart", authenticateUser, async (req, res) => {
+//   if (!req.user || !req.user.Email) {
+//       return res.render("login.ejs"); // Stop further execution if not logged in
+//   }
+
+//   try {
+//       const userResult = await db.query(`SELECT * FROM users WHERE email=$1`, [
+//           req.user.Email,
+//       ]);
+
+//       if (userResult.rows.length === 0) {
+//           console.log("User not found:", req.user.Email);
+//           return res.render("login.ejs"); // Stop further execution if user not found
+//       }
+
+//       const user = userResult.rows[0];
+//       const userId = user.user_id;
+
+//       if (!userId) {
+//           console.log("User ID is null");
+//           return res.status(500).send("User ID is null");
+//       }
+
+//       const { item_id, item_type, quantity } = req.body;
+//       console.log("Item details:", { item_id, item_type, quantity });
+
+//       const itemResult = await db.query(
+//           `SELECT * FROM stock_${item_type} WHERE item_id=$1`,
+//           [item_id]
+//       );
+
+//       if (itemResult.rows.length === 0) {
+//           console.log("Item not found:", { item_id, item_type });
+//           return res.status(404).send("Item not found");
+//       }
+
+//       const item = itemResult.rows[0];
+//       const availableItemQuantity = item.quantity;
+
+//       const itemCheckInCart = await db.query(
+//           "SELECT * FROM cart WHERE user_id=$1 AND item_id=$2",
+//           [userId, item_id]
+//       );
+
+//       if (itemCheckInCart.rows.length === 0) {
+//           const insertQuantity =
+//               quantity <= availableItemQuantity ? quantity : availableItemQuantity;
+//           await db.query(
+//               "INSERT INTO cart (user_id, img, name, description, item_id, price, quantity) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+//               [
+//                   userId,
+//                   item.img,
+//                   item.name,
+//                   item.description,
+//                   item.item_id,
+//                   item.price,
+//                   insertQuantity,
+//               ]
+//           );
+//           console.log(
+//               "Item added to cart successfully with quantity:",
+//               insertQuantity
+//           );
+//       } else {
+//           const existingQuantity = itemCheckInCart.rows[0].quantity;
+//           const newQuantity = Math.min(
+//               existingQuantity + parseInt(quantity),
+//               availableItemQuantity
+//           );
+//           await db.query(
+//               "UPDATE cart SET quantity=$1 WHERE user_id=$2 AND item_id=$3",
+//               [newQuantity, userId, item_id]
+//           );
+//           console.log("Item quantity updated in cart to:", newQuantity);
+//       }
+
+//       res.status(200).json({ success: true, message: "Item added to cart successfully" });
+//   } catch (error) {
+//       console.error("Error in /AddToCart:", error);
+//       res.status(500).json({ success: false, message: "Internal Server Error" });
+//   }
+// });
 app.post("/AddToCart", authenticateUser, async (req, res) => {
-    if (!req.user || !req.user.Email) {
-        res.render("login.ejs");
-    }
-  
-    try {
-        const userResult = await db.query(`SELECT * FROM users WHERE email=$1`, [
-            req.user.Email,
-        ]);
-  
-        if (userResult.rows.length === 0) {
-            console.log("User not found:", req.user.Email);
-            res.render("login.ejs");
-        }
-  
-        const user = userResult.rows[0];
-        const userId = user.user_id;
-  
-        if (!userId) {
-            console.log("User ID is null");
-            return res.status(500).send("User ID is null");
-        }
-  
-        const { item_id, item_type, quantity } = req.body;
-        console.log("Item details:", { item_id, item_type, quantity });
-  
-        const itemResult = await db.query(
-            `SELECT * FROM stock_${item_type} WHERE item_id=$1`,
-            [item_id]
-        );
-        if (itemResult.rows.length === 0) {
-            console.log("Item not found:", { item_id, item_type });
-            return res.status(404).send("Item not found");
-        }
-  
-        const item = itemResult.rows[0];
-        const availableItemQuantity = item.quantity;
-  
-        const itemCheckInCart = await db.query(
-            "SELECT * FROM cart WHERE user_id=$1 AND item_id=$2",
-            [userId, item_id]
-        );
-  
-        if (itemCheckInCart.rows.length === 0) {
-            const insertQuantity =
-                quantity <= availableItemQuantity ? quantity : availableItemQuantity;
-            await db.query(
-                "INSERT INTO cart (user_id, img, name, description, item_id, price, quantity) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-                [
-                    userId,
-                    item.img,
-                    item.name,
-                    item.description,
-                    item.item_id,
-                    item.price,
-                    insertQuantity,
-                ]
-            );
-            console.log(
-                "Item added to cart successfully with quantity:",
-                insertQuantity
-            );
-        } else {
-            const existingQuantity = itemCheckInCart.rows[0].quantity;
-            const newQuantity = Math.min(
-                existingQuantity + parseInt(quantity),
-                availableItemQuantity
-            );
-            await db.query(
-                "UPDATE cart SET quantity=$1 WHERE user_id=$2 AND item_id=$3",
-                [newQuantity, userId, item_id]
-            );
-            console.log("Item quantity updated in cart to:", newQuantity);
-        }
-  
-        res.status(200).json({ success: true, message: "Item added to cart successfully" });
-    } catch (error) {
-        console.error("Error in /AddToCart:", error);
-        res.status(500).json({ success: false, message: "Internal Server Error" });
-    }
+  if (!req.user || !req.user.Email) {
+      return res.status(401).json({ loginRequired: true }); // Send a 401 status for unauthenticated users
+  }
+
+  try {
+      const userResult = await db.query(`SELECT * FROM users WHERE email=$1`, [
+          req.user.Email,
+      ]);
+
+      if (userResult.rows.length === 0) {
+          console.log("User not found:", req.user.Email);
+          return res.status(401).json({ loginRequired: true }); // Send a 401 status if user not found
+      }
+
+      const user = userResult.rows[0];
+      const userId = user.user_id;
+
+      if (!userId) {
+          console.log("User ID is null");
+          return res.status(500).send("User ID is null");
+      }
+
+      const { item_id, item_type, quantity } = req.body;
+      console.log("Item details:", { item_id, item_type, quantity });
+
+      const itemResult = await db.query(
+          `SELECT * FROM stock_${item_type} WHERE item_id=$1`,
+          [item_id]
+      );
+
+      if (itemResult.rows.length === 0) {
+          console.log("Item not found:", { item_id, item_type });
+          return res.status(404).send("Item not found");
+      }
+
+      const item = itemResult.rows[0];
+      const availableItemQuantity = item.quantity;
+
+      const itemCheckInCart = await db.query(
+          "SELECT * FROM cart WHERE user_id=$1 AND item_id=$2",
+          [userId, item_id]
+      );
+
+      if (itemCheckInCart.rows.length === 0) {
+          const insertQuantity =
+              quantity <= availableItemQuantity ? quantity : availableItemQuantity;
+          await db.query(
+              "INSERT INTO cart (user_id, img, name, description, item_id, price, quantity) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+              [
+                  userId,
+                  item.img,
+                  item.name,
+                  item.description,
+                  item.item_id,
+                  item.price,
+                  insertQuantity,
+              ]
+          );
+          console.log(
+              "Item added to cart successfully with quantity:",
+              insertQuantity
+          );
+      } else {
+          const existingQuantity = itemCheckInCart.rows[0].quantity;
+          const newQuantity = Math.min(
+              existingQuantity + parseInt(quantity),
+              availableItemQuantity
+          );
+          await db.query(
+              "UPDATE cart SET quantity=$1 WHERE user_id=$2 AND item_id=$3",
+              [newQuantity, userId, item_id]
+          );
+          console.log("Item quantity updated in cart to:", newQuantity);
+      }
+
+      res.status(200).json({ success: true, message: "Item added to cart successfully" });
+  } catch (error) {
+      console.error("Error in /AddToCart:", error);
+      res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
 });
-  
+
 app.get("/Cart", authenticateUser, async (req, res) => {
     try {
         // Initialize variables for rendering
@@ -1080,7 +1245,8 @@ app.get("/orderDetailsUser", authenticateUser, async (req, res) => {
       });
     }
 });
-//yaha pe achievements ka hai
+
+//yaha pe academy achievements ka hai
 app.get("/achievements", async (req, res) => {
     try {
       // Query the database to get the achievements
@@ -1112,33 +1278,55 @@ app.get("/achievements", async (req, res) => {
       });
     }
 });
-//iske liye abhi  table create karni hai.
+
 app.get("/StudentsAchievements", authenticateUser, async (req, res) => {
+  try {
     if (req.user) {
-        try {
-            const data = await db.query("SELECT * FROM students");
-            const result = data.rows;
-            res.render("studentsAchievements.ejs", {
-                studentsAchievementsData: result
-            });
-        } catch (error) {
-            console.error("Error fetching achievements:", error);
-            res.status(500).send("Internal Server Error");
-        }
-    } else {
-        res.redirect("/login"); // Redirect to login if user is not authenticated
-    }
-});
-app.post("/studentAchievementDetails",authenticateUser,async(req,res)=>{
-if(req.user){
-    const studentId=req.body;
-    const data=await db.query("Select * from students_achievements where student_id=$1",[studentId]);
-    const result=data.rows;
-    res.render("offlineStudentsDetails.ejs",{
-        studentDetails:result
-    });
+      try {
+          const data = await db.query("SELECT * FROM students");
+          const result = data.rows;
+          res.render("studentsAchievements.ejs", {
+              studentsAchievementsData: result
+          });
+      } catch (error) {
+          console.error("Error fetching achievements:", error);
+          res.status(500).send("Internal Server Error");
+      }
+  } else {
+    res.render("studentsAchievements.ejs", {
+      studentsAchievementsData:null
+  });      
 }
-})
+  } catch (error) {
+    console.log("Error rendering students achievements page");
+  }
+    
+});
+
+app.post("/studentAchievementDetails", authenticateUser, async (req, res) => {
+  if (req.user) {
+      const studentId = req.body.studentId; 
+      try {
+          const data = await db.query(
+              `SELECT * FROM students_achievements s1 
+               JOIN students s2 ON s1.stud_id = s2.stud_id 
+               WHERE s2.stud_id = $1`,
+              [studentId]
+          );
+          const studentAchievements = data.rows; 
+          res.render("offlineStudentsDetails.ejs", {
+              studentDetails: studentAchievements
+          });
+      } catch (error) {
+          console.error("Database query error:", error);
+          res.status(500).send("Internal Server Error");
+      }
+  } else {
+      res.status(401).send("Unauthorized");
+  }
+});
+
+
 //yaha pe footer ka hai
 app.use("/FAQ", authenticateUser,async (req, res) => {
   if(req.user){

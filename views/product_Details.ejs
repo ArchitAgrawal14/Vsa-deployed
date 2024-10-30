@@ -322,43 +322,63 @@
                 Item successfully added to cart!
             </div>
         </div>
+        <!-- below is the toast for user that are not logged in and are trying to add an item -->
+        <div id="toast-login" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-warning text-dark">
+                <strong class="me-auto">Login Required</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body text-dark">
+                Please log in to continue.
+            </div>
+        </div>
     </div>
     <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script> -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>   -->
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-          const addItemsToCartButton = document.querySelectorAll(".addItemsToCart");         
-          addItemsToCartButton.forEach(button => {
-              button.addEventListener("click", async (event) => {
-                  event.preventDefault();
-                  const item_id = button.getAttribute("data-item-id");
-                  const item_type = button.getAttribute("data-item-type");
-                  const quantity = document.getElementById("quantity-input").value;
 
-                  try {
-                      const response = await fetch("/AddToCart", {
-                          method: "POST",
-                          headers: {
-                              "Content-Type": "application/json",
-                          },
-                          body: JSON.stringify({ item_id, item_type, quantity }),
-                      });
-  
-                      const data = await response.json();
-                      if (data.success) {
-                          const toast = new bootstrap.Toast(document.getElementById('toast'));
-                          toast.show();
-                      }
-                      console.log("Item id and type successfully sent to server for add to cart button", data);
-                  } catch (error) {
-                      console.log("Failed to add item", error);
-                  }
-              });
-          });          
-      });
+     <!-- below script is for add to cart button and also handles when the user is not logged in -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const addItemsToCartButton = document.querySelectorAll(".addItemsToCart");
+            addItemsToCartButton.forEach(button => {
+                button.addEventListener("click", async (event) => {
+                    event.preventDefault();
+                    const item_id = button.getAttribute("data-item-id");
+                    const item_type = button.getAttribute("data-item-type");
+                    const quantity = document.getElementById("quantity-input").value;
+
+                    try {
+                        const response = await fetch("/AddToCart", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ item_id, item_type, quantity }),
+                        });
+    
+                        const data = await response.json();
+                        
+                        // Check if the response indicates the user is logged in or not
+                        if (response.status === 401) { // Adjusting to check for a 401 Unauthorized status
+                            const loginToast = new bootstrap.Toast(document.getElementById('toast-login'));
+                            loginToast.show();
+                        } else if (data.success) {
+                            const successToast = new bootstrap.Toast(document.getElementById('toast'));
+                            successToast.show();
+                        } else {
+                            console.log("Unexpected response:", data);
+                        }
+                        
+                        console.log("Response from server:", data);
+                    } catch (error) {
+                        console.log("Failed to add item", error);
+                    }
+                });
+            });            
+        });
     </script>
-  
+    <!-- This below is for incrementing and decrementing of the quantity -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const decrementButton = document.getElementById('decrement-btn');
