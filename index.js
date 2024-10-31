@@ -102,7 +102,7 @@ app.use(cors(
   }
 ));
   
-  app.options("/google", cors());
+app.options("/google", cors());
 app.get("/google", cors(), passport.authenticate("google",{
   
       scope:['profile']
@@ -283,6 +283,10 @@ app.post("/Login", async (req, res) => {
         errorMessage: "An error occurred, please try again.",
       });
     }
+});
+app.get("/newLogin", (req, res) => {
+  res.render("login.ejs");
+  console.log("Successfully rendered login page");
 });
 const authenticateUser = (req, res, next) => {
     const token = req.cookies.token;
@@ -881,6 +885,16 @@ app.post("/AddToCart", authenticateUser, async (req, res) => {
   }
 });
 
+//yaha pe join us ka hai
+app.get("/joinUs",authenticateUser,(req,res)=>{
+  if(req.user){    
+    res.render("joinUs.ejs");
+  }else{
+    res.redirect("/newlogin");
+  }
+});
+
+//yaha pe join us ka end hai
 app.get("/Cart", authenticateUser, async (req, res) => {
     try {
         // Initialize variables for rendering
@@ -923,7 +937,6 @@ app.get("/Cart", authenticateUser, async (req, res) => {
     }
 });
 // yaha pe item cart se remove karne ka hai.
-
 app.post("/removeItemFromCart", authenticateUser, async (req, res) => {
     let userId;
     const firstName = req.user.fullName.split(" ")[0];
@@ -981,11 +994,7 @@ app.post("/removeItemFromCart", authenticateUser, async (req, res) => {
       res.status(500).json({ success: false, error: "Server error" });
     }
 });
-  
-app.get("/newLogin", (req, res) => {
-    res.render("login.ejs");
-    console.log("Successfully rendered login page");
-});
+
 app.get("/Logout", (req, res) => {
     res.clearCookie("token");
     res.redirect("/");
@@ -1279,7 +1288,7 @@ app.get("/achievements", async (req, res) => {
       });
     }
 });
-
+//yaha pe academy students details ka hai
 app.get("/StudentsAchievements", authenticateUser, async (req, res) => {
   try {
     if (req.user) {
@@ -1326,7 +1335,7 @@ app.post("/studentAchievementDetails", authenticateUser, async (req, res) => {
       res.status(401).send("Unauthorized");
   }
 });
-
+//yaha pe academy students details ka end hai
 
 //yaha pe footer ka hai
 app.use("/FAQ", authenticateUser,async (req, res) => {
@@ -1343,6 +1352,7 @@ app.use("/FAQ", authenticateUser,async (req, res) => {
     res.render("FAQ.ejs", { FAQ_data: FAQ_data, Login:null});
   }
 });
+
 //Admin panel funtionnality starts here
 //yaha pe newsletter ka hai
 app.post("/subscribedToNewsLetter", authenticateUser, async (req, res) => {
@@ -2194,6 +2204,7 @@ const storage = multer.diskStorage({
   // })
   
   //functionality for tours booking ends here
+
 db.connect();
 app.listen(port, () => {
   console.log(`Listening on port:${port}`);

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Student</title>
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #f0f4f8; /* Softer background color */
+        font-family: "Arial", sans-serif;
+      }
+
+      .form-container {
+        max-width: 600px;
+        margin: 30px auto;
+        padding: 20px;
+        background-color: #ffffff; /* White background for form */
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .form-container h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #007bff; /* Primary color for headings */
+        font-weight: bold;
+      }
+
+      .form-group {
+        margin-bottom: 15px; /* Reduced space between form groups */
+      }
+
+      .form-group label {
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #333; /* Dark gray for labels */
+        display: block; /* Align labels above the inputs */
+      }
+
+      .form-control,
+      .form-select {
+        width: 100%; /* Full width */
+        height: 38px; /* Reduced height */
+        border-radius: 10px;
+        border: 1px solid #ced4da;
+        padding: 8px; /* Reduced padding */
+        font-size: 14px; /* Slightly smaller font size */
+        box-sizing: border-box; /* Include padding in width calculations */
+        background-color: #f9f9f9; /* Light gray background for inputs */
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        border-color: #007bff; /* Primary color on focus */
+        box-shadow: 0 0 5px rgba(38, 143, 255, 0.5);
+      }
+
+      .btn-submit {
+        width: 100%; /* Full width */
+        background-color: #28a745; /* Success color for button */
+        border: none;
+        border-radius: 10px;
+        padding: 10px; /* Reduced padding */
+        font-size: 16px; /* Slightly smaller font size */
+        color: #ffffff; /* White text color */
+        cursor: pointer;
+      }
+
+      .btn-submit:hover {
+        background-color: #218838; /* Darker shade of green on hover */
+      }
+
+      .toast {
+        background-color: #28a745; /* Success color */
+        color: #ffffff; /* White text color */
+        border-radius: 8px;
+      }
+
+      .toast-body {
+        font-size: 16px;
+      }
+
+      .toast-container {
+        display: none;
+      }
+
+      .toast-container.show {
+        display: block;
+      }
+
+      .custom-select {
+        height: 38px; /* Consistent height */
+        border-radius: 10px;
+        border: 1px solid #ced4da;
+        background-color: #f9f9f9; /* Light gray background */
+      }
+
+      .custom-select:focus {
+        border-color: #007bff; /* Primary color on focus */
+        box-shadow: 0 0 5px rgba(38, 143, 255, 0.5);
+      }
+
+      .form-check {
+        display: flex; /* Align checkbox and label in one line */
+        align-items: center; /* Center vertically */
+        margin-bottom: 10px; /* Space below checkbox */
+      }
+
+      .form-check-label {
+        margin-left: 5px; /* Space between checkbox and label */
+        font-size: 14px; /* Consistent font size */
+        color: #333; /* Dark gray for labels */
+      }
+
+      #termsAndConditionPopup {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 1000;
+      }
+
+      #termsAndConditionPopup > div {
+        background-color: #ffffff; /* White background for popup */
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        width: 90%;
+        max-width: 500px;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative; /* For positioning the close button */
+      }
+
+      #termsAndConditionPopup h2 {
+        margin-bottom: 10px;
+        color: #dc3545; /* Danger color for heading */
+      }
+
+      #termsAndConditionPopup button {
+        margin-top: 15px;
+        border-radius: 8px;
+        background-color: #dc3545; /* Danger color for close button */
+        color: white;
+        border: none;
+        padding: 10px 15px; /* Consistent padding */
+        cursor: pointer;
+      }
+
+      #termsAndConditionPopup button:hover {
+        background-color: #c82333; /* Darker shade on hover */
+      }
+
+      /* Close Button for the Popup */
+      .close-popup {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: transparent;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: #dc3545; /* Danger color for close button */
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .form-container {
+          margin: 10px;
+          padding: 15px;
+        }
+
+        .form-container h1 {
+          font-size: 24px;
+        }
+
+        .btn-submit {
+          font-size: 16px;
+          padding: 10px;
+        }
+
+        .form-control,
+        .form-select {
+          padding: 8px; /* Slightly smaller padding */
+          font-size: 14px;
+        }
+
+        .toast-body {
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <% if (typeof toastMessage !== 'undefined') { %>
+    <div
+      id="toast-container"
+      class="position-fixed bottom-0 end-0 p-3 toast-container <%= toastMessage ? 'show' : '' %>"
+    >
+      <div
+        id="toast"
+        class="toast"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="toast-header">
+          <strong class="me-auto">Message</strong>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="toast-body">
+          <% if (toastMessage === true) { %>Successfully added student<% } %> <%
+          if (toastMessage === 'e') { %>Student already exists in the
+          database.<% } %> <% if (toastMessage === false) { %>Couldn't add
+          student. Try again later.<% } %>
+        </div>
+      </div>
+    </div>
+    <% } %>
+
+    <div class="form-container">
+      <h1>Register New Student</h1>
+      <form action="/" method="post">
+        <div class="form-group">
+          <label for="studentName">Enter Student Name</label>
+          <input
+            type="text"
+            id="studentName"
+            class="form-control"
+            name="Student_Name"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="motherName">Enter Mother's Name</label>
+          <input
+            type="text"
+            id="motherName"
+            class="form-control"
+            name="Mother_name"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="fatherName">Enter Father's Name</label>
+          <input
+            type="text"
+            id="fatherName"
+            class="form-control"
+            name="Father_name"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="mobileNumber">Enter Mobile Number</label>
+          <input
+            type="text"
+            id="mobileNumber"
+            class="form-control"
+            name="mobile_number"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="email">Enter Email</label>
+          <input
+            type="email"
+            id="email"
+            class="form-control"
+            name="email"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="feeStructure">Enter Fee Structure</label>
+          <select
+            id="feeStructure"
+            name="feeStructure"
+            class="form-select custom-select"
+            required
+          >
+            <option value="type1">Something</option>
+            <option value="type2">Something</option>
+            <option value="type3">Something</option>
+            <option value="type4">Something</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="groupAddedOn">Enter Group Name</label>
+          <select
+            id="groupAddedOn"
+            name="groupAddedOn"
+            class="form-select custom-select"
+            required
+          >
+            <option value="High_performance-1">High performance-1</option>
+            <option value="High_performance-2">High performance-2</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Beginner">Beginner</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="skateType">Enter Skate Type</label>
+          <select
+            id="skateType"
+            name="skate_type"
+            class="form-select custom-select"
+            required
+          >
+            <option value="Tenacity">Tenacity</option>
+            <option value="Quads">Quads</option>
+            <option value="Inline">Inline</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="feePaid">Fees Paid</label>
+          <input
+            type="number"
+            id="feePaid"
+            class="form-control"
+            name="feePaid"
+          />
+        </div>
+
+        <div class="form-group">
+          <div class="form-check">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              id="terms"
+              name="terms"
+              required
+            />
+            <label class="form-check-label" for="terms">
+              I accept the
+              <a href="#" id="termsAndConditionLink">terms and conditions</a>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit">Register</button>
+      </form>
+    </div>
+
+    <div
+      id="termsAndConditionPopup"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      "
+    >
+      <div
+        style="
+          background-color: white;
+          padding: 20px;
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+          width: 80%;
+          max-width: 500px;
+          max-height: 80vh;
+          overflow-y: auto;
+        "
+      >
+        <h2>Terms and Condition :</h2>
+        <ol>
+          <li>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe,
+            repudiandae eius tenetur a reprehenderit libero animi. Aut quasi,
+            nulla ipsum deleniti a rerum similique, nam laboriosam pariatur
+            soluta dolores reprehenderit.
+          </li>
+          <li>
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Suscipit
+            perferendis reprehenderit cumque fugit aliquam dolore cupiditate
+            voluptatibus laborum hic? Aperiam eos vel fuga nulla obcaecati porro
+            assumenda facilis eius nostrum!
+          </li>
+          <li>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe,
+            repudiandae eius tenetur a reprehenderit libero animi. Aut quasi,
+            nulla ipsum deleniti a rerum similique, nam laboriosam pariatur
+            soluta dolores reprehenderit.
+          </li>
+          <li>
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Suscipit
+            perferendis reprehenderit cumque fugit aliquam dolore cupiditate
+            voluptatibus laborum hic? Aperiam eos vel fuga nulla obcaecati porro
+            assumenda facilis eius nostrum!
+          </li>
+        </ol>
+        <button id="closePopup" class="btn btn-danger">Close</button>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("termsAndConditionLink")
+        .addEventListener("click", function (event) {
+          event.preventDefault();
+          document.getElementById("termsAndConditionPopup").style.display =
+            "flex";
+        });
+
+      document
+        .getElementById("closePopup")
+        .addEventListener("click", function () {
+          document.getElementById("termsAndConditionPopup").style.display =
+            "none";
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
