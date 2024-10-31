@@ -41,20 +41,6 @@ export async function createNewsLetterAdmin(req, res) {
     console.log("news letter page error:", error);
   }
 }
-// Function to send newsletter
-export async function adminSendingNewsLetter(req, res, Title, Description, firstName) {
-  try {
-    const result = await db.query("SELECT * FROM news_letter_subscriber");
-    const subscribers = result.rows;
-    subscribers.forEach((subscriber) => {
-      sendNewsletter(subscriber.email, Title, Description);
-    });
-    return; // No need to render here; handled by route redirect
-  } catch (error) {
-    console.error("Failed to send newsletter:", error);
-    throw error; // Re-throw error to be caught by route handler
-  }
-}
 
 export async function downloadOnlineUsersList(req, res,users) {
   try {

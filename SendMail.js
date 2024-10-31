@@ -1,17 +1,17 @@
+//this is a mock and is not used
 import nodemailer from "nodemailer";
-    const transporter = nodemailer.createTransport({
-        host: "smtpout.secureserver.net",
-        port: 465,
-        secure: true, // true for 465, false for other ports
-        auth: {
-            user: '', // your GoDaddy email
-            pass: '' // your GoDaddy email password
-        }
-    });
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail', // You can use other services too like Outlook, SMTP etc.
+    auth: {
+      user: "", // Your email
+      pass: ""// Your email password or app password
+    }
+  });
 
 const sendNewsletter = (email, subject, message) => {
     const mailOptions = {
-        from: 'your-email@your-domain.com',
+        from:"archit.uhr75@gmail.com",
         to: email,
         subject: subject,
         text: message
@@ -25,4 +25,5 @@ const sendNewsletter = (email, subject, message) => {
         }
     });
 };
-export default sendNewsletter();;
+
+export default sendNewsletter;

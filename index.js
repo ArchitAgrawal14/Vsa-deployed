@@ -54,13 +54,13 @@ app.use((req, res, next) => {
 
 const Secret_key = process.env.jwtSecretKey;
 
-// const db = new pg.Client({
-//   host:process.env.databaseHost,
-//   password: process.env.databasePassword,
-//   database: "vsa",
-//   port: 4000,
-//   user: "postgres",
-// });
+const db = new pg.Client({
+  host:process.env.databaseHost,
+  password: process.env.databasePassword,
+  database: "vsa",
+  port: 4000,
+  user: "postgres",
+});
 //Database_url mei internal server ka link dala jaata hai
 // const db = new pg.Client({
 //   host: process.env.databaseHost,       // Fetch from env
@@ -69,13 +69,13 @@ const Secret_key = process.env.jwtSecretKey;
 //   database: process.env.DATABASE_NAME || "vsa",  // Fetch from env with a fallback
 //   port: process.env.DATABASE_PORT || 4000 // Fetch from env with default 5432
 // });
-const db = new pg.Client({
-  host: process.env.databaseHost,       // Fetch from env
-  user: process.env.DATABASE_USER,       // Fetch from env
-  password: process.env.databasePassword, // Fetch from env
-  database: process.env.DATABASE_NAME || "vsa_hyuv",  // Fetch from env with a fallback
-  port: process.env.DATABASE_PORT || 5432 // Fetch from env with default 5432
-});
+// const db = new pg.Client({
+//   host: process.env.databaseHost,       // Fetch from env
+//   user: process.env.DATABASE_USER,       // Fetch from env
+//   password: process.env.databasePassword, // Fetch from env
+//   database: process.env.DATABASE_NAME || "vsa_hyuv",  // Fetch from env with a fallback
+//   port: process.env.DATABASE_PORT || 5432 // Fetch from env with default 5432
+// });
 
 // Connect to the database
 // connection.connect((err) => {
@@ -1395,22 +1395,51 @@ app.get("/updateAchievements",authenticateUser,(req,res)=>{
       res.redirect("/newLogin");
       console.log("Update achievements page not opened user not logged in");
     }
-  });
-   
+  });   
+  
 app.post("/NewsLetter_Sending", async (req, res) => {
-      const userDetails = await db.query("SELECT * FROM users WHERE email=$1", [req.user.Email]);
-      const userCheck = userDetails.rows[0];
-      const firstName = userCheck.full_name.split(" ")[0];
-      const { Title, Description } = req.body;
-    
-      try {
-        await admin.adminSendingNewsLetter(req, res, Title, Description, firstName);
-        res.redirect('/adminDashboard?success=true'); // Redirect with success parameter
-      } catch (error) {
-        console.error("Failed to send newsletter:", error);
-        res.redirect('/adminDashboard?success=false'); // Redirect with failure parameter
+  const { Title, Description } = req.body;
+
+  // Set up the email transporter
+  const transporter = nodemailer.createTransport({
+      service: 'gmail', // You can use other services like Outlook, SMTP, etc.
+      auth: {
+          user: process.env.nodeMailerEmailValidatorEmail, // Your email
+          pass: process.env.nodeMailerEmailValidatorPass// Your email password or app password
       }
+  });
+
+  // Function to send email to each subscriber
+  const sendNewsletter = async (email) => {
+      const mailOptions = {
+          from: process.env.nodeMailerEmailValidatorEmail,
+          to: email,
+          subject: Title,
+          text: Description
+      };
+
+      return transporter.sendMail(mailOptions);
+  };
+
+  try {
+      // Retrieve all newsletter subscribers from the database
+      const result = await db.query("SELECT * FROM news_letter_subscriber");
+      const subscribers = result.rows;
+
+      // Send the email to each subscriber and wait for all to finish
+      for (const subscriber of subscribers) {
+          await sendNewsletter(subscriber.email); // Send email and await each response
+          console.log(`Email sent to: ${subscriber.email}`);
+      }
+
+      // Redirect to dashboard with success parameter
+      res.redirect('/adminDashboard?success=true');
+  } catch (error) {
+      console.error("Failed to send newsletter:", error);
+      res.redirect('/adminDashboard?success=false'); // Redirect with failure parameter
+  }
 });
+
 // yaha pe images user se lena ka hai middleware.
 const storage = multer.diskStorage({
     destination: path.join(_dirname, 'public/images'), // Store files in public/images
