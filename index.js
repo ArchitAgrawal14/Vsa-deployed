@@ -61,6 +61,7 @@ const Secret_key = process.env.jwtSecretKey;
 //   port: 4000,
 //   user: "postgres",
 // });
+
 //Database_url mei internal server ka link dala jaata hai
 // const db = new pg.Client({
 //   host: process.env.databaseHost,       // Fetch from env
@@ -1433,10 +1434,10 @@ app.post("/NewsLetter_Sending", async (req, res) => {
       }
 
       // Redirect to dashboard with success parameter
-      res.redirect('/adminDashboard?success=true');
+      res.redirect('/adminDashboard?newsletterStatus=success');
   } catch (error) {
       console.error("Failed to send newsletter:", error);
-      res.redirect('/adminDashboard?success=false'); // Redirect with failure parameter
+      res.redirect('/adminDashboard?newsletterStatus=failure'); // Redirect with failure parameter
   }
 });
 
