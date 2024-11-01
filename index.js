@@ -150,8 +150,9 @@ app.post("/SignUp", async (req, res) => {
           }
         });
   
-        const verificationLink = `http://localhost:3000/verify-email?token=${verificationToken}`;
-  
+        // const verificationLink = `http://localhost:3000/verify-email?token=${verificationToken}`;
+        const verificationLink = `https://vsa-deployed.onrender.com/verify-email?token=${verificationToken}`;
+
         const mailOptions = {
           from: process.env.nodeMailerEmailValidatorEmail,
           to: SignUp_Email,
