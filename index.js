@@ -178,40 +178,48 @@ app.post("/SignUp", async (req, res) => {
       });
     }
 });
-  
-// This below is the end for when the user
-//clicks on the link sent to him in mail for email verification
-  // app.get('/verify-email', async (req, res) => {
-  //   const { token, email } = req.query;
-  
-  //   try {
-  //     const result = await db.query(
-  //       'SELECT * FROM users WHERE email=$1 AND verification_token=$2',
-  //       [email, token]
-  //     );
-  
-  //     if (result.rows.length > 0) {
-  //       // Update user as verified
-  //       await db.query(
-  //         'UPDATE users SET is_verified=true WHERE email=$1',
-  //         [email]
-  //       );
-  
-  //       res.render('login.ejs', {
-  //         message: 'Your email has been verified! You can now log in.',
-  //       });
-  //     } else {
-  //       res.render('login.ejs', {
-  //         errorMessage: 'Invalid or expired token.',
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error('Error during email verification:', error);
-  //     res.render('login.ejs', {
-  //       errorMessage: 'An error occurred during email verification, please try again.',
-  //     });
-  //   }
-  // });
+
+//this below is after user clicks on the link sent to their email
+app.get("/verify-email", async (req, res) => {
+  const { token } = req.query;
+
+  try {
+      const result = await db.query(
+          `SELECT * FROM users WHERE verification_token=$1 AND is_verified=false`,
+          [token]
+      );
+
+      if (result.rows.length > 0) {
+          await db.query(
+              `UPDATE users SET is_verified=true WHERE verification_token=$1`,
+              [token]
+          );
+
+          // Render the success page
+          res.render("verificationSuccesspage.ejs", {
+              message: "Your email has been verified successfully! You can now log in.",
+              redirectTo: "/newLogin",
+              delay: 2000 // Delay in milliseconds before redirecting
+          });
+      } else {
+          // Render the failure page
+          res.render("verificationFailure.ejs", {
+              message: "Email verification failed. Please try again.",
+              redirectTo: "/newLogin",
+              delay: 2500 // Delay in milliseconds before redirecting
+          });
+      }
+  } catch (error) {
+      console.error("Error during email verification:", error);
+      // Render the failure page
+      res.render("verificationFailure", {
+          message: "Email verification failed. Please try again.",
+          redirectTo: "/newLogin",
+          delay: 2500 // Delay in milliseconds before redirecting
+      });
+  }
+});
+
 app.post("/Login", async (req, res) => {
     const { Email, Password } = req.body;
     try {
@@ -284,6 +292,7 @@ app.post("/Login", async (req, res) => {
       });
     }
 });
+
 app.get("/newLogin", (req, res) => {
   res.render("login.ejs");
   console.log("Successfully rendered login page");
@@ -1094,7 +1103,7 @@ app.post("/Change_password", authenticateUser, async (req, res) => {
     }
 });
   
-  //Header part endpoints ends here
+//Header part endpoints ends here
 // For Mobile Number
 app.post("/EnterMobileNumber", authenticateUser, async (req, res) => {
     const { mobile_number } = req.body;
