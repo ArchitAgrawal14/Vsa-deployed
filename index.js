@@ -54,13 +54,13 @@ app.use((req, res, next) => {
 
 const Secret_key = process.env.jwtSecretKey;
 
-// const db = new pg.Client({
-//   host:process.env.databaseHost,
-//   password: process.env.databasePassword,
-//   database: "vsa",
-//   port: 4000,
-//   user: "postgres",
-// });
+const db = new pg.Client({
+  host:process.env.databaseHost,
+  password: process.env.databasePassword,
+  database: "vsa",
+  port: 4000,
+  user: "postgres",
+});
 
 //Database_url mei internal server ka link dala jaata hai
 // const db = new pg.Client({
@@ -70,13 +70,13 @@ const Secret_key = process.env.jwtSecretKey;
 //   database: process.env.DATABASE_NAME || "vsa",  // Fetch from env with a fallback
 //   port: process.env.DATABASE_PORT || 4000 // Fetch from env with default 5432
 // });
-const db = new pg.Client({
-  host: process.env.databaseHost,       // Fetch from env
-  user: process.env.DATABASE_USER,       // Fetch from env
-  password: process.env.databasePassword, // Fetch from env
-  database: process.env.DATABASE_NAME || "vsa_hyuv",  // Fetch from env with a fallback
-  port: process.env.DATABASE_PORT || 5432 // Fetch from env with default 5432
-});
+// const db = new pg.Client({
+//   host: process.env.databaseHost,       // Fetch from env
+//   user: process.env.DATABASE_USER,       // Fetch from env
+//   password: process.env.databasePassword, // Fetch from env
+//   database: process.env.DATABASE_NAME || "vsa_hyuv",  // Fetch from env with a fallback
+//   port: process.env.DATABASE_PORT || 5432 // Fetch from env with default 5432
+// });
 
 // Connect to the database
 // connection.connect((err) => {
@@ -150,8 +150,8 @@ app.post("/SignUp", async (req, res) => {
           }
         });
   
-        // const verificationLink = `http://localhost:3000/verify-email?token=${verificationToken}`;
-        const verificationLink = `https://vsa-deployed.onrender.com/verify-email?token=${verificationToken}`;
+        const verificationLink = `http://localhost:3000/verify-email?token=${verificationToken}`;
+        // const verificationLink = `https://vsa-deployed.onrender.com/verify-email?token=${verificationToken}`;
 
         const mailOptions = {
           from: process.env.nodeMailerEmailValidatorEmail,
@@ -1323,6 +1323,15 @@ app.get("/StudentsAchievements", authenticateUser, async (req, res) => {
     
 });
 
+app.get("/meetOurCoach",authenticateUser,async(req,res)=>{
+if(req.user){
+  res.render("meetOurCoach.ejs");
+
+}else{
+  res.render("meetOurCoach.ejs");
+}
+});
+
 app.post("/studentAchievementDetails", authenticateUser, async (req, res) => {
   if (req.user) {
       const studentId = req.body.studentId; 
@@ -1363,42 +1372,77 @@ app.use("/FAQ", authenticateUser,async (req, res) => {
   }
 });
 
-//Admin panel funtionnality starts here
+
 //yaha pe newsletter ka hai
+// app.post("/subscribedToNewsLetter", authenticateUser, async (req, res) => {
+//     if (req.user) {
+//       try {
+//         const {Email} = req.body;
+//         console.log(Email);
+//         if (Email) {
+//           const checkDuplicateEmail_forNewsLetter = await db.query(
+//             "SELECT * FROM news_letter_subscriber WHERE email=$1",
+//             [Email]
+//           );
+//           if (checkDuplicateEmail_forNewsLetter.rows.length>0) {
+//             // res.render("/");
+//             res.send("Email already exist");
+//             console.log("Email already exist");
+//           } else {
+//             await db.query(
+//               "INSERT INTO news_letter_subscriber(email) VALUES($1)",
+//               [Email]
+//             );
+//             res.redirect("/");
+//             console.log("Email successfully added for news letter");
+//            }
+//         }
+//       } catch (error) {
+//         res.redirect("/");
+//         console.log("Failed to get email subscribe news letter route", error);
+//       }
+//     } else {
+//       res.redirect("/newLogin");
+//       console.log(
+//         "User not logged in and trying to subscribe to newsLetter that is why redirected to login page"
+//       );
+//     }
+// });
+
 app.post("/subscribedToNewsLetter", authenticateUser, async (req, res) => {
-    if (req.user) {
-      try {
-        const {Email} = req.body;
-        console.log(Email);
-        if (Email) {
-          const checkDuplicateEmail_forNewsLetter = await db.query(
-            "SELECT * FROM news_letter_subscriber WHERE email=$1",
+  if (req.user) {
+    try {
+      const { Email } = req.body;
+      // console.log(Email);
+      if (Email) {
+        const checkDuplicateEmail_forNewsLetter = await db.query(
+          "SELECT * FROM news_letter_subscriber WHERE email=$1",
+          [Email]
+        );
+        if (checkDuplicateEmail_forNewsLetter.rows.length > 0) {
+          res.send("Email already exists");
+          console.log("Email already exists");
+        } else {
+          await db.query(
+            "INSERT INTO news_letter_subscriber(email) VALUES($1)",
             [Email]
           );
-          if (checkDuplicateEmail_forNewsLetter.rows.length>0) {
-            // res.render("/");
-            res.send("Email already exist");
-            console.log("Email already exist");
-          } else {
-            await db.query(
-              "INSERT INTO news_letter_subscriber(email) VALUES($1)",
-              [Email]
-            );
-            res.redirect("/");
-            console.log("Email successfully added for news letter");
-           }
+          res.send("Email successfully added for newsletter");
+          console.log("Email successfully added for newsletter");
         }
-      } catch (error) {
-        res.redirect("/");
-        console.log("Failed to get email subscribe news letter route", error);
       }
-    } else {
-      res.redirect("/newLogin");
-      console.log(
-        "User not logged in and trying to subscribe to newsLetter that is why redirected to login page"
-      );
+    } catch (error) {
+      res.status(500).send("An error occurred");
+      console.log("Failed to subscribe to newsletter route", error);
     }
+  } else {
+    // Send a JSON response for redirection when user is not logged in
+    res.status(401).json({ redirectTo: "/newLogin" });
+    console.log("User not logged in, redirecting to login page");
+  }
 });
+
+//Admin panel funtionnality starts here
 // Route for sending newsletters
 app.get("/Create_newsLetter", authenticateUser, async (req,res) => {
     admin.createNewsLetterAdmin(req,res);

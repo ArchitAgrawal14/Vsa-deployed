@@ -176,19 +176,20 @@ Close
 </div>
 <div id="termsOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
            <!-- Popup modal  for Terms and condition policy ends here--> 
-        <div class="col-md-5 offset-md-1 mb-3">
-          <form action="/subscribedToNewsLetter" method="post" class="text-primary">
+      <!-- Below is for newsletter -->
+      <div class="col-md-5 offset-md-1 mb-3">
+        <form id="newsletterForm" action="/subscribedToNewsLetter" method="post" class="text-primary">
             <h5>Subscribe to our newsletter</h5>
             <p>Monthly digest of what's new and exciting from us.</p>
             <div class="d-flex flex-column flex-sm-row w-100 gap-2">
-              <label for="newsletter1" class="visually-hidden">Email address</label>
-              <input id="newsletter1" type="text" name="Email" class="form-control" placeholder="Email address">
-              <button class="btn btn-primary" type="submit">Subscribe</button>
+                <label for="newsletter1" class="visually-hidden">Email address</label>
+                <input id="newsletter1" type="email" name="Email" class="form-control" placeholder="Email address" required>
+                <button class="btn btn-primary" type="submit">Subscribe</button>
             </div>
-          </form>
-        </div>
-      </div>
-      
+            <p id="successMessage" class="text-success mt-2" style="display: none;">Successfully subscribed!</p>
+            <p id="errorMessage" class="text-danger mt-2" style="display: none;">This email is already subscribed.</p>
+        </form>
+    </div>
     
       <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
         <p class="text-primary">© 2024 Company, Inc. All rights reserved.</p>
@@ -205,8 +206,53 @@ Close
     </footer>  
 </div>
 </div>
+<!-- Below is for newsletter -->
+  <script>
+    document.getElementById('newsletterForm').addEventListener('submit', async function(event) {
+    event.preventDefault(); // Prevents default form submission
+  
+    const emailInput = document.getElementById('newsletter1').value;
+    const successMessage = document.getElementById('successMessage');
+    const errorMessage = document.getElementById('errorMessage');
+  
+    successMessage.style.display = 'none';
+    errorMessage.style.display = 'none';
+  
+    try {
+      const response = await fetch('/subscribedToNewsLetter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ Email: emailInput })
+      });
+  
+      if (response.status === 401) {
+        // Redirect the user if they are not logged in
+        const result = await response.json();
+        window.location.href = result.redirectTo;
+      } else if (response.ok) {
+        const result = await response.text();
+  
+        if (result.includes("Email already exists")) {
+          errorMessage.style.display = 'block';
+          errorMessage.innerText = "This email is already subscribed.";
+        } else {
+          successMessage.style.display = 'block';
+          successMessage.innerText = "Successfully subscribed!";
+          document.getElementById('newsletterForm').reset();
+        }
+      } else {
+        errorMessage.style.display = 'block';
+        errorMessage.innerText = "An error occurred. Please try again.";
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      errorMessage.style.display = 'block';
+      errorMessage.innerText = "Network error. Please try again.";
+    }
+  });
+</script>  
+  <!-- for return policy -->
 <script>
-  //for return policy
   document.getElementById('returnPolicyLink').addEventListener('click', function(event) {
 event.preventDefault(); // Prevent the default link behavior
 
