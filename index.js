@@ -6,7 +6,7 @@ import cors from "cors";
 import multer from "multer";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
-import pg from "pg";
+import pg from 'pg'; // Import only Pool from pg
 import jwt from "jsonwebtoken";
 import path from "path";
 import cookieParser from "cookie-parser";
@@ -23,6 +23,7 @@ dotenv.config();
 const app = express();
 const _dirname = dirname(fileURLToPath(import.meta.url));
 const port =process.env.SERVER_PORT;
+const {Pool} = pg;
 // const port=3000;
 // iss niche wala ko use kar sakte hai agar hum google ka oauth2 use karna ho toh.
 const CLIENT_ID =
@@ -54,14 +55,6 @@ app.use((req, res, next) => {
 
 const Secret_key = process.env.jwtSecretKey;
 
-// const db = new pg.Client({
-//   host:process.env.databaseHost,
-//   password: process.env.databasePassword,
-//   database: "vsa",
-//   port: 4000,
-//   user: "postgres",
-// });
-
 //Database_url mei internal server ka link dala jaata hai
 // const db = new pg.Client({
 //   host: process.env.databaseHost,       // Fetch from env
@@ -70,13 +63,13 @@ const Secret_key = process.env.jwtSecretKey;
 //   database: process.env.DATABASE_NAME || "vsa",  // Fetch from env with a fallback
 //   port: process.env.DATABASE_PORT || 4000 // Fetch from env with default 5432
 // });
-const db = new pg.Client({
-  host: process.env.databaseHost,       // Fetch from env
-  user: process.env.DATABASE_USER,       // Fetch from env
-  password: process.env.databasePassword, // Fetch from env
-  database: process.env.DATABASE_NAME || "vsa_hyuv",  // Fetch from env with a fallback
-  port: process.env.DATABASE_PORT || 5432 // Fetch from env with default 5432
-});
+// const db = new pg.Client({
+//   host: process.env.databaseHost,       // Fetch from env
+//   user: process.env.DATABASE_USER,       // Fetch from env
+//   password: process.env.databasePassword, // Fetch from env
+//   database: process.env.DATABASE_NAME || "vsa_hyuv",  // Fetch from env with a fallback
+//   port: process.env.DATABASE_PORT || 5432 // Fetch from env with default 5432
+// });
 
 // Connect to the database
 // connection.connect((err) => {
@@ -90,7 +83,13 @@ const db = new pg.Client({
 // export default connection;
 
 // below is the middle ware to prevent caching of authenticated pages iske wajah se back button dabane per re logged in page pe nhi jayega
-
+const db = new Pool({
+  host: process.env.databaseHost,
+  password: process.env.databasePassword,
+  database: "vsa",
+  port: 4000,
+  user: "postgres",
+});
 app.use((req, res, next) => {
   res.set("Cache-Control", "no-store");
   next();
@@ -371,55 +370,6 @@ app.get("/Shop", authenticateUser, async (req, res) => {
     }
 });
 
-app.post("/payment_success", async (req, res) => {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
-      req.body;
-  
-    // Verification of payment signature
-    const hmac = crypto.createHmac("sha256", "YOUR_RAZORPAY_SECRET");
-    hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
-    const generated_signature = hmac.digest("hex");
-  
-    if (generated_signature === razorpay_signature) {
-      // Payment verified
-      try {
-        // Find the order with the given Razorpay order ID and mark it as paid
-        const order = await db.query("SELECT * FROM orders WHERE order_id = $1", [
-          razorpay_order_id,
-        ]);
-  
-        if (order.rows.length === 0) {
-          return res
-            .status(404)
-            .json({ success: false, error: "Order not found" });
-        }
-  
-        const orderDetails = order.rows[0];
-        const { item_id, item_type, quantity } = orderDetails;
-  
-        // Update stock quantity
-        await db.query(
-          `UPDATE stock_${item_type} SET quantity = quantity - $1 WHERE item_id = $2`,
-          [quantity, item_id]
-        );
-  
-        // Update order status to 'completed'
-        await db.query(
-          "UPDATE orders SET status = 'completed', payment_id = $1 WHERE order_id = $2",
-          [razorpay_payment_id, razorpay_order_id]
-        );
-  
-        res.json({ success: true });
-      } catch (error) {
-        console.error("Error processing payment:", error);
-        res.status(500).json({ success: false, error: "Database update failed" });
-      }
-    } else {
-      res
-        .status(400)
-        .json({ success: false, error: "Signature verification failed" });
-    }
-});
 // yaha pe buy karne ke liye hai.
 // app.get("/Buy_Now", authenticateUser, async (req, res) => {
 //     if (req.user) {
@@ -438,40 +388,41 @@ app.post("/payment_success", async (req, res) => {
 // });
   
   // Endpoint to handle payment success  
+  
+  // Razorpay instance setup  
 app.post("/Buy_Now", authenticateUser, async (req, res) => {
     const { item_id, item_type, quantity } = req.body;
   
     if (!req.user) {
       console.log("User not logged in, unable to process purchase.");
-      return res
-        .status(401)
-        .render("login.ejs", {
-          message: "You must be logged in to purchase items.",
-        });
+      return res.status(401).render("login.ejs", {
+        message: "You must be logged in to purchase items.",
+      });
     }
   
+    const client = await db.connect(); // Start a database client connection
+  
     try {
+      await client.query("BEGIN"); // Start a transaction block
+  
       // Check user details
-      const user_check = await db.query("SELECT * FROM users WHERE email = $1", [
+      const user_check = await client.query("SELECT * FROM users WHERE email = $1", [
         req.user.Email,
       ]);
-      const user_check_address = await db.query(
-        "SELECT * FROM users_address WHERE email = $1",
-        [req.user.Email]
-      );
+      const user_check_address = await client.query("SELECT * FROM users_address WHERE email = $1", [
+        req.user.Email,
+      ]);
   
       if (user_check.rows.length === 0 || user_check_address.rows.length === 0) {
         console.log("User or address details not found.");
-        return res
-          .status(404)
-          .json({ error: "User or address details not found." });
+        return res.status(404).json({ error: "User or address details not found." });
       }
   
       const { name: full_name, email, mobile_number } = user_check.rows[0];
       const { address, zip_code, city, state } = user_check_address.rows[0];
   
-      // Check item stock
-      const itemCheck = await db.query(
+      // Check item stock with version
+      const itemCheck = await client.query(
         `SELECT * FROM stock_${item_type} WHERE item_id = $1`,
         [item_id]
       );
@@ -482,14 +433,33 @@ app.post("/Buy_Now", authenticateUser, async (req, res) => {
       }
   
       const purchase = itemCheck.rows[0];
-      const newQuantity = Math.min(parseInt(quantity), purchase.quantity);
+      const currentVersion = purchase.version; // Current version of the stock row
+      const stockQuantity = purchase.quantity;
+      const newQuantity = Math.min(parseInt(quantity), stockQuantity);
   
-      if (quantity > purchase.quantity) {
-        console.log("Number of items exceeds stock limit.");
+      if (newQuantity > stockQuantity) {
+        console.log(`Insufficient stock for item_id ${item_id}, requested: ${newQuantity}, available: ${stockQuantity}`);
+        return res.status(400).json({ error: "Insufficient stock" });
+      }
+  
+      // Attempt to update stock using optimistic locking
+      const updateResult = await client.query(
+        `UPDATE stock_${item_type}
+        SET quantity = quantity - $1, version = version + 1
+        WHERE item_id = $2 AND version = $3`,
+        [newQuantity, item_id, currentVersion]
+      );
+  
+      // If no rows were updated, it means the version was outdated
+      if (updateResult.rowCount === 0) {
+        console.log("Stock has been updated by another transaction.");
+        return res.status(409).json({
+          error: "The stock has been updated by another transaction. Please try again.",
+        });
       }
   
       // Insert into orders with a pending status
-      await db.query(
+      await client.query(
         "INSERT INTO orders (name, email, mobile_number, address, zip_code, city, state, item_id, item_type, price, quantity, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'pending')",
         [
           full_name,
@@ -513,8 +483,9 @@ app.post("/Buy_Now", authenticateUser, async (req, res) => {
         receipt: `receipt_order_${item_id}_${Date.now()}`,
       };
   
-      const order = await razorpay.orders.create(orderOptions);
+      const order = await razorpayInstance.orders.create(orderOptions);
   
+      await client.query("COMMIT"); // Commit the transaction if all queries succeed
   
       res.status(200).json({
         id: order.id,
@@ -525,19 +496,138 @@ app.post("/Buy_Now", authenticateUser, async (req, res) => {
         mobile_number,
         address,
       });
-      
+  
     } catch (error) {
+      await client.query("ROLLBACK"); // Rollback the transaction in case of error
       console.error("Error processing purchase:", error);
-      res
-        .status(500)
-        .json({ error: "An error occurred while processing your purchase." });
+      res.status(500).json({ error: "An error occurred while processing your purchase." });
+    } finally {
+      client.release(); // Release the client back to the pool
     }
 });
+  
+app.post("/payment_success", async (req, res) => {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+  
+    // Verification of payment signature
+    const razorpaySecret = process.env.RAZORPAY_SECRET; // Store secret securely
+    const hmac = crypto.createHmac("sha256", razorpaySecret);
+    hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
+    const generated_signature = hmac.digest("hex");
+  
+    if (generated_signature === razorpay_signature) {
+      // Payment verified
+      const client = await db.connect(); // Start a database client connection
+  
+      try {
+        await client.query("BEGIN"); // Start a transaction block
+  
+        // Find the order with the given Razorpay order ID and mark it as paid
+        const order = await client.query("SELECT * FROM orders WHERE order_id = $1", [
+          razorpay_order_id,
+        ]);
+  
+        if (order.rows.length === 0) {
+          return res.status(404).json({ success: false, error: "Order not found" });
+        }
+  
+        const orderDetails = order.rows[0];
+        const { item_id, item_type, quantity } = orderDetails;
+  
+        // Use optimistic locking during the stock update
+        const itemCheck = await client.query(
+          `SELECT * FROM stock_${item_type} WHERE item_id = $1`,
+          [item_id]
+        );
+  
+        const currentVersion = itemCheck.rows[0].version;
+  
+        const updateStockResult = await client.query(
+          `UPDATE stock_${item_type} SET quantity = quantity - $1, version = version + 1 WHERE item_id = $2 AND version = $3`,
+          [quantity, item_id, currentVersion]
+        );
+  
+        // If no rows were updated, it means the version was outdated
+        if (updateStockResult.rowCount === 0) {
+          console.log("Stock has been updated by another transaction after payment verification.");
+          return res.status(409).json({
+            success: false,
+            error: "The stock has been updated by another transaction. Please try again.",
+          });
+        }
+  
+        // Update order status to 'completed'
+        await client.query(
+          "UPDATE orders SET status = 'completed', payment_id = $1 WHERE order_id = $2",
+          [razorpay_payment_id, razorpay_order_id]
+        );
+  
+        await client.query("COMMIT"); // Commit the transaction if all queries succeed
+  
+        res.json({ success: true });
+  
+      } catch (error) {
+        await client.query("ROLLBACK"); // Rollback the transaction in case of error
+        console.error("Error processing payment:", error);
+        res.status(500).json({ success: false, error: "Database update failed" });
+      } finally {
+        client.release(); // Release the client back to the pool
+      }
+    } else {
+      res.status(400).json({ success: false, error: "Signature verification failed" });
+    }
+});  
 
-app.get("/CheckOut",authenticateUser,(req,res)=>{
-  res.render("checkOutPage.ejs");
+app.post("/CheckOut", authenticateUser, async (req, res) => {
+  if(!req.user){
+    return res.status(401).json({ success: false, message: "User not logged in." });
+  }
+  const { item_id, item_type, quantity } = req.body;
+  console.log(item_id, item_type, quantity);
+  if (!item_id || !item_type || !quantity) {
+      return res.status(400).json({ success: false, message: "Missing required fields." });
+  }
+  
+  // Query the database for the item details and check available stock
+  const data = await db.query(`SELECT * FROM stock_${item_type} WHERE item_id=$1 AND quantity >= $2`, [item_id, quantity]);
+  const items_data = data.rows;
+  
+  if (!items_data.length) {
+      return res.status(404).json({ success: false, message: "Insufficient stock" });
+  }
+  
+  res.json({ success: true, items_data: items_data });
 });
 
+app.get("/checkOutPage",authenticateUser, async(req,res)=>{
+  try {
+    if(req.user){
+      const firstName=req.user.fullName.split(" ")[0];
+      const {item_id,item_type,quantity}=req.query;
+      console.log("Fetching product with ID:", item_id, "of type:", item_type, "Quantity: ",quantity);
+      
+    if (!item_id || !item_type) {
+      console.error("Missing item_id or item_type in the request for checkout page");
+      return res.status(400).send("Bad Request: Missing item ID or type.");
+    }
+    
+    // Fetch product details from the database
+    const data = await db.query(`SELECT * FROM stock_${item_type} WHERE item_id=$1 AND quantity>=$2`, [item_id, quantity]);
+    const result = data.rows;
+    const UserSelectedItems=quantity;
+    if (!result.length) {
+      return res.status(404).send("Item not found");
+    }
+    res.render("checkOutPage.ejs", { items_data: result, Login: firstName ,
+      UserSelectedItems:UserSelectedItems
+    });
+
+    }
+  } catch (error) {
+    res.render("login.ejs");
+    console.log("User is not logged in and is trying to buy an item");
+  }
+})
 app.get("/productDetails", authenticateUser ,async (req, res) => {
   try {
     if (req.user) {
@@ -895,7 +985,7 @@ app.post("/AddToCart", authenticateUser, async (req, res) => {
   }
 });
 
-//yaha pe join us ka hai
+//yaha pe join us ka hai with razor pay 
 app.get("/joinUs",authenticateUser,(req,res)=>{
   if(req.user){    
     res.render("joinUs.ejs");
@@ -904,7 +994,253 @@ app.get("/joinUs",authenticateUser,(req,res)=>{
   }
 });
 
+// Endpoint for payment processing on the frontend for student registration
+// app.post('/joinUsStudentRegistered', async (req, res) => {
+//   // Connect to the database
+//   await db.connect(); // Connect to the database using the pg.Client instance
+
+//   try {
+//     // Start the transaction
+//     await db.query('BEGIN');
+
+//     // Check if the user is logged in (or any necessary validation)
+//     if (req.user) {
+//       const { Student_Name, Mother_name, Father_name, mobile_number, email, feeStructure, terms } = req.body;
+
+//       // Calculate amount based on the fee structure
+//       let amount;
+//       if (feeStructure === '1_month') {
+//         amount = 2000 * 100; // Convert to paise
+//       } else if (feeStructure === '3_month') {
+//         amount = 5500 * 100;
+//       } else if (feeStructure === '6_month') {
+//         amount = 10000 * 100;
+//       } else if (feeStructure === '11_month') {
+//         amount = 16000 * 100;
+//       }
+
+//       // Razorpay order creation options
+//       const options = {
+//         amount: amount, // Amount in paise
+//         currency: 'INR',
+//         receipt: crypto.randomBytes(10).toString('hex'), // Unique receipt ID
+//         notes: {
+//           studentName: Student_Name,
+//         },
+//       };
+
+//       // Create Razorpay order
+//       const order = await razorpay.orders.create(options);
+
+//       // If Razorpay order creation is successful, save student details to PostgreSQL
+//       const insertStudentQuery = `
+//         INSERT INTO students_registration (Student_Name, Mother_name, Father_name, mobile_number, email, feeStructure, terms, razorpay_order_id, payment_status)
+//         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id;
+//       `;
+
+//       const studentValues = [
+//         Student_Name,
+//         Mother_name,
+//         Father_name,
+//         mobile_number,
+//         email,
+//         feeStructure,
+//         terms,
+//         order.id, // Store Razorpay order ID
+//         'Pending', // Payment status
+//       ];
+
+//       // Execute the insert query for student details
+//       const studentResult = await db.query(insertStudentQuery, studentValues);
+
+//       // If everything is successful, commit the transaction
+//       await db.query('COMMIT');
+
+//       // Respond with Razorpay order details
+//       res.json({
+//         orderId: order.id,
+//         amount: order.amount,
+//         currency: order.currency,
+//       });
+//     }
+//   } catch (error) {
+//     // If an error occurs, rollback the transaction
+//     await db.query('ROLLBACK');
+//     console.error('Transaction error:', error);
+//     res.status(500).send({ error: 'Something went wrong, please try again' });
+//   } finally {
+//     // Release the client back to the pool (not necessary in this case since we are using a single client)
+//     db.end(); // You should explicitly close the connection when using `pg.Client` in this case
+//   }
+// });
+
+// // Endpoint to verify payment after successful payment on the frontend for student registration
+// app.post('/verify-payment', async (req, res) => {
+//   const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+//   // Verify the payment signature
+//   const body = razorpay_order_id + "|" + razorpay_payment_id;
+//   const expectedSignature = crypto.createHmac('sha256', 'YOUR_RAZORPAY_SECRET')
+//                                    .update(body)
+//                                    .digest('hex');
+
+//   if (expectedSignature === razorpay_signature) {
+//     // Payment is verified, now process the payment and update the database
+//     try {
+//       // Connect to the database
+//       await db.connect();
+
+//       // Start the transaction
+//       await db.query('BEGIN');
+
+//       // Update the payment status in the database
+//       const updatePaymentStatusQuery = `
+//         UPDATE students_registration
+//         SET payment_status = $1, razorpay_payment_id = $2
+//         WHERE razorpay_order_id = $3 RETURNING id;
+//       `;
+//       const updateValues = ['Success', razorpay_payment_id, razorpay_order_id];
+
+//       // Execute the update query
+//       const result = await db.query(updatePaymentStatusQuery, updateValues);
+
+//       if (result.rowCount > 0) {
+//         // If the student record was found and updated, commit the transaction
+//         await db.query('COMMIT');
+//         res.send('Payment verified and processed');
+//       } else {
+//         // If no matching record is found
+//         await db.query('ROLLBACK');
+//         res.status(400).send('Order not found');
+//       }
+//     } catch (error) {
+//       // Rollback the transaction if an error occurs
+//       await db.query('ROLLBACK');
+//       console.error('Payment verification failed:', error);
+//       res.status(500).send('Payment verification failed');
+//     } finally {
+//       // Close the database connection
+//       db.end();
+//     }
+//   } else {
+//     res.status(400).send('Payment verification failed');
+//   }
+// });
+
 //yaha pe join us ka end hai
+
+//
+app.post('/joinUsStudentRegistered', authenticateUser,async (req, res) => {
+  try {
+    await db.connect(); // Connect to the database
+    await db.query('BEGIN'); // Start the transaction
+
+    if (req.user) {
+      const { Student_Name, Mother_name, Father_name, mobile_number, email, feeStructure, terms } = req.body;
+
+      // Calculate amount based on the fee structure
+      let amount;
+      if (feeStructure === '1_month') {
+        amount = 2000 * 100; // Convert to paise
+      } else if (feeStructure === '3_month') {
+        amount = 5500 * 100;
+      } else if (feeStructure === '6_month') {
+        amount = 10000 * 100;
+      } else if (feeStructure === '11_month') {
+        amount = 16000 * 100;
+      }
+
+      // Razorpay order creation options
+      const options = {
+        amount: amount, // Amount in paise
+        currency: 'INR',
+        receipt: crypto.randomBytes(10).toString('hex'), // Unique receipt ID
+        notes: {
+          studentName: Student_Name,
+        },
+      };
+
+      // Create Razorpay order
+      const order = await razorpay.orders.create(options);
+
+      // If Razorpay order creation is successful, save student details to PostgreSQL
+      const insertStudentQuery = `
+        INSERT INTO students_registration (Student_Name, Mother_name, Father_name, mobile_number, email, feeStructure, terms, razorpay_order_id, payment_status)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id;
+      `;
+
+      const studentValues = [
+        Student_Name,
+        Mother_name,
+        Father_name,
+        mobile_number,
+        email,
+        feeStructure,
+        terms,
+        order.id, // Store Razorpay order ID
+        'Pending', // Payment status
+      ];
+
+      const studentResult = await db.query(insertStudentQuery, studentValues);
+
+      await db.query('COMMIT'); // Commit the transaction
+
+      res.json({
+        orderId: order.id,
+        amount: order.amount,
+        currency: order.currency,
+      });
+    }
+  } catch (error) {
+    await db.query('ROLLBACK'); // Rollback the transaction in case of error
+    console.error('Transaction error:', error);
+    res.status(500).send({ error: 'Something went wrong, please try again' });
+  } finally {
+    db.end(); // Close the connection after request handling
+  }
+});
+
+app.post('/verify-payment',authenticateUser, async (req, res) => {
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
+    const expectedSignature = crypto.createHmac('sha256', 'YOUR_RAZORPAY_SECRET')
+                                     .update(body)
+                                     .digest('hex');
+
+    if (expectedSignature === razorpay_signature) {
+      await db.connect(); // Connect to the database for payment verification
+      await db.query('BEGIN'); // Start the transaction
+
+      const updatePaymentStatusQuery = `
+        UPDATE students_registration
+        SET payment_status = $1, razorpay_payment_id = $2
+        WHERE razorpay_order_id = $3 RETURNING id;
+      `;
+      const updateValues = ['Success', razorpay_payment_id, razorpay_order_id];
+
+      const result = await db.query(updatePaymentStatusQuery, updateValues);
+
+      if (result.rowCount > 0) {
+        await db.query('COMMIT');
+        res.send('Payment verified and processed');
+      } else {
+        await db.query('ROLLBACK');
+        res.status(400).send('Order not found');
+      }
+    } else {
+      res.status(400).send('Payment verification failed');
+    }
+  } catch (error) {
+    await db.query('ROLLBACK'); // Rollback the transaction in case of error
+    console.error('Payment verification failed:', error);
+    res.status(500).send('Payment verification failed');
+  } finally {
+    db.end(); // Close the connection after request handling
+  }
+});
+
 app.get("/Cart", authenticateUser, async (req, res) => {
     try {
         // Initialize variables for rendering
