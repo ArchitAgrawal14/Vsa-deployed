@@ -1,39 +1,40 @@
-import express, { query } from "express";
+import express from "express";
 import bodyParser from "body-parser";
 import * as admin from "./admin.js";
 import Razorpay from "razorpay";
-import cors from "cors";
+import { v4 as uuidv4 } from 'uuid';
 import multer from "multer";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
 import pg from 'pg'; // Import only Pool from pg
 import jwt from "jsonwebtoken";
 import path from "path";
+import { Strategy } from "passport-local";
+import GoogleStrategy from "passport-google-oauth2"
 import cookieParser from "cookie-parser";
 import bcrypt from "bcryptjs";
 import axios from "axios";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import {  auth, OAuth2Client } from "google-auth-library";
 import dotenv from 'dotenv';
 import passport from 'passport';
-import  './googleauth.js'; 
+
 dotenv.config();
+
 // import mysql from 'mysql2';
+
 const app = express();
 const _dirname = dirname(fileURLToPath(import.meta.url));
 const port =process.env.SERVER_PORT;
 const {Pool} = pg;
+
 // const port=3000;
-// iss niche wala ko use kar sakte hai agar hum google ka oauth2 use karna ho toh.
-const CLIENT_ID =
-  process.env.googleClientId;
-  const Client = new OAuth2Client(CLIENT_ID);
 
 // const razorpay = new Razorpay({
 //   key_id: process.env.razorPayKeyId, // Replace with your Razorpay key id
 //   key_secret: process.env.razorPayKeySecret, // Replace with your Razorpay key secret
 // });
+
 app.use(passport.initialize());
 app.set("view engine", "ejs");
 app.set("views", _dirname + "/views"); // Set the path to the views directory
@@ -41,17 +42,18 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(_dirname + "/public"));
+
 // app.use(function(req,res,next){
 //   res.setHeader('Access-Control-Allow-Origin','*');
 //   res.setHeader('Access-Control-Allow-Methods','GET,POST,PUT,DELETE');
 //   res.setHeader('Access-Control-Allow-Headers','Content-Type');
 //   res.setHeader('Access-Control-Allow-Credentials','true');
 // })
-app.use((req, res, next) => {
-  res.removeHeader('Cross-Origin-Opener-Policy');
-  res.removeHeader('Cross-Origin-Embedder-Policy');
-  next();
-});
+// app.use((req, res, next) => {
+//   res.removeHeader('Cross-Origin-Opener-Policy');
+//   res.removeHeader('Cross-Origin-Embedder-Policy');
+//   next();
+// });
 
 const Secret_key = process.env.jwtSecretKey;
 
@@ -63,13 +65,17 @@ const Secret_key = process.env.jwtSecretKey;
 //   database: process.env.DATABASE_NAME || "vsa",  // Fetch from env with a fallback
 //   port: process.env.DATABASE_PORT || 4000 // Fetch from env with default 5432
 // });
-// const db = new pg.Client({
-//   host: process.env.databaseHost,       // Fetch from env
-//   user: process.env.DATABASE_USER,       // Fetch from env
-//   password: process.env.databasePassword, // Fetch from env
-//   database: process.env.DATABASE_NAME || "vsa_hyuv",  // Fetch from env with a fallback
-//   port: process.env.DATABASE_PORT || 5432 // Fetch from env with default 5432
-// });
+
+const db = new Pool({
+  host: process.env.DATABASE_HOST,       // Fetch from env
+  user: process.env.DATABASE_USER,       // Fetch from env
+  password: process.env.DATABASE_PASSWORD, // Fetch from env
+  database: process.env.DATABASE_NAME || "vsa_database",  // Fetch from env with a fallback
+  port: process.env.DATABASE_PORT || 5432, // Fetch from env with default 5432
+  ssl: {
+    rejectUnauthorized: false, // Required for Render-managed PostgreSQL
+  },
+});
 
 // Connect to the database
 // connection.connect((err) => {
@@ -82,38 +88,106 @@ const Secret_key = process.env.jwtSecretKey;
 
 // export default connection;
 
-// below is the middle ware to prevent caching of authenticated pages iske wajah se back button dabane per re logged in page pe nhi jayega
-const db = new Pool({
-  host: process.env.databaseHost,
-  password: process.env.databasePassword,
-  database: "vsa",
-  port: 4000,
-  user: "postgres",
-});
+// const db = new Pool({
+//   host: localhost,
+//   password: process.env.DATABASE_PASSWORD,
+//   database: "vsa",
+//   port: 4000,
+//   user: "postgres",
+// });
+
 app.use((req, res, next) => {
   res.set("Cache-Control", "no-store");
   next();
 });
-app.use(cors(
-  {origin:"http://localhost:3000",
-      credentials:true,
-      allowHeaders:"Content-Type"
+
+passport.use("google", new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: "http://localhost:3000/auth/google/secrets",
+  userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
+  passReqToCallback: true // This allows accessing req in the verify callback
+}, async (req, accessToken, refreshToken, profile, done) => {
+  try {
+    // Check if user exists
+    let duplicateCheck = await db.query(
+      `SELECT * FROM users WHERE email=$1;`,
+      [profile.emails[0].value]
+    );
+
+    let user, token;
+    if (duplicateCheck.rows.length > 0) {
+      // Existing user
+      user = duplicateCheck.rows[0];
+    } else {
+      // New user
+      const user_id = uuidv4();
+      const newUserResult = await db.query(
+        "INSERT INTO users (full_name, email, user_id ,password_entered) VALUES ($1, $2, $3, $4) RETURNING *",
+        [profile.displayName, profile.emails[0].value,user_id,"Logged in via google"]
+      );
+      user = newUserResult.rows[0];
+    }
+
+    // Generate token
+    token = jwt.sign(
+      {
+        Email: user.email,
+        fullName: user.full_name,
+        user_id: user.id,
+      },
+      Secret_key,
+      { expiresIn: "3d" }
+    );
+
+    return done(null, { user, token });
+  } catch (error) {
+    return done(error);
   }
-));
-  
-app.options("/google", cors());
-app.get("/google", cors(), passport.authenticate("google",{
-  
-      scope:['profile']
-  
 }));
 
-//Header part endpoints starts here
-//this below is for signup
+// Modify the Google callback route
+app.get("/auth/google/secrets", 
+  passport.authenticate("google", { 
+    failureRedirect: "/newLogin",
+    session: false // Disable session
+  }),
+  (req, res) => {
+    // Set cookie with the token
+    res.cookie("token", req.user.token, { httpOnly: true, secure: true });
+    
+    // Redirect based on user
+    const firstName = req.user.user.full_name.split(" ")[0];
+    res.redirect("/");
+  }
+);
+
+// Add this middleware to set the user from the token
+app.use((req, res, next) => {
+  const token = req.cookies.token;
+
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, Secret_key);
+      req.user = decoded;
+    } catch (err) {
+      req.user = null;
+    }
+  }
+  next();
+});
+// Endpoint to start Google OAuth process
+app.get("/auth/google", 
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    session: false // Explicitly disable session
+  })
+);
 
 app.post("/SignUp", async (req, res) => {
     const { FullName, SignUp_Email, SignUp_Password, Mobile_number } = req.body;
     const saltRounds = 10;
+    const user_id = uuidv4();
     try {
       // Hashing the password
       const salt = await bcrypt.genSalt(saltRounds);
@@ -134,12 +208,12 @@ app.post("/SignUp", async (req, res) => {
         // Generate email verification token
         const verificationToken = crypto.randomBytes(32).toString('hex');
   
-        // Insert user with verification token and 'isVerified' flag set to false
+        // Insert user with verification token and 'isVerified' flag set to false    
         await db.query(
-          "INSERT INTO users (full_name, email, password_entered, mobile_number,admin, verification_token, is_verified) VALUES ($1, $2, $3, $4, $5, $6,$7)",
-          [FullName, SignUp_Email, hashedPassword, Mobile_number,false, verificationToken, false]
+          "INSERT INTO users (full_name, email, password_entered, mobile_number,user_id, admin, verification_token, is_verified) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+          [FullName, SignUp_Email, hashedPassword, Mobile_number,user_id, false, verificationToken, false]
         );
-  
+
         // Send verification email
         const transporter = nodemailer.createTransport({
           service: 'gmail', // You can use other services too like Outlook, SMTP etc.
@@ -297,6 +371,7 @@ app.get("/newLogin", (req, res) => {
   res.render("login.ejs");
   console.log("Successfully rendered login page");
 });
+
 const authenticateUser = (req, res, next) => {
     const token = req.cookies.token;
   
@@ -318,6 +393,7 @@ const authenticateUser = (req, res, next) => {
       next();
     });
 };
+
 app.get("/", authenticateUser,async (req, res) => {
     if (req.user) {
       const firstName = req.user.fullName.split(" ")[0];
