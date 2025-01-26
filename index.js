@@ -110,7 +110,7 @@ passport.use("google", new GoogleStrategy({
   // userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
   // passReqToCallback: true // This allows accessing req in the verify callback
 
-  //This below is for render
+  //This below is for render`
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: "https://vsa-deployed.onrender.com/auth/google/secrets",
