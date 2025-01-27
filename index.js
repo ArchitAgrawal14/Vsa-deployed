@@ -89,6 +89,8 @@ const db = new Pool({
 });
 
 
+
+
 app.use((req, res, next) => {
   res.set("Cache-Control", "no-store");
   next();
@@ -451,25 +453,41 @@ app.get("/", authenticateUser, async (req, res) => {
   }
 });
 app.get("/Shop", authenticateUser, async (req, res) => {
-  if (req.user) {
-    const firstName = req.user.fullName.split(" ")[0];
+  if (req.user) {    
     try {
-      const { rows: item_data } = await db.query("SELECT * FROM stock_skates");
-      console.log(
-        "Stocks successfully retrieved from database with user login"
-      );
-      res.render("Shop.ejs", {
-        Login: firstName,
-        items_data: item_data,
-      });
-      console.log(
-        "Sucessfully opened shop with user log in and item displayed"
-      );
+    //   const { rows: item_data } = await db.query("SELECT * FROM stock_skates");
+    //   console.log(
+    //     "Stocks successfully retrieved from database with user login"
+    //   );
+    //   res.render("Shop.ejs", {
+    //     Login: firstName,
+    //     items_data: item_data,
+    //   });
+    //   console.log(
+    //     "Sucessfully opened shop with user log in and item displayed"
+    //   );
+
+    renderItems(req, res, "Skates", "stock_skates");
     } catch (error) {
       console.log("Unable to retrive stock", error);
     }
   } else {
-    const { rows: item_data } = await db.query("SELECT * FROM stock_skates");
+    const { rows: item_data } = await db.query(`SELECT 
+        s.item_id,           
+        s.item_type,         
+        s.img,               
+        s.name,
+        s.price,
+        ARRAY_AGG(pd.size) AS sizes,  
+        ARRAY_AGG(pd.color) AS colors 
+        FROM stock_skates s
+        LEFT JOIN product_details pd ON s.item_id = pd.item_id
+        GROUP BY 
+        s.item_id,           
+        s.item_type,
+        s.img,
+        s.name,
+        s.price`);
     console.log(
       "Stocks successfully retrieved from database without user login"
     );
@@ -933,174 +951,9 @@ app.get("/Accessories", authenticateUser, (req, res) => {
 
 // Route for Skates
 app.get("/Skates", (req, res) => {
-  res.redirect("/Shop");
-  console.log("Successfully redirected to shop");
+  renderItems(req, res, "Skates", "stock_skates");
 });
 
-// app.post("/AddToCart", authenticateUser, async (req, res) => {
-//     if (!req.user || !req.user.Email) {
-//         res.render("login.ejs");
-//     }
-
-//     try {
-//         const userResult = await db.query(`SELECT * FROM users WHERE email=$1`, [
-//             req.user.Email,
-//         ]);
-
-//         if (userResult.rows.length === 0) {
-//             console.log("User not found:", req.user.Email);
-//             res.render("login.ejs");
-//         }
-
-//         const user = userResult.rows[0];
-//         const userId = user.user_id;
-
-//         if (!userId) {
-//             console.log("User ID is null");
-//             return res.status(500).send("User ID is null");
-//         }
-
-//         const { item_id, item_type, quantity } = req.body;
-//         console.log("Item details:", { item_id, item_type, quantity });
-
-//         const itemResult = await db.query(
-//             `SELECT * FROM stock_${item_type} WHERE item_id=$1`,
-//             [item_id]
-//         );
-//         if (itemResult.rows.length === 0) {
-//             console.log("Item not found:", { item_id, item_type });
-//             return res.status(404).send("Item not found");
-//         }
-
-//         const item = itemResult.rows[0];
-//         const availableItemQuantity = item.quantity;
-
-//         const itemCheckInCart = await db.query(
-//             "SELECT * FROM cart WHERE user_id=$1 AND item_id=$2",
-//             [userId, item_id]
-//         );
-
-//         if (itemCheckInCart.rows.length === 0) {
-//             const insertQuantity =
-//                 quantity <= availableItemQuantity ? quantity : availableItemQuantity;
-//             await db.query(
-//                 "INSERT INTO cart (user_id, img, name, description, item_id, price, quantity) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-//                 [
-//                     userId,
-//                     item.img,
-//                     item.name,
-//                     item.description,
-//                     item.item_id,
-//                     item.price,
-//                     insertQuantity,
-//                 ]
-//             );
-//             console.log(
-//                 "Item added to cart successfully with quantity:",
-//                 insertQuantity
-//             );
-//         } else {
-//             const existingQuantity = itemCheckInCart.rows[0].quantity;
-//             const newQuantity = Math.min(
-//                 existingQuantity + parseInt(quantity),
-//                 availableItemQuantity
-//             );
-//             await db.query(
-//                 "UPDATE cart SET quantity=$1 WHERE user_id=$2 AND item_id=$3",
-//                 [newQuantity, userId, item_id]
-//             );
-//             console.log("Item quantity updated in cart to:", newQuantity);
-//         }
-
-//         res.status(200).json({ success: true, message: "Item added to cart successfully" });
-//     } catch (error) {
-//         console.error("Error in /AddToCart:", error);
-//         res.status(500).json({ success: false, message: "Internal Server Error" });
-//     }
-// });
-
-// app.post("/AddToCart", authenticateUser, async (req, res) => {
-//   if (!req.user || !req.user.Email) {
-//       return res.render("login.ejs"); // Stop further execution if not logged in
-//   }
-
-//   try {
-//       const userResult = await db.query(`SELECT * FROM users WHERE email=$1`, [
-//           req.user.Email,
-//       ]);
-
-//       if (userResult.rows.length === 0) {
-//           console.log("User not found:", req.user.Email);
-//           return res.render("login.ejs"); // Stop further execution if user not found
-//       }
-
-//       const user = userResult.rows[0];
-//       const userId = user.user_id;
-
-//       if (!userId) {
-//           console.log("User ID is null");
-//           return res.status(500).send("User ID is null");
-//       }
-
-//       const { item_id, item_type, quantity } = req.body;
-//       console.log("Item details:", { item_id, item_type, quantity });
-
-//       const itemResult = await db.query(
-//           `SELECT * FROM stock_${item_type} WHERE item_id=$1`,
-//           [item_id]
-//       );
-
-//       if (itemResult.rows.length === 0) {
-//           console.log("Item not found:", { item_id, item_type });
-//           return res.status(404).send("Item not found");
-//       }
-
-//       const item = itemResult.rows[0];
-//       const availableItemQuantity = item.quantity;
-
-//       const itemCheckInCart = await db.query(
-//           "SELECT * FROM cart WHERE user_id=$1 AND item_id=$2",
-//           [userId, item_id]
-//       );
-
-//       if (itemCheckInCart.rows.length === 0) {
-//           const insertQuantity =
-//               quantity <= availableItemQuantity ? quantity : availableItemQuantity;
-//           await db.query(
-//               "INSERT INTO cart (user_id, img, name, description, item_id, price, quantity) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-//               [
-//                   userId,
-//                   item.img,
-//                   item.name,
-//                   item.description,
-//                   item.item_id,
-//                   item.price,
-//                   insertQuantity,
-//               ]
-//           );
-//           console.log(
-//               "Item added to cart successfully with quantity:",
-//               insertQuantity
-//           );
-//       } else {
-//           const existingQuantity = itemCheckInCart.rows[0].quantity;
-//           const newQuantity = Math.min(
-//               existingQuantity + parseInt(quantity),
-//               availableItemQuantity
-//           );
-//           await db.query(
-//               "UPDATE cart SET quantity=$1 WHERE user_id=$2 AND item_id=$3",
-//               [newQuantity, userId, item_id]
-//           );
-//           console.log("Item quantity updated in cart to:", newQuantity);
-//       }
-
-//       res.status(200).json({ success: true, message: "Item added to cart successfully" });
-//   } catch (error) {
-//       console.error("Error in /AddToCart:", error);
-//       res.status(500).json({ success: false, message: "Internal Server Error" });
-//   }
-// });
 app.post("/AddToCart", authenticateUser, async (req, res) => {
   if (!req.user || !req.user.Email) {
     return res.status(401).json({ loginRequired: true }); // Send a 401 status for unauthenticated users
@@ -1232,6 +1085,7 @@ function getColorName(hexCode) {
 
   return colorNameMap[hexCode.toUpperCase()] || "Unknown Color";
 }
+
 app.get("/Cart", authenticateUser, async (req, res) => {
   try {
     // Initialize variables for rendering
@@ -2117,7 +1971,7 @@ app.post("/NewsLetter_Sending", async (req, res) => {
 
 // yaha pe images user se lena ka hai middleware.
 const storage = multer.diskStorage({
-  destination: path.join(_dirname, "public/images"), // Store files in public/images
+  destination: path.join(_dirname, "public/images"),
   filename: function (req, file, cb) {
     const timestamp = Date.now();
     const fileExt = path.extname(file.originalname);
@@ -2127,6 +1981,14 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+
+//specialized middleware for multiple images
+const uploadMultiple = upload.fields([
+  { name: 'itemsImage', maxCount: 1 },
+  { name: 'itemsImage1', maxCount: 1 },
+  { name: 'itemsImage2', maxCount: 1 }
+]);
+
 // Define your route with multer middleware
 app.post("/AddAchievements",authenticateUser,upload.single("imageTaken"),
   async (req, res) => {
@@ -2549,105 +2411,111 @@ app.get("/addNewItem", authenticateUser, (req, res) => {
     console.log("Add item page cannot be rendered admin not logged in");
   }
 });
-// app.post("/completeAddingNewItem", authenticateUser, async (req, res) => {
-//   try {
-//     // Use multer to upload the first image
-//     const itemsImage = await new Promise((resolve, reject) => {
-//       upload.single('itemsImage')(req, res, (err) => {
-//         if (err) reject(err);
-//         resolve(req.file);
-//       });
-//     });
+app.post("/completeAddingNewItem", authenticateUser, uploadMultiple, async (req, res) => {
+  const client = await db.connect();  
+  try {
+    await client.query('BEGIN');
 
-//     // Use multer to upload the second image
-//     const itemsImage1 = await new Promise((resolve, reject) => {
-//       upload.single('itemsImage1')(req, res, (err) => {
-//         if (err) reject(err);
-//         resolve(req.file);
-//       });
-//     });
+    // Check if all required files are present
+    if (!req.files || !req.files.itemsImage || !req.files.itemsImage1 || !req.files.itemsImage2) {
+      throw new Error('All three images are required');
+    }
 
-//     // Use multer to upload the third image
-//     const itemsImage2 = await new Promise((resolve, reject) => {
-//       upload.single('itemsImage2')(req, res, (err) => {
-//         if (err) reject(err);
-//         resolve(req.file);
-//       });
-//     });
+    // Get the uploaded files
+    const itemsImage = req.files.itemsImage[0];
+    const itemsImage1 = req.files.itemsImage1[0];
+    const itemsImage2 = req.files.itemsImage2[0];
 
-//     // Extract data from request body
-//     const { itemsName, itemsDescription, itemsItemId, itemsPrice, itemsQuantity, itemsItemType } = req.body;
+    // Extract data from request body
+    const { 
+      itemsName, 
+      itemsDescription, 
+      itemsItemId, 
+      itemsPrice, 
+      itemsQuantity, 
+      itemsItemType,
+      size,
+      color 
+    } = req.body;
 
-//     // Check if all images are uploaded
-//     if (!itemsImage) {
-//       console.error('Error: itemsImage is missing');
-//       return res.status(400).send('Missing itemsImage');
-//     }
-//     if (!itemsImage1) {
-//       console.error('Error: itemsImage1 is missing');
-//       return res.status(400).send('Missing itemsImage1');
-//     }
-//     if (!itemsImage2) {
-//       console.error('Error: itemsImage2 is missing');
-//       return res.status(400).send('Missing itemsImage2');
-//     }
+    // Build image paths
+    const imagePath = `/images/${itemsImage.filename}`;
+    const imagePath1 = `/images/${itemsImage1.filename}`;
+    const imagePath2 = `/images/${itemsImage2.filename}`;
 
-//     // Build image paths
-//     const imagePath = `/images/${itemsImage.filename}`;
-//     const imagePath1 = `/images/${itemsImage1.filename}`;
-//     const imagePath2 = `/images/${itemsImage2.filename}`;
+    // Generate a unique item_type_id
+    const item_type_id = `${itemsItemType.substring(0, 3)}${Date.now()}`;
 
-//     // Check if the item ID already exists in the corresponding stock table
-//     const data = await db.query(`SELECT * FROM stock_${itemsItemType} WHERE item_id = $1`, [itemsItemId]);
-//     const result = data.rows[0];
+    // 1. First, insert into stocks table
+    await client.query(
+      `INSERT INTO stocks (item_type, item_id, item_type_id) 
+       VALUES ($1, $2, $3)`,
+      [itemsItemType, itemsItemId, item_type_id]
+    );
+    console.log("Item added to stocks table");
 
-//     if (result) {
-//       console.error("Item ID already in use. Please use another ID.");
-//       return res.status(400).send("Item ID already in use. Please use another ID.");
-//     }
+    // 2. Then, insert into stock_[type] table
+    await client.query(
+      `INSERT INTO stock_${itemsItemType} 
+       (img, name, description, item_id, price, quantity, item_type, item_type_id) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [
+        imagePath,
+        itemsName,
+        itemsDescription,
+        itemsItemId,
+        itemsPrice,
+        itemsQuantity,
+        itemsItemType,
+        item_type_id
+      ]
+    );
+    console.log(`Item added to stock_${itemsItemType} table`);
 
-//     // Insert the new item into the corresponding stock table
-//     await db.query(
-//       `INSERT INTO stock_${itemsItemType} (img, name, description, item_id, price, quantity, item_type)
-//        VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-//       [imagePath, itemsName, itemsDescription, itemsItemId, itemsPrice, itemsQuantity, itemsItemType]
-//     );
-//     console.log("Item successfully added to stock table.");
+    // 3. Finally, insert all images into product_details table
+    const productDetailsQueries = [
+      {
+        img: imagePath,
+        size: size,
+        color: color
+      },
+      {
+        img: imagePath1,
+        size: size,
+        color: color
+      },
+      {
+        img: imagePath2,
+        size: size,
+        color: color
+      }
+    ];
 
-//     // Insert the additional images into the product_details table
-//     await db.query(
-//       `INSERT INTO product_details (img, img1, img2, item_id)
-//        VALUES ($1, $2, $3, $4)`,
-//       [imagePath, imagePath1, imagePath2, itemsItemId]
-//     );
-//     console.log("Item successfully added to product details table.");
+    for (const details of productDetailsQueries) {
+      await client.query(
+        `INSERT INTO product_details (img, item_id, color, size)
+         VALUES ($1, $2, $3, $4)`,
+        [details.img, itemsItemId, details.color, details.size]
+      );
+    }
+    console.log("Images added to product_details table");
 
-//     // If everything is successful, redirect to /editShop
-//     res.redirect("/editShop");
+    // Commit the transaction
+    await client.query('COMMIT');
+    console.log("All insertions completed successfully");
 
-//   } catch (error) {
-//     console.error("Cannot retrieve item details:", error);
-//     return res.status(500).send('Server error');
-//   }
-// });
+    res.redirect("/editShop");
 
-// app.post("/completeAddingNewItem",authenticateUser,upload.single('itemsImage'),upload.single('itemsImage1'),upload.single('itemsImage2'),(req,res)=>{
-//   try {
-//     const {itemsName,itemsDescription,itemsItemId,itemsPrice,itemsQuantity,itemsItemType}=req.body;
-//     const imageTaken = req.file;
-//     const imageTaken1 = req.file;
-//     const imageTaken2 = req.file;
-//     const imagePath = `/images/${imageTaken.filename}`;
-//     const imagePath1 = `/images/${imageTaken1.filename}`;
-//     const imagePath2 = `/images/${imageTaken2.filename}`;
-//     const itemAddedSuccessfully=admin.addingNewItemInShop(imagePath,imagePath1,imagePath2,itemsName,itemsDescription,itemsItemId,itemsPrice,itemsQuantity,itemsItemType)
-//     if(itemAddedSuccessfully){
-//       res.redirect("/editShop");
-//     }
-//   } catch (error) {
-//     console.log("Cannot retrieve item details",error);
-//   }
-// });
+  } catch (error) {
+    // Rollback in case of error
+    await client.query('ROLLBACK');
+    console.error("Error adding new item:", error);
+    res.status(500).send(`Error adding item: ${error.message}`);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
+});
 
 app.post("/completeUpdationOfItem", authenticateUser, async (req, res) => {
   try {

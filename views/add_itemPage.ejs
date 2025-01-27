@@ -5,140 +5,136 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Item</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+        /* ... (keep your existing styles) ... */
+        
+        .image-preview {
+            margin: 10px 0;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            padding: 20px;
+            gap: 10px;
         }
-
-        form {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
-            width: 100%;
+        
+        .image-preview img {
+            max-width: 100px;
+            height: auto;
         }
-
-        .floating-label {
-            position: relative;
-            margin-bottom: 15px;
+        
+        .error-message {
+            color: red;
+            margin-top: 5px;
+            font-size: 0.9em;
         }
-
-        .floating-label input,
-        .floating-label select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
+        
+        .form-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
             border-radius: 5px;
-            font-size: 16px;
-            background-color: transparent;
-            outline: none;
-            transition: border-color 0.3s ease;
         }
-
-        .floating-label input:focus,
-        .floating-label select:focus {
-            border-color: #007bff;
-        }
-
-        .floating-label input:focus~label,
-        .floating-label input:not(:placeholder-shown)~label,
-        .floating-label select:focus~label,
-        .floating-label select:not([value=""])~label {
-            transform: translateY(-1.5rem) scale(0.85);
-            padding-left: 5px;
-            padding-right: 5px;
-            background-color: #fff;
-        }
-
-        .floating-label label {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: #666;
-            pointer-events: none;
-            transition: all 0.3s ease;
-            background-color: transparent;
-        }
-
-        input[type="file"] {
-            padding: 0;
-            border: none;
+        
+        .form-section h3 {
             margin-bottom: 15px;
-        }
-
-        form input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            border: none;
-            background-color: #007bff;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        form input[type="submit"]:hover {
-            background-color: #0056b3;
+            color: #007bff;
         }
     </style>
 </head>
 <body>
-    <form action="/completeAddingNewItem" method="post" enctype="multipart/form-data">
-        <input type="file" name="itemsImage" placeholder="Select image" required>
-        <input type="file" name="itemsImage1" placeholder="Select second image" required>
-        <input type="file" name="itemsImage2" placeholder="Select third image" required>
+    <form action="/completeAddingNewItem" method="post" enctype="multipart/form-data" id="addItemForm">
+        <!-- Basic Item Information -->
+        <div class="form-section">
+            <h3>Basic Information</h3>
+            <div class="floating-label">
+                <input type="text" name="itemsName" placeholder=" " required pattern="[A-Za-z0-9\s]+" title="Only letters, numbers, and spaces allowed">
+                <label>Product Name</label>
+            </div>
 
-        <div class="floating-label">
-            <input type="text" name="itemsName" placeholder=" " required>
-            <label>Enter Name</label>
+            <div class="floating-label">
+                <textarea name="itemsDescription" placeholder=" " required></textarea>
+                <label>Product Description</label>
+            </div>
+
+            <div class="floating-label">
+                <input type="text" name="itemsItemId" placeholder=" " required pattern="[A-Za-z0-9]+" title="Only letters and numbers allowed">
+                <label>Product ID</label>
+            </div>
+
+            <div class="floating-label">
+                <input type="number" name="itemsPrice" placeholder=" " required min="0">
+                <label>Price (₹)</label>
+            </div>
+
+            <div class="floating-label">
+                <input type="number" name="itemsQuantity" placeholder=" " required min="1">
+                <label>Quantity in Stock</label>
+            </div>
+
+            <div class="floating-label">
+                <select name="itemsItemType" required>
+                    <option value="" disabled selected>Select Item Type</option>
+                    <option value="skates">Skates</option>
+                    <option value="helmets">Helmets</option>
+                    <option value="skinsuits">Skinsuits</option>
+                    <option value="wheels">Wheels</option>
+                    <option value="accessories">Accessories</option>
+                </select>
+                <label>Product Category</label>
+            </div>
         </div>
 
-        <div class="floating-label">
-            <input type="text" name="itemsDescription" placeholder=" " required>
-            <label>Enter Description</label>
+        <!-- Variant Information -->
+        <div class="form-section">
+            <h3>Variant Information</h3>
+            <div class="floating-label">
+                <input type="text" name="size" placeholder=" " required>
+                <label>Size (e.g., S, M, L or numeric)</label>
+            </div>
+
+            <div class="floating-label">
+                <input type="text" name="color" placeholder=" " required>
+                <label>Color</label>
+            </div>
         </div>
 
-        <div class="floating-label">
-            <input type="text" name="itemsItemId" placeholder=" " required>
-            <label>Enter ID</label>
+        <!-- Product Images -->
+        <div class="form-section">
+            <h3>Product Images</h3>
+            <div class="floating-label">
+                <input type="file" name="itemsImage" accept="image/*" required>
+                <label>Main Product Image</label>
+            </div>
+
+            <div class="floating-label">
+                <input type="file" name="itemsImage1" accept="image/*" required>
+                <label>Additional Image 1</label>
+            </div>
+
+            <div class="floating-label">
+                <input type="file" name="itemsImage2" accept="image/*" required>
+                <label>Additional Image 2</label>
+            </div>
+            
+            <div class="image-preview" id="imagePreview"></div>
         </div>
 
-        <div class="floating-label">
-            <input type="text" name="itemsPrice" placeholder=" " required>
-            <label>Price</label>
-        </div>
-
-        <div class="floating-label">
-            <input type="text" name="itemsQuantity" placeholder=" " required>
-            <label>Quantity</label>
-        </div>
-
-        <div class="floating-label">
-            <select name="itemsItemType" required>
-                <option value="" disabled selected>Select Item Type</option>
-                <option value="skates">Skates</option>
-                <option value="helmets">Helmets</option>
-                <option value="skinsuits">Skinsuits</option>
-                <option value="wheels">Wheels</option>
-                <option value="accessories">Accessories</option>
-            </select>
-            <label>Select Item Type</label>
-        </div>
-
-        <input type="submit" value="Submit">
+        <input type="submit" value="Add Product">
     </form>
+
+    <script>
+        // Add image preview functionality
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            input.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        const previewDiv = document.getElementById('imagePreview');
+                        previewDiv.appendChild(img);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
