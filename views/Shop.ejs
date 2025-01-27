@@ -1,433 +1,610 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shop</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="stylesheet" href="/style/shop.css">
-    <link rel="stylesheet" href="/style/header.css">
-    <style>   
-        /* Style for Buy Now and Add to Cart buttons */
-.btn.buyNow, .btn.addItemsToCart {
-    background-color: #007bff; /* Match surrounding color (e.g., a blue theme) */
-    border: none;
-    color: white;
-    font-size: 1rem;
-    padding: 10px 15px;
-    border-radius: 30px;
-    text-transform: uppercase;
-    font-weight: bold;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    display: inline-block;
-    margin: 10px auto; /* Adds space between buttons */
-}
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/style/shop.css" />
+    <link rel="stylesheet" href="/style/header.css" />
+    <style>
+      /* Style for the size-button */
+      .size-button.selected {
+        border: 2px solid blue; /* Dark border when selected */
+        background-color: #f0f0f0; /* Light background when selected */
+      }
 
-/* Center the buttons */
-.button-container {
-    text-align: center;
-}
+      /* Style for the color-button */
+      .color-button.selected {
+        border: 2px solid blue; /* Dark border when selected */
+        opacity: 0.8; /* Make selected color slightly darker */
+      }
 
-/* Hover and active effects */
-.btn.buyNow:hover, .btn.addItemsToCart:hover {
-    background-color: #0056b3; /* Darker blue on hover */
-    transform: translateY(-2px); /* Subtle lift effect */
-}
+      /* Optional: Adding hover effect for size and color buttons */
+      .size-button:hover,
+      .color-button:hover {
+        cursor: pointer;
+        opacity: 0.9;
+      }
 
-.btn.buyNow:active, .btn.addItemsToCart:active {
-    background-color: #004085; /* Darkest blue on active click */
-    transform: translateY(1px); /* Slight depression on click */
-}
-/* below is the toast for telling user to login */
-/* Toast for Login Prompt */
-#toast-login {
-    background-color: #ffc107; /* Warning yellow color */
-    color: #333;
-}
-.toast-header.bg-warning {
-    background-color: #ffcd39; /* Slightly darker yellow for header */
-    color: #333;
-}
-.toast-login .btn-close {
-    color: #333;
-}
-/* login toast ends here */
+      .size-selector,
+      .color-selector {
+        display: flex;
+        gap: 0.5rem;
+      }
 
-        #toast {
-            background-color: #007bff;
-            color: white;
-        }
-        .toast-header {
-            background-color: #0056b3;
-            color: white;
-        }
-        .toast .btn-close {
-            color: white;
-        }
-        .toast-body {
-            color: white;
-        }
-        .card {
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-        .card.hide {
-            opacity: 0;
-            transform: translateY(20px);
-            pointer-events: none;
-        }
-        #search-sort-container {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 0.5rem;
-        }
-        #sort-select {
-            width: auto;
-            max-width: 150px;
-        }
+      .size-button,
+      .color-button {
+        border: 2px solid transparent;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .size-button:hover,
+      .color-button:hover {
+        border-color: var(--primary-color);
+      }
+
+      .color-button {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+      }
+      /* Style for Buy Now and Add to Cart buttons */
+      .btn.buyNow,
+      .btn.addItemsToCart {
+        background-color: #007bff; /* Match surrounding color (e.g., a blue theme) */
+        border: none;
+        color: white;
+        font-size: 1rem;
+        padding: 10px 15px;
+        border-radius: 30px;
+        text-transform: uppercase;
+        font-weight: bold;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        display: inline-block;
+        margin: 10px auto; /* Adds space between buttons */
+      }
+
+      /* Center the buttons */
+      .button-container {
+        text-align: center;
+      }
+
+      /* Hover and active effects */
+      .btn.buyNow:hover,
+      .btn.addItemsToCart:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+        transform: translateY(-2px); /* Subtle lift effect */
+      }
+
+      .btn.buyNow:active,
+      .btn.addItemsToCart:active {
+        background-color: #004085; /* Darkest blue on active click */
+        transform: translateY(1px); /* Slight depression on click */
+      }
+      /* below is the toast for telling user to login */
+      /* Toast for Login Prompt */
+      #toast-login {
+        background-color: #ffc107; /* Warning yellow color */
+        color: #333;
+      }
+      .toast-header.bg-warning {
+        background-color: #ffcd39; /* Slightly darker yellow for header */
+        color: #333;
+      }
+      .toast-login .btn-close {
+        color: #333;
+      }
+      /* login toast ends here */
+
+      #toast {
+        background-color: #007bff;
+        color: white;
+      }
+      .toast-header {
+        background-color: #0056b3;
+        color: white;
+      }
+      .toast .btn-close {
+        color: white;
+      }
+      .toast-body {
+        color: white;
+      }
+      .card {
+        transition: opacity 0.5s ease, transform 0.5s ease;
+      }
+      .card.hide {
+        opacity: 0;
+        transform: translateY(20px);
+        pointer-events: none;
+      }
+      #search-sort-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.5rem;
+      }
+      #sort-select {
+        width: auto;
+        max-width: 150px;
+      }
     </style>
-</head>
-<body style="background-color: aliceblue;">
+  </head>
+  <body style="background-color: aliceblue">
     <%- include("header.ejs") %>
     <header class="p-3 text-bg-primary">
-        <div class="container">
-            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                    <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg>
-                </a>
-                <ol class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                    <li><a href="/Skates" class="nav-link px-2 text-white">Skates</a></li>
-                    <li><a href="/Wheels" class="nav-link px-2 text-white">Wheels</a></li>
-                    <li><a href="/Helmets" class="nav-link px-2 text-white">Helmets</a></li>
-                    <li><a href="/SkinSuits" class="nav-link px-2 text-white">Skin Suits</a></li>
-                    <li><a href="/Accessories" class="nav-link px-2 text-white">Accessories</a></li>
-                </ol>
-                <form id="search-form" class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-                    <input type="search" id="search-input" class="form-control form-control-dark text-bg-white" placeholder="Search for Products..." aria-label="Search">
-                </form>
-                <select id="sort-select" class="form-select form-select-dark ms-3">
-                    <option value="default">Sort By</option>
-                    <option value="name">Name</option>
-                    <option value="price">Price</option>
-                </select>
-            </div>
+      <div class="container">
+        <div
+          class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start"
+        >
+          <a
+            href="/"
+            class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none"
+          >
+            <svg
+              class="bi me-2"
+              width="40"
+              height="32"
+              role="img"
+              aria-label="Bootstrap"
+            >
+              <use xlink:href="#bootstrap"></use>
+            </svg>
+          </a>
+          <ol
+            class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0"
+          >
+            <li>
+              <a href="/Skates" class="nav-link px-2 text-white">Skates</a>
+            </li>
+            <li>
+              <a href="/Wheels" class="nav-link px-2 text-white">Wheels</a>
+            </li>
+            <li>
+              <a href="/Helmets" class="nav-link px-2 text-white">Helmets</a>
+            </li>
+            <li>
+              <a href="/SkinSuits" class="nav-link px-2 text-white"
+                >Skin Suits</a
+              >
+            </li>
+            <li>
+              <a href="/Accessories" class="nav-link px-2 text-white"
+                >Accessories</a
+              >
+            </li>
+          </ol>
+          <form
+            id="search-form"
+            class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3"
+            role="search"
+          >
+            <input
+              type="search"
+              id="search-input"
+              class="form-control form-control-dark text-bg-white"
+              placeholder="Search for Products..."
+              aria-label="Search"
+            />
+          </form>
+          <select id="sort-select" class="form-select form-select-dark ms-3">
+            <option value="default">Sort By</option>
+            <option value="name">Name</option>
+            <option value="price">Price</option>
+          </select>
         </div>
+      </div>
     </header>
     <div id="products-container">
-        <% if(items_data && items_data.length > 0) { %>
-            <% items_data.forEach((item) => { %>
-                <div class="row d-flex justify-content-around">
-                    <div class="card m-5 border-0" style="width: 12rem;" data-name="<%= item.name %>" data-price="<%= item.price %>">
-                        <a href="/productDetails" class="detailsOfProduct" data-item-type="<%= item.item_type %>" data-item-id="<%= item.item_id %>">
-                            <img src="<%= item.img %>" class="card-img-top" alt="<%= item.name %>">
-                        </a>
-                        <div class="card-body">
-                            <h5 class="card-title"><%= item.name %></h5>
-                            <h4 class="card-title">₹<%= item.price %></h4>
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <button class="btn btn-outline-secondary" type="button" id="decrement-btn">-</button>
-                                </div>
-                                <input type="text" class="form-control text-center" id="quantity-input" value="1" >
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary" type="button" id="increment-btn">+</button>
-                                </div>
-                            </div>
-                            <p class="card-text"><%= item.description %></p>
-                            <div class="button-container">
-                            <a href="/CheckOut" class="btn btn-primary buyNow" data-item-type="<%= item.item_type %>" data-item-id="<%= item.item_id %>">Check Out</a>
-                            <a href="/AddToCart" class="btn btn-primary addItemsToCart" data-item-type="<%= item.item_type %>" data-item-id="<%= item.item_id %>">Add to cart</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <% }) %>
-        <% } %>
+      <% if(items_data && items_data.length > 0) { %> <%
+      items_data.forEach((item) => { %>
+      <div class="row d-flex justify-content-around">
+        <div
+          class="card m-5 border-0"
+          style="width: 12rem"
+          data-name="<%= item.name %>"
+          data-price="<%= item.price %>"
+        >
+          <a
+            href="/productDetails"
+            class="detailsOfProduct"
+            data-item-type="<%= item.item_type %>"
+            data-item-id="<%= item.item_id %>"
+          >
+            <img
+              src="<%= item.img %>"
+              class="card-img-top"
+              alt="<%= item.name %>"
+            />
+          </a>
+          <div class="card-body">
+            <h5 class="card-title"><%= item.name %></h5>
+            <h4 class="card-title">₹<%= item.price %></h4>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  id="decrement-btn"
+                >
+                  -
+                </button>
+              </div>
+              <input
+                type="text"
+                class="form-control text-center"
+                id="quantity-input"
+                value="1"
+              />
+              <div class="input-group-append">
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  id="increment-btn"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <div class="mb-4">
+              <div class="size-selector">
+                <% item.sizes.forEach((size) => { %>
+                <!-- Loop through all sizes -->
+                <button
+                  class="size-button btn btn-outline-secondary"
+                  data-size="<%= size %>"
+                >
+                  <%= size %>
+                </button>
+                <% }) %>
+              </div>
+              <br />
+              <div class="color-selector">
+                <div
+                  class="color-button"
+                  style="background-color: #000000"
+                  data-color="#000000"
+                ></div>
+                <div
+                  class="color-button"
+                  style="background-color: #ff0000"
+                  data-color="#FF0000"
+                ></div>
+                <div
+                  class="color-button"
+                  style="background-color: #0000ff"
+                  data-color="#0000FF"
+                ></div>
+              </div>
+            </div>
+
+            <div class="button-container">
+              <a
+                href="/CheckOut"
+                class="btn btn-primary buyNow"
+                data-item-type="<%= item.item_type %>"
+                data-item-id="<%= item.item_id %>"
+                >Check Out</a
+              >
+              <a
+                href="/AddToCart"
+                class="btn btn-primary addItemsToCart"
+                data-item-type="<%= item.item_type %>"
+                data-item-id="<%= item.item_id %>"
+                >Add to cart</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <% }) %> <% } %>
     </div>
     <%- include("footer.ejs") %>
     <div id="toast-container" class="position-fixed bottom-0 end-0 p-3">
-        <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <strong class="me-auto">Success</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div class="toast-body">
-                Item successfully added to cart!
-            </div>
+      <div
+        id="toast"
+        class="toast"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="toast-header">
+          <strong class="me-auto">Success</strong>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
         </div>
-        <!-- below is the toast for user that are not logged in and are trying to add an item -->
-        <div id="toast-login" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header bg-warning text-dark">
-                <strong class="me-auto">Login Required</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div class="toast-body text-dark">
-                Please log in to continue.
-            </div>
+        <div class="toast-body">Item successfully added to cart!</div>
+      </div>
+      <!-- below is the toast for user that are not logged in and are trying to add an item -->
+      <div
+        id="toast-login"
+        class="toast"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="toast-header bg-warning text-dark">
+          <strong class="me-auto">Login Required</strong>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
         </div>
+        <div class="toast-body text-dark">Please log in to continue.</div>
+      </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-pzjw8f+ua7Kw1TIq+8A7V2b3vZ3lOJXfW5JxjZf6eKHeDmt6kG+5GIMkFvV0dPfcJ" crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-pzjw8f+ua7Kw1TIq+8A7V2b3vZ3lOJXfW5JxjZf6eKHeDmt6kG+5GIMkFvV0dPfcJ"
+      crossorigin="anonymous"
+    ></script>
 
-    <!-- this below is for searching and sorting. -->     
+    <!-- this below is for searching and sorting. -->
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const searchInput = document.getElementById("search-input");
-            const sortSelect = document.getElementById("sort-select");
-            const productsContainer = document.getElementById("products-container");
+      document.addEventListener("DOMContentLoaded", () => {
+        const searchInput = document.getElementById("search-input");
+        const sortSelect = document.getElementById("sort-select");
+        const productsContainer = document.getElementById("products-container");
 
-            // Filter items based on search input
-            searchInput.addEventListener("input", () => {
-                const query = searchInput.value.toLowerCase();
-                const cards = document.querySelectorAll(".card");
+        // Filter items based on search input
+        searchInput.addEventListener("input", () => {
+          const query = searchInput.value.toLowerCase();
+          const cards = document.querySelectorAll(".card");
 
-                cards.forEach(card => {
-                    const name = card.getAttribute("data-name").toLowerCase();
-                    if (name.includes(query)) {
-                        card.classList.remove("hide");
-                    } else {
-                        card.classList.add("hide");
-                    }
-                });
-            });
-
-            // Sort items based on selected option
-            sortSelect.addEventListener("change", () => {
-                const sortBy = sortSelect.value;
-                const cards = Array.from(document.querySelectorAll(".card"));
-
-                if (sortBy === "name") {
-                    cards.sort((a, b) => a.getAttribute("data-name").localeCompare(b.getAttribute("data-name")));
-                } else if (sortBy === "price") {
-                    cards.sort((a, b) => parseFloat(a.getAttribute("data-price")) - parseFloat(b.getAttribute("data-price")));
-                }
-
-                // Re-append sorted cards to container
-                cards.forEach(card => productsContainer.appendChild(card));
-            });
+          cards.forEach((card) => {
+            const name = card.getAttribute("data-name").toLowerCase();
+            if (name.includes(query)) {
+              card.classList.remove("hide");
+            } else {
+              card.classList.add("hide");
+            }
+          });
         });
+
+        // Sort items based on selected option
+        sortSelect.addEventListener("change", () => {
+          const sortBy = sortSelect.value;
+          const cards = Array.from(document.querySelectorAll(".card"));
+
+          if (sortBy === "name") {
+            cards.sort((a, b) =>
+              a
+                .getAttribute("data-name")
+                .localeCompare(b.getAttribute("data-name"))
+            );
+          } else if (sortBy === "price") {
+            cards.sort(
+              (a, b) =>
+                parseFloat(a.getAttribute("data-price")) -
+                parseFloat(b.getAttribute("data-price"))
+            );
+          }
+
+          // Re-append sorted cards to container
+          cards.forEach((card) => productsContainer.appendChild(card));
+        });
+      });
     </script>
 
-    <!-- this below commented script is the code for add to cart and product details which did not handle user when it was not logged in -->
-    <!-- <script>
-      document.addEventListener("DOMContentLoaded", () => {
-          const addItemsToCartButton = document.querySelectorAll(".addItemsToCart");
-          const productDetailslink = document.querySelectorAll(".detailsOfProduct");
-
-          addItemsToCartButton.forEach(button => {
-              button.addEventListener("click", async (event) => {
-                  event.preventDefault();
-                  const item_id = button.getAttribute("data-item-id");
-                  const item_type = button.getAttribute("data-item-type");
-                  const quantity = button.closest(".card").querySelector("#quantity-input").value;
-  
-                  try {
-                      const response = await fetch("/AddToCart", {
-                          method: "POST",
-                          headers: {
-                              "Content-Type": "application/json",
-                          },
-                          body: JSON.stringify({ item_id, item_type, quantity }),
-                      });
-  
-                      const data = await response.json();
-                      if (data.success) {
-                          const toast = new bootstrap.Toast(document.getElementById('toast'));
-                          toast.show();
-                      }
-                      console.log("Item id and type successfully sent to server for add to cart button", data);
-                  } catch (error) {
-                      console.log("Failed to add item", error);
-                  }
-              });
-          });
-  
-          productDetailslink.forEach(link => {
-              link.addEventListener("click", async (event) => {
-                  event.preventDefault();
-                  const item_id = link.getAttribute("data-item-id");
-                  const item_type = link.getAttribute("data-item-type");
-                  try {
-                      const response = await fetch("/productDetails", {
-                          method: "POST",
-                          headers: {
-                              "Content-Type": "application/json",
-                          },
-                          body: JSON.stringify({ item_id, item_type }),
-                      });
-  
-                      const contentType = response.headers.get("content-type");
-                      if (contentType && contentType.includes("application/json")) {
-                        const data = await response.json();
-                        console.log("Item data received from server:", data);
-
-                        if (data.success) {
-                          window.location.href = `/productDetails?item_id=${item_id}&item_type=${item_type}`;
-                        } else {
-                          alert("Failed to load item update page.");
-                        }
-                      } else {
-                        const html = await response.text();
-                        document.open();
-                        document.write(html);
-                        document.close();
-                      }
-                  } catch (error) {
-                      console.error("Failed to fetch product details", error);
-                  }
-              });
-          });
-      });
-    </script> -->
-  
     <!-- below is the script for (new) add to cart and product details it also handles users when they are not logged in -->
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const addItemsToCartButton = document.querySelectorAll(".addItemsToCart");
-            const productDetailslink = document.querySelectorAll(".detailsOfProduct");
+      document.addEventListener("DOMContentLoaded", () => {
+        const addItemsToCartButton =
+          document.querySelectorAll(".addItemsToCart");
+        const productDetailslink =
+          document.querySelectorAll(".detailsOfProduct");
 
-            addItemsToCartButton.forEach(button => {
-                button.addEventListener("click", async (event) => {
-                    event.preventDefault();
-                    const item_id = button.getAttribute("data-item-id");
-                    const item_type = button.getAttribute("data-item-type");
-                    const quantity = button.closest(".card").querySelector("#quantity-input").value;
-    
-                    try {
-                        const response = await fetch("/AddToCart", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({ item_id, item_type, quantity }),
-                        });
-    
-                        const data = await response.json();
-                        
-                        // Check if the response indicates the user is logged in or not
-                        if (response.status === 401) { // Adjusting to check for a 401 Unauthorized status
-                            const loginToast = new bootstrap.Toast(document.getElementById('toast-login'));
-                            loginToast.show();
-                        } else if (data.success) {
-                            const successToast = new bootstrap.Toast(document.getElementById('toast'));
-                            successToast.show();
-                        } else {
-                            console.log("Unexpected response:", data);
-                        }
-                        
-                        console.log("Response from server:", data);
-                    } catch (error) {
-                        console.log("Failed to add item", error);
-                    }
-                });
-            });
+        addItemsToCartButton.forEach((button) => {
+          button.addEventListener("click", async (event) => {
+            event.preventDefault();
+            const item_id = button.getAttribute("data-item-id");
+            const item_type = button.getAttribute("data-item-type");
+            const quantity = button
+              .closest(".card")
+              .querySelector("#quantity-input").value;
+            const selectedSize = button
+              .closest(".card")
+              .querySelector(".size-button.selected");
+            const selectedColor = button
+              .closest(".card")
+              .querySelector(".color-button.selected");
 
-            productDetailslink.forEach(link => {
-              link.addEventListener("click", async (event) => {
-                  event.preventDefault();
-                  const item_id = link.getAttribute("data-item-id");
-                  const item_type = link.getAttribute("data-item-type");
-                  try {
-                      const response = await fetch("/productDetails", {
-                          method: "POST",
-                          headers: {
-                              "Content-Type": "application/json",
-                          },
-                          body: JSON.stringify({ item_id, item_type }),
-                      });
-  
-                      const contentType = response.headers.get("content-type");
-                      if (contentType && contentType.includes("application/json")) {
-                        const data = await response.json();
-                        console.log("Item data received from server:", data);
+            const size = selectedSize
+              ? selectedSize.getAttribute("data-size")
+              : "M";
+            const color = selectedColor
+              ? selectedColor.getAttribute("data-color")
+              : "#0000FF";
 
-                        if (data.success) {
-                          window.location.href = `/productDetails?item_id=${item_id}&item_type=${item_type}`;
-                        } else {
-                          alert("Failed to load item update page.");
-                        }
-                      } else {
-                        const html = await response.text();
-                        document.open();
-                        document.write(html);
-                        document.close();
-                      }
-                  } catch (error) {
-                      console.error("Failed to fetch product details", error);
-                  }
+            try {
+              const response = await fetch("/AddToCart", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  item_id,
+                  item_type,
+                  quantity,
+                  size,
+                  color,
+                }),
               });
+
+              const data = await response.json();
+
+              // Check if the response indicates the user is logged in or not
+              if (response.status === 401) {
+                // Adjusting to check for a 401 Unauthorized status
+                const loginToast = new bootstrap.Toast(
+                  document.getElementById("toast-login")
+                );
+                loginToast.show();
+              } else if (data.success) {
+                const successToast = new bootstrap.Toast(
+                  document.getElementById("toast")
+                );
+                successToast.show();
+              } else {
+                console.log("Unexpected response:", data);
+              }
+
+              console.log("Response from server:", data);
+            } catch (error) {
+              console.log("Failed to add item", error);
+            }
           });
         });
+        // Handle size selection
+        const sizeButtons = document.querySelectorAll(".size-button");
+        sizeButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            // Remove 'selected' class from all size buttons
+            sizeButtons.forEach((b) => b.classList.remove("selected"));
+            // Add 'selected' class to the clicked button
+            button.classList.add("selected");
+          });
+        });
+
+        // Handle color selection
+        const colorButtons = document.querySelectorAll(".color-button");
+        colorButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            // Remove 'selected' class from all color buttons
+            colorButtons.forEach((b) => b.classList.remove("selected"));
+            // Add 'selected' class to the clicked button
+            button.classList.add("selected");
+          });
+        });
+
+        productDetailslink.forEach((link) => {
+          link.addEventListener("click", async (event) => {
+            event.preventDefault();
+            const item_id = link.getAttribute("data-item-id");
+            const item_type = link.getAttribute("data-item-type");
+            try {
+              const response = await fetch("/productDetails", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ item_id, item_type }),
+              });
+
+              const contentType = response.headers.get("content-type");
+              if (contentType && contentType.includes("application/json")) {
+                const data = await response.json();
+                console.log("Item data received from server:", data);
+
+                if (data.success) {
+                  window.location.href = `/productDetails?item_id=${item_id}&item_type=${item_type}`;
+                } else {
+                  alert("Failed to load item update page.");
+                }
+              } else {
+                const html = await response.text();
+                document.open();
+                document.write(html);
+                document.close();
+              }
+            } catch (error) {
+              console.error("Failed to fetch product details", error);
+            }
+          });
+        });
+      });
     </script>
+
     <!-- Below is the script for sending data to server side for checkout page -->
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const checkoutButton = document.querySelectorAll(".buyNow"); // Checkout buttons
-    
-            checkoutButton.forEach(button => {
-                button.addEventListener("click", async (event) => {
-                    event.preventDefault();  // Prevent the default link behavior
-    
-                    // Extract data from the button's attributes
-                    const item_id = button.getAttribute("data-item-id");
-                    const item_type = button.getAttribute("data-item-type");
-                    const quantity = button.closest(".card").querySelector("#quantity-input").value;
-    
-                    try {
-                        const response = await fetch("/CheckOut", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({ item_id, item_type, quantity }),
-                        });
-                        
-                        if (response.status === 401) { // Unauthorized
-                            console.log("User not logged in. Redirecting to login page...");
-                            window.location.href = "/newLogin";
-                            return;
-                        }
+      document.addEventListener("DOMContentLoaded", () => {
+        const checkoutButton = document.querySelectorAll(".buyNow"); // Checkout buttons
 
-                        const data = await response.json();
-    
-                        if (data.success) { // Successful checkout
-                            console.log("Checkout successful!");
-                            // If successful, we can redirect the user to the checkout page and pass the items
-                            window.location.href = `/checkOutPage?item_id=${item_id}&item_type=${item_type}&quantity=${quantity}`;
-                        } else if (!data.success) {
-                        console.log(data.message || "An error occurred during checkout.");
-                        }
-                        else {
-                            console.log("Unexpected response:", data);
-                        }
-                    } catch (error) {
-                        console.log("Checkout failed", error);
-                    }
-                });
-            });
+        checkoutButton.forEach((button) => {
+          button.addEventListener("click", async (event) => {
+            event.preventDefault(); // Prevent the default link behavior
+
+            // Extract data from the button's attributes
+            const item_id = button.getAttribute("data-item-id");
+            const item_type = button.getAttribute("data-item-type");
+            const quantity = button
+              .closest(".card")
+              .querySelector("#quantity-input").value;
+
+            try {
+              const response = await fetch("/CheckOut", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ item_id, item_type, quantity }),
+              });
+
+              if (response.status === 401) {
+                // Unauthorized
+                console.log("User not logged in. Redirecting to login page...");
+                window.location.href = "/newLogin";
+                return;
+              }
+
+              const data = await response.json();
+
+              if (data.success) {
+                // Successful checkout
+                console.log("Checkout successful!");
+                // If successful, we can redirect the user to the checkout page and pass the items
+                window.location.href = `/checkOutPage?item_id=${item_id}&item_type=${item_type}&quantity=${quantity}`;
+              } else if (!data.success) {
+                console.log(
+                  data.message || "An error occurred during checkout."
+                );
+              } else {
+                console.log("Unexpected response:", data);
+              }
+            } catch (error) {
+              console.log("Checkout failed", error);
+            }
+          });
         });
+      });
     </script>
-     
-     <!-- This below script is for increment and decrement of quantity of items -->
+
+    <!-- This below script is for increment and decrement of quantity of items -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const decrementButton = document.getElementById('decrement-btn');
-            const incrementButton = document.getElementById('increment-btn');
-            const quantityInput = document.getElementById('quantity-input');
+      document.addEventListener("DOMContentLoaded", function () {
+        const decrementButton = document.getElementById("decrement-btn");
+        const incrementButton = document.getElementById("increment-btn");
+        const quantityInput = document.getElementById("quantity-input");
 
-            decrementButton.addEventListener('click', function() {
-                let currentValue = parseInt(quantityInput.value);
-                if (currentValue > 1) {
-                    quantityInput.value = currentValue - 1;
-                }
-            });
-
-            incrementButton.addEventListener('click', function() {
-                let currentValue = parseInt(quantityInput.value);
-                quantityInput.value = currentValue + 1;
-            });
+        decrementButton.addEventListener("click", function () {
+          let currentValue = parseInt(quantityInput.value);
+          if (currentValue > 1) {
+            quantityInput.value = currentValue - 1;
+          }
         });
+
+        incrementButton.addEventListener("click", function () {
+          let currentValue = parseInt(quantityInput.value);
+          quantityInput.value = currentValue + 1;
+        });
+      });
     </script>
-</body>
+  </body>
 </html>

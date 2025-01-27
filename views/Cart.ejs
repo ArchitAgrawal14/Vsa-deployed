@@ -11,7 +11,29 @@
     crossorigin="anonymous"
   />
   <title>Cart</title>
-  <style>   
+  <style>  
+   .size-selector, .color-selector {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .size-button, .color-button {
+            border: 2px solid transparent;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .size-button:hover, .color-button:hover {
+            border-color: var(--primary-color);
+        }
+
+        .color-button {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        } 
     /* Style for Buy Now and Add to Cart buttons */
 .btn.buyNow, .btn.removeItemsFromCart {
 background-color: #007bff; /* Match surrounding color (e.g., a blue theme) */
@@ -93,7 +115,17 @@ transform: translateY(1px); /* Slight depression on click */
                 </div>
               </div>
               
-              <p class="card-text"><%= addItem.description %></p>
+              <div class="mb-4">
+                <div class="size-selector">
+                    <button class="size-button btn btn-outline-secondary" data-size="<%= addItem.size %>" readonly><%= addItem.size %></button>
+                    <!-- <h3 class="text-xl font-semibold mb-2">Select Color</h3> -->
+                <div class="color-selector">
+                  <div class="color-button" style="background-color: <%=addItem.color%>;"></div>
+              </div>
+                </div>
+                <br>
+                
+            </div>
               <div class="button-container">
               <a
                 href="/Buy_Now"
@@ -106,7 +138,7 @@ transform: translateY(1px); /* Slight depression on click */
                 class="btn btn-primary removeItemsFromCart"
                 data-item-type="<%= addItem.item_type %>"
                 data-item-id="<%= addItem.item_id %>"
-              >Remove from cart</a>
+              >Remove</a>
               </div>
             </div>
           </div>
