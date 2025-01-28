@@ -90,7 +90,6 @@ const db = new Pool({
 
 
 
-
 app.use((req, res, next) => {
   res.set("Cache-Control", "no-store");
   next();
@@ -2342,37 +2341,67 @@ app.get("/updateItemForShop", authenticateUser, async (req, res) => {
   }
 });
 app.post("/deleteItemFromShop", authenticateUser, async (req, res) => {
+  const client = await db.connect();
+  
   try {
-    if (req.user) {
-      const { item_id, item_type } = req.body;
-
-      // Corrected SQL query typo from FORM to FROM
-      const data = await db.query(
-        `SELECT * FROM stock_${item_type} WHERE item_id=$1`,
-        [item_id]
-      );
-      const result = data.rows[0];
-
-      if (result) {
-        await db.query(`DELETE FROM stock_${item_type} WHERE item_id=$1`, [
-          item_id,
-        ]);
-        console.log("Item deleted successfully");
-
-        await db.query(`DELETE FROM product_details WHERE item_id=$1`, [
-          item_id,
-        ]);
-        res.redirect("/editShop");
-      } else {
-        console.log("Item does not exist for deletion");
-        res.status(404).send("Item not found");
-      }
-    } else {
-      res.status(403).send("Unauthorized access");
+    if (!req.user) {
+      return res.status(403).send("Unauthorized access");
     }
+
+    const { item_id, item_type } = req.body;
+
+    // Start transaction
+    await client.query('BEGIN');
+
+    // First check if item exists
+    const data = await client.query(
+      `SELECT * FROM stock_${item_type} WHERE item_id=$1`,
+      [item_id]
+    );
+    const result = data.rows[0];
+
+    if (!result) {
+      await client.query('ROLLBACK');
+      console.log("Item does not exist for deletion");
+      return res.status(404).send("Item not found");
+    }
+
+    // Delete in specific order to maintain referential integrity
+    // 1. First delete from product_details (child table)
+    await client.query(
+      `DELETE FROM product_details WHERE item_id=$1`,
+      [item_id]
+    );
+    console.log("Deleted from product_details table");
+
+    // 2. Delete from stock_[type] table
+    await client.query(
+      `DELETE FROM stock_${item_type} WHERE item_id=$1`,
+      [item_id]
+    );
+    console.log(`Deleted from stock_${item_type} table`);
+
+    // 3. Finally delete from stocks table (parent table)
+    await client.query(
+      `DELETE FROM stocks WHERE item_id=$1 AND item_type=$2`,
+      [item_id, item_type]
+    );
+    console.log("Deleted from stocks table");
+
+    // Commit transaction
+    await client.query('COMMIT');
+    console.log("Item deleted successfully from all tables");
+
+    res.redirect("/editShop");
+
   } catch (error) {
+    // Rollback transaction in case of any error
+    await client.query('ROLLBACK');
     console.error("Error deleting item:", error);
     res.status(500).send("Internal server error");
+  } finally {
+    // Release the client back to the pool
+    client.release();
   }
 });
 
@@ -2411,6 +2440,7 @@ app.get("/addNewItem", authenticateUser, (req, res) => {
     console.log("Add item page cannot be rendered admin not logged in");
   }
 });
+
 app.post("/completeAddingNewItem", authenticateUser, uploadMultiple, async (req, res) => {
   const client = await db.connect();  
   try {
@@ -2432,11 +2462,17 @@ app.post("/completeAddingNewItem", authenticateUser, uploadMultiple, async (req,
       itemsDescription, 
       itemsItemId, 
       itemsPrice, 
-      itemsQuantity, 
       itemsItemType,
-      size,
       color 
     } = req.body;
+
+    const sizes = req.body.sizes;
+    const quantities = req.body.quantities;
+
+    // Validate sizes and quantities
+    if (!sizes || !quantities || sizes.length !== quantities.length) {
+      throw new Error('Invalid size and quantity data');
+    }
 
     // Build image paths
     const imagePath = `/images/${itemsImage.filename}`;
@@ -2445,6 +2481,9 @@ app.post("/completeAddingNewItem", authenticateUser, uploadMultiple, async (req,
 
     // Generate a unique item_type_id
     const item_type_id = `${itemsItemType.substring(0, 3)}${Date.now()}`;
+
+    // Calculate total quantity
+    const totalQuantity = quantities.reduce((sum, qty) => sum + parseInt(qty), 0);
 
     // 1. First, insert into stocks table
     await client.query(
@@ -2460,59 +2499,40 @@ app.post("/completeAddingNewItem", authenticateUser, uploadMultiple, async (req,
        (img, name, description, item_id, price, quantity, item_type, item_type_id) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
       [
-        imagePath,
+        imagePath,  // Using the first image as the main image
         itemsName,
         itemsDescription,
         itemsItemId,
         itemsPrice,
-        itemsQuantity,
+        totalQuantity,
         itemsItemType,
         item_type_id
       ]
     );
     console.log(`Item added to stock_${itemsItemType} table`);
 
-    // 3. Finally, insert all images into product_details table
-    const productDetailsQueries = [
-      {
-        img: imagePath,
-        size: size,
-        color: color
-      },
-      {
-        img: imagePath1,
-        size: size,
-        color: color
-      },
-      {
-        img: imagePath2,
-        size: size,
-        color: color
+    // 3. Insert product details - one entry per size with all images
+    for (let i = 0; i < sizes.length; i++) {
+      if (sizes[i] && quantities[i]) {
+        await client.query(
+          `INSERT INTO product_details (img, img1, img2, item_id, color, size, quantity)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+          [imagePath, imagePath1, imagePath2, itemsItemId, color, sizes[i], quantities[i]]
+        );
       }
-    ];
-
-    for (const details of productDetailsQueries) {
-      await client.query(
-        `INSERT INTO product_details (img, item_id, color, size)
-         VALUES ($1, $2, $3, $4)`,
-        [details.img, itemsItemId, details.color, details.size]
-      );
     }
-    console.log("Images added to product_details table");
+    console.log("Size details and images added to product_details table");
 
-    // Commit the transaction
     await client.query('COMMIT');
     console.log("All insertions completed successfully");
 
     res.redirect("/editShop");
 
   } catch (error) {
-    // Rollback in case of error
     await client.query('ROLLBACK');
     console.error("Error adding new item:", error);
     res.status(500).send(`Error adding item: ${error.message}`);
   } finally {
-    // Release the client back to the pool
     client.release();
   }
 });

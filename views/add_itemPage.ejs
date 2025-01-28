@@ -5,6 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Item</title>
     <style>
+
+.size-quantity-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.size-quantity-row {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.floating-label {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.floating-label select,
+.floating-label input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.floating-label select {
+    min-width: 120px;
+}
+
+.floating-label input[type="number"] {
+    width: 100px;
+}
+
+.floating-label label {
+    position: absolute;
+    left: 10px;
+    top: -8px;
+    background: white;
+    padding: 0 5px;
+    font-size: 12px;
+    color: #666;
+    pointer-events: none;
+}
+
+.floating-label select:focus,
+.floating-label input:focus {
+    border-color: #4a90e2;
+}
         /* ... (keep your existing styles) ... */
         
         .image-preview {
@@ -62,10 +113,10 @@
                 <label>Price (₹)</label>
             </div>
 
-            <div class="floating-label">
+            <!-- <div class="floating-label">
                 <input type="number" name="itemsQuantity" placeholder=" " required min="1">
                 <label>Quantity in Stock</label>
-            </div>
+            </div> -->
 
             <div class="floating-label">
                 <select name="itemsItemType" required>
@@ -82,10 +133,61 @@
 
         <!-- Variant Information -->
         <div class="form-section">
-            <h3>Variant Information</h3>
-            <div class="floating-label">
-                <input type="text" name="size" placeholder=" " required>
-                <label>Size (e.g., S, M, L or numeric)</label>
+            <div class="size-quantity-container">
+                <div class="size-quantity-row">
+                    <div class="floating-label">
+                        <select name="sizes[]" required>
+                            <option value="">Select Size</option>
+                            <option value="XS">XS</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="XXL">XXL</option>
+                        </select>
+                        <label>Size</label>
+                    </div>
+                    <div class="floating-label">
+                        <input type="number" name="quantities[]" placeholder=" " min="0" required>
+                        <label>Quantity</label>
+                    </div>
+                </div>
+                <div class="size-quantity-row">
+                    <div class="floating-label">
+                        <select name="sizes[]" required>
+                            <option value="">Select Size</option>
+                            <option value="XS">XS</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="XXL">XXL</option>
+                        </select>
+                        <label>Size</label>
+                    </div>
+                    <div class="floating-label">
+                        <input type="number" name="quantities[]" placeholder=" " min="0" required>
+                        <label>Quantity</label>
+                    </div>
+                </div>
+                <div class="size-quantity-row">
+                    <div class="floating-label">
+                        <select name="sizes[]" required>
+                            <option value="">Select Size</option>
+                            <option value="XS">XS</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="XXL">XXL</option>
+                        </select>
+                        <label>Size</label>
+                    </div>
+                    <div class="floating-label">
+                        <input type="number" name="quantities[]" placeholder=" " min="0" required>
+                        <label>Quantity</label>
+                    </div>
+                </div>
             </div>
 
             <div class="floating-label">
