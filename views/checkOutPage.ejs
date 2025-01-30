@@ -262,7 +262,7 @@
           </div>
 
           <hr class="my-4">
-          <a href="#" class="btn btn-primary buyNow w-100 btn-lg" data-item-type="<%= item.item_type %>" data-item-id="<%= item.item_id %>">Buy</a>                                 
+          <a href="/Buy_Now" class="btn btn-primary buyNow w-100 btn-lg" data-item-type="<%= item.item_type %>" data-item-id="<%= item.item_id %>">Buy</a>                                 
         </form>
       </div>
     </div>
@@ -281,7 +281,7 @@
 <script src="/docs/5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script>
+    <!-- <script>
       document.addEventListener("DOMContentLoaded", () => {
           const buyButton = document.querySelectorAll(".buyNow");        
           buyButton.forEach(button => {
@@ -349,6 +349,150 @@
               });
           });          
       });
-    </script>
-
-</body></html>
+    </script> -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+          // Configuration
+          const RAZORPAY_KEY = process.env.RAZORPAY_KEY_ID || "YOUR_RAZORPAY_KEY_ID";
+          const COMPANY_NAME = "Vaibhav Skating Academy";
+          const COMPANY_LOGO = "/icons/VSA_logo.png";
+          const SUCCESS_REDIRECT = "/orders"; // Changed from /Buy_Now to a more appropriate route
+      
+          // Utility functions
+          const validateQuantity = (value) => {
+              const quantity = parseInt(value);
+              if (isNaN(quantity) || quantity <= 0) {
+                  throw new Error("Please enter a valid quantity greater than 0");
+              }
+              return quantity;
+          };
+      
+          const showError = (message) => {
+              // You can replace this with a better UI notification system
+              alert(message);
+          };
+      
+          const disableButton = (button, disabled = true) => {
+              button.disabled = disabled;
+              button.style.opacity = disabled ? "0.5" : "1";
+              button.style.cursor = disabled ? "not-allowed" : "pointer";
+          };
+      
+          // Initialize Razorpay buttons
+          const buyButtons = document.querySelectorAll(".buyNow");
+          
+          buyButtons.forEach(button => {
+              button.addEventListener("click", async (event) => {
+                  event.preventDefault();
+                  
+                  // Disable button to prevent double submissions
+                  disableButton(button, true);
+                  
+                  try {
+                      // Get and validate input data
+                      const item_type = button.getAttribute("data-item-type");
+                      const item_id = button.getAttribute("data-item-id");
+                      const quantityInput = button.closest(".card").querySelector("#quantity-input");
+                      
+                      if (!item_type || !item_id) {
+                          throw new Error("Invalid product information");
+                      }
+      
+                      const quantity = validateQuantity(quantityInput.value);
+      
+                      // Create order on server
+                      const response = await fetch("/Buy_Now", {
+                          method: "POST",
+                          headers: {
+                              'Content-Type': 'application/json',                              
+                          },
+                          body: JSON.stringify({ 
+                              item_id, 
+                              item_type, 
+                              quantity 
+                          }),
+                      });
+      
+                      if (!response.ok) {
+                          const errorData = await response.json();
+                          throw new Error(errorData.error || 'Failed to create order');
+                      }
+      
+                      const data = await response.json();
+      
+                      // Configure Razorpay options
+                      const options = {
+                          key: RAZORPAY_KEY,
+                          amount: data.amount,
+                          currency: data.currency,
+                          name: COMPANY_NAME,
+                          description: `Order #${data.id}`,
+                          image: COMPANY_LOGO,
+                          order_id: data.id,
+                          prefill: {
+                              name: data.full_name,
+                              email: data.email,
+                              contact: data.mobile_number
+                          },
+                          notes: {
+                              address: data.address
+                          },
+                          theme: {
+                              color: "#3399cc"
+                          },
+                          handler: async function(response) {
+                              try {
+                                  // Verify payment on server
+                                  const paymentResponse = await fetch('/payment_success', {
+                                      method: 'POST',
+                                      headers: {
+                                          'Content-Type': 'application/json'
+                                          
+                                      },
+                                      body: JSON.stringify({
+                                          razorpay_payment_id: response.razorpay_payment_id,
+                                          razorpay_order_id: response.razorpay_order_id,
+                                          razorpay_signature: response.razorpay_signature
+                                      })
+                                  });
+      
+                                  const paymentData = await paymentResponse.json();
+      
+                                  if (paymentData.success) {
+                                      // Show success message before redirect
+                                      // alert('Payment successful! Redirecting to orders page...');
+                                      window.location.href = SUCCESS_REDIRECT;
+                                  } else {
+                                      throw new Error(paymentData.error || 'Payment verification failed');
+                                  }
+                              } catch (error) {
+                                  showError(`Payment verification failed: ${error.message}`);
+                              }
+                          },
+                          modal: {
+                              ondismiss: function() {
+                                  // Re-enable button if payment modal is closed
+                                  disableButton(button, false);
+                              }
+                          }
+                      };
+      
+                      // Initialize and open Razorpay
+                      const rzp1 = new Razorpay(options);
+                      rzp1.on('payment.failed', function(response) {
+                          showError(`Payment failed: ${response.error.description}`);
+                          disableButton(button, false);
+                      });
+                      rzp1.open();
+      
+                  } catch (error) {
+                      console.error("Purchase error:", error);
+                      showError(`Error: ${error.message}`);
+                      disableButton(button, false);
+                  }
+              });
+          });
+      });
+      </script>
+</body>
+</html>

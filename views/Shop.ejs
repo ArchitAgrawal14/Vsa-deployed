@@ -11,137 +11,228 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="/style/shop.css" />
-    <link rel="stylesheet" href="/style/header.css" />
-    <style>
-      /* Style for the size-button */
-      .size-button.selected {
-        border: 2px solid blue; /* Dark border when selected */
-        background-color: #f0f0f0; /* Light background when selected */
-      }
+  <style>
+.text-bg-primary.p-3 {
+    position: fixed;
+    top: 75px;
+    width: 100%;
+    z-index: 999;
+    background: linear-gradient(135deg, var(--primary-color, #007bff), var(--secondary-color, #0056b3)) !important;
+    padding: 15px 20px;
+}
+body {
+    padding-top: 130px; 
+    background-color: aliceblue;
+}
+#products-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 20px;
+    margin: 0 auto;
+    max-width: 1400px;
+}
 
-      /* Style for the color-button */
-      .color-button.selected {
-        border: 2px solid blue; /* Dark border when selected */
-        opacity: 0.8; /* Make selected color slightly darker */
-      }
+/* Product card */
+.product-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 250px;
+    max-width: 100%;
+    padding: 1rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-      /* Optional: Adding hover effect for size and color buttons */
-      .size-button:hover,
-      .color-button:hover {
-        cursor: pointer;
-        opacity: 0.9;
-      }
+/* Image styling */
+.product-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+}
 
-      .size-selector,
-      .color-selector {
-        display: flex;
-        gap: 0.5rem;
-      }
+/* Card title */
+.product-card h5, .product-card h4 {
+    text-align: center;
+    margin: 10px 0;
+}
+.product-card .size-selector {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: nowrap; 
+}
 
-      .size-button,
-      .color-button {
-        border: 2px solid transparent;
-        padding: 0.5rem 1rem;
-        border-radius: 0.5rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
+.product-card .size-button {
+    border: 2px solid transparent;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
 
-      .size-button:hover,
-      .color-button:hover {
-        border-color: var(--primary-color);
-      }
+.product-card .color-selector {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
 
-      .color-button {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-      }
-      /* Style for Buy Now and Add to Cart buttons */
-      .btn.buyNow,
-      .btn.addItemsToCart {
-        background-color: #007bff; /* Match surrounding color (e.g., a blue theme) */
-        border: none;
-        color: white;
-        font-size: 1rem;
-        padding: 10px 15px;
-        border-radius: 30px;
-        text-transform: uppercase;
-        font-weight: bold;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        display: inline-block;
-        margin: 10px auto; /* Adds space between buttons */
-      }
+.product-card .color-button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
 
-      /* Center the buttons */
-      .button-container {
-        text-align: center;
-      }
+.product-card .size-button.selected {
+    border: 2px solid #007bff;
+    background-color: #f0f0f0;
+}
 
-      /* Hover and active effects */
-      .btn.buyNow:hover,
-      .btn.addItemsToCart:hover {
-        background-color: #0056b3; /* Darker blue on hover */
-        transform: translateY(-2px); /* Subtle lift effect */
-      }
+.product-card .color-button.selected {
+    border: 2px solid #007bff;
+    opacity: 0.8;
+}
 
-      .btn.buyNow:active,
-      .btn.addItemsToCart:active {
-        background-color: #004085; /* Darkest blue on active click */
-        transform: translateY(1px); /* Slight depression on click */
-      }
-      /* below is the toast for telling user to login */
-      /* Toast for Login Prompt */
-      #toast-login {
-        background-color: #ffc107; /* Warning yellow color */
-        color: #333;
-      }
-      .toast-header.bg-warning {
-        background-color: #ffcd39; /* Slightly darker yellow for header */
-        color: #333;
-      }
-      .toast-login .btn-close {
-        color: #333;
-      }
-      /* login toast ends here */
+.product-card .btn.buyNow,
+.product-card .btn.addItemsToCart {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    padding: 10px 15px;
+    border-radius: 30px;
+    text-transform: uppercase;
+    font-weight: bold;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    display: inline-block;
+    margin: 10px 5px;
+    min-width: 120px;
+}
 
-      #toast {
-        background-color: #007bff;
-        color: white;
-      }
-      .toast-header {
-        background-color: #0056b3;
-        color: white;
-      }
-      .toast .btn-close {
-        color: white;
-      }
-      .toast-body {
-        color: white;
-      }
-      .card {
-        transition: opacity 0.5s ease, transform 0.5s ease;
-      }
-      .card.hide {
-        opacity: 0;
-        transform: translateY(20px);
-        pointer-events: none;
-      }
-      #search-sort-container {
-        display: flex;
+.product-card .btn.buyNow:hover,
+.product-card .btn.addItemsToCart:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.product-card .btn.buyNow:active,
+.product-card .btn.addItemsToCart:active {
+    background-color: #004085;
+    transform: translateY(1px);
+}
+
+
+.product-card .button-container {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+#search-sort-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    margin-top: 60px;
+    text-align: center;
+}
+
+#sort-select {
+    width: 100%;
+    max-width: 200px;
+}
+@media (max-width: 1024px) {
+    body {
+        padding-top: 150px; 
+    }
+
+    .text-bg-primary.p-3 {
+        top: 90px;
+    }
+
+    #products-container {
+        gap: 1rem;
+        padding-top: 140px;
+    }
+
+    .product-card {
+        width: 220px;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-top: 160px; 
+    }
+
+    .text-bg-primary.p-3 {
+        top: 80px;
+    }
+
+    #products-container {
         flex-direction: column;
-        align-items: flex-end;
-        gap: 0.5rem;
-      }
-      #sort-select {
-        width: auto;
-        max-width: 150px;
-      }
-    </style>
+        align-items: center;
+        padding: 10px;
+        padding-top: 120px; 
+    }
+
+    .product-card {
+        width: 90%;
+    }
+
+    .product-card .button-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .product-card .btn.buyNow,
+    .product-card .btn.addItemsToCart {
+        width: 100%;
+        margin: 5px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding-top: 170px;
+    }
+
+    .text-bg-primary.p-3 {
+        top: 70px;
+        padding: 10px;
+    }
+
+    #products-container {
+        padding-top: 120px; 
+          }
+
+    .product-card {
+        width: 95%;
+    }
+
+    .product-card .btn.buyNow,
+    .product-card .btn.addItemsToCart {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
+}
+
+
+  </style>
   </head>
   <body style="background-color: aliceblue">
     <%- include("header.ejs") %>
+    <div class="shop-headers">
     <header class="p-3 text-bg-primary">
       <div class="container">
         <div
@@ -205,12 +296,13 @@
         </div>
       </div>
     </header>
+  </div>
     <div id="products-container">
       <% if(items_data && items_data.length > 0) { %> <%
       items_data.forEach((item) => { %>
       <div class="row d-flex justify-content-around">
         <div
-          class="card m-5 border-0"
+          class="card m-5 border-0 product-card"
           style="width: 12rem"
           data-name="<%= item.name %>"
           data-price="<%= item.price %>"
@@ -310,7 +402,7 @@
       <% }) %> <% } %>
     </div>
     <%- include("footer.ejs") %>
-    <div id="toast-container" class="position-fixed bottom-0 end-0 p-3">
+    <div id="toast-container" class="position-fixed bottom-0 end-0 p-3 ">
       <div
         id="toast"
         class="toast"
@@ -356,51 +448,52 @@
       crossorigin="anonymous"
     ></script>
 
-    <!-- this below is for searching and sorting. -->
+     <!-- this below is for searching and sorting. -->
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const searchInput = document.getElementById("search-input");
-        const sortSelect = document.getElementById("sort-select");
-        const productsContainer = document.getElementById("products-container");
+      document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("search-input");
+    const sortSelect = document.getElementById("sort-select");
+    const productsContainer = document.getElementById("products-container");
+    const productCards = Array.from(document.querySelectorAll(".product-card"));
 
-        // Filter items based on search input
-        searchInput.addEventListener("input", () => {
-          const query = searchInput.value.toLowerCase();
-          const cards = document.querySelectorAll(".card");
-
-          cards.forEach((card) => {
-            const name = card.getAttribute("data-name").toLowerCase();
-            if (name.includes(query)) {
-              card.classList.remove("hide");
+    function filterProducts() {
+        const searchText = searchInput.value.trim().toLowerCase();
+        productCards.forEach(card => {
+            const productName = card.getAttribute("data-name").toLowerCase();
+            const productPrice = card.getAttribute("data-price").toLowerCase();
+            
+            if (productName.includes(searchText) || productPrice.includes(searchText)) {
+                card.style.transition = "opacity 0.3s ease-in-out";
+                card.style.display = "flex";
+                card.style.opacity = "1";
             } else {
-              card.classList.add("hide");
+                card.style.transition = "opacity 0.3s ease-in-out";
+                card.style.opacity = "0";
+                setTimeout(() => {
+                    card.style.display = "none";
+                }, 300);
             }
-          });
         });
+    }
 
-        // Sort items based on selected option
-        sortSelect.addEventListener("change", () => {
-          const sortBy = sortSelect.value;
-          const cards = Array.from(document.querySelectorAll(".card"));
+    function sortProducts() {
+        const sortBy = sortSelect.value;
+        let sortedCards = [...productCards];
+        
+        if (sortBy === "name") {
+            sortedCards.sort((a, b) => a.getAttribute("data-name").localeCompare(b.getAttribute("data-name")));
+        } else if (sortBy === "price") {
+            sortedCards.sort((a, b) => parseFloat(a.getAttribute("data-price")) - parseFloat(b.getAttribute("data-price")));
+        }
 
-          if (sortBy === "name") {
-            cards.sort((a, b) =>
-              a
-                .getAttribute("data-name")
-                .localeCompare(b.getAttribute("data-name"))
-            );
-          } else if (sortBy === "price") {
-            cards.sort(
-              (a, b) =>
-                parseFloat(a.getAttribute("data-price")) -
-                parseFloat(b.getAttribute("data-price"))
-            );
-          }
+        productsContainer.innerHTML = "";
+        sortedCards.forEach(card => productsContainer.appendChild(card));
+    }
 
-          // Re-append sorted cards to container
-          cards.forEach((card) => productsContainer.appendChild(card));
-        });
-      });
+    searchInput.addEventListener("input", filterProducts);
+    sortSelect.addEventListener("change", sortProducts);
+});
+
     </script>
 
     <!-- below is the script for (new) add to cart and product details it also handles users when they are not logged in -->

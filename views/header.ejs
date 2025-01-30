@@ -1,256 +1,395 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Header</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <style>
-      /* Transparent Header */
-      .transparent-header {
-        position: relative;
-        height: 100px;
+    <title>Modern Header</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+  <style>
+    :root {
+    --primary-color: #2563eb;
+    --secondary-color: #1e40af;
+    --accent-color: #60a5fa;
+    --text-light: #f8fafc;
+    --text-dark: #1e293b;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.modern-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    padding: 0.5rem;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.header-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+}
+
+.logo img {
+    max-height: 60px;
+    transition: transform 0.3s ease;
+}
+
+.logo img:hover {
+    transform: scale(1.05);
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    transition: transform 0.3s ease-in-out;
+}
+
+.nav-links li {
+    animation: fadeInDown 0.5s ease forwards;
+    opacity: 0;
+    animation-delay: calc(0.1s * var(--animation-order));
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.nav-links li a {
+    color: var(--text-light);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-links li a:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.dropdown-menu {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: none;
+    margin-top: 0.5rem;
+    padding: 0.5rem 0;
+    display: none;
+    transition: all 0.3s ease-in-out;
+    position: absolute;
+    right: 0;
+    min-width: 180px;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-menu .dropdown-item {
+    color: var(--text-dark);
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background 0.3s ease;
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background: #f8fafc;
+}
+
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+@media (max-width: 992px) {
+    .nav-links {
+        gap: 1rem;
+    }
+    .nav-links li a {
+        font-size: 0.9rem;
+        padding: 0.5rem 0.75rem;
+    }
+    .dropdown-menu {
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+@media (max-width: 768px) {
+    .mobile-menu-btn {
+        display: block;
+        margin-left: auto;
+    }
+    .nav-links {
+        position: fixed;
         top: 0;
+        right: -100%;
+        height: 100vh;
+        width: 80%;
+        max-width: 400px;
+        background: var(--primary-color);
+        flex-direction: column;
+        padding: 4rem 2rem;
+        transition: right 0.3s ease-in-out;
+        z-index: 1001;
+    }
+    .nav-links.active {
+    right: 0;
+    display: flex; /* Ensures visibility */
+}
+
+    .nav-links li {
+        width: 100%;
+        margin: 1rem 0;
+    }
+    .nav-links li a {
         width: 100%;
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px 50px;
-        background-color: rgba(0, 174, 239); /* Keeps the background invisible */
-        z-index: 100; /* Ensures it's above other elements */
-      }
-
-      .transparent-header .logo img {
-        max-height: 50px;
-      }
-
-      .transparent-header .navigation {
-        position: relative;
-      }
-
-      .transparent-header .navigation ul {
-        list-style: none;
-        display: flex;
-        gap: 30px;
-        transition: all 0.3s ease;
-        justify-content: center; /* Centering items horizontally */
-        align-items: center; /* Centering items vertically */
-      }
-
-      .transparent-header .navigation ul li {
-        display: inline-block;
-        text-align: center;
-        position: relative; /* Make the dropdown relative to its parent */
-      }
-
-      .transparent-header .navigation ul li a {
-        text-decoration: none;
-        font-size: 1rem;
-        color: white; /* Adjust this according to your design */
-        transition: color 0.3s ease;
-      }
-
-      .transparent-header .navigation ul li a:hover {
-        color: #ddd; /* Adjust hover effect */
-      }
-
-      /* Dropdown styles */
-      .dropdown-menu {
-        visibility: hidden; /* Keep the dropdown menu invisible by default */
-        opacity: 0; /* Make it fully transparent */
-        position: absolute; /* Position absolutely within the dropdown */
-        top: 100%; /* Position below the toggle */
-        left: 0; /* Align to the left of the toggle */
-        background-color: white; /* Background color of the dropdown */
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Add some shadow for effect */
-        z-index: 1000; /* Ensure it appears above other elements */
-        transition: visibility 0s, opacity 0.3s ease; /* Smooth transition */
-        padding: 0; /* Remove padding from dropdown */
-        margin: 0; /* Remove margin from dropdown */
-        width: max-content; /* Adjust width to fit items */
-      }
-
-      .dropdown-menu li {
-        list-style: none; /* Remove bullet points */
-        display: block; /* Ensure list items stack vertically */
-      }
-
-      .dropdown-menu li a {
-        display: block; /* Make the links block elements for full width */
-        padding: 10px 15px; /* Add padding for better click area */
-        text-decoration: none; /* Remove underline */
-        color: #333; /* Set link color */
-        transition: background-color 0.3s ease; /* Add transition for hover effect */
-      }
-
-      .dropdown-menu li a:hover {
-        background-color: #f0f0f0; /* Change background on hover */
-      }
-
-      .dropdown:hover .dropdown-menu {
-        visibility: visible; /* Show the dropdown menu on hover */
-        opacity: 1; /* Make it fully opaque */
-      }
-
-      .transparent-header .cta-button {
-        padding: 10px 25px;
-        background-color: #fff;
-        color: #333;
-        border: none;
-        border-radius: 20px;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
-
-      .transparent-header .cta-button:hover {
-        background-color: #ddd;
-      }
-
-      /* Button to Reveal the Navigation */
-      .menu-button {
+        justify-content: flex-start;
+        padding: 0.75rem 1rem;
+    }
+    .nav-overlay {
         display: none;
-        padding: 10px 20px;
-        background-color: #fff;
-        color: #333;
-        border: none;
-        border-radius: 20px;
-        font-size: 1rem;
-        cursor: pointer;
-        position: absolute;
-        right: 10px;
-        top: 20px;
-        z-index: 101;
-      }
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+    .nav-overlay.active {
+        display: block;
+    }
+    .dropdown-menu {
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+}
 
-      /* Hide the navigation on smaller screens */
-      @media (max-width: 768px) {
-        .transparent-header {
-          justify-content: flex-start;
-          padding: 10px 20px;
-        }
+@media (max-width: 576px) {
+    .header-container {
+        padding: 0 1rem;
+    }
+    .dropdown-menu {
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+/* Button to Reveal the Navigation */
+.menu-button {
+    display: none;
+    padding: 10px 20px;
+    background-color: #fff;
+    /* margin-left: -10px; */
+    color: #333;
+    border: none;
+    border-radius: 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    top: 20px;
+    z-index: 101;
+}
 
-        .transparent-header .logo {
-          margin-right: auto;
-        }
+.menu-button:hover + .navigation ul {
+    right: 0;
+}
 
-        .transparent-header .navigation ul {
-          position: fixed;
-          top: 0;
-          right: -100%; /* Move off-screen initially */
-          height: 100vh;
-          width: 60%;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          background-color: rgba(0, 0, 0, 0); /* white background for mobile menu */
-          transition: right 0.3s ease;
-          gap: 20px;
-        }
-
-        .transparent-header .navigation ul li {
-          text-align: center;
-        }
-
-        /* Show the navigation when hovering over the menu button */
-        .menu-button:hover + .navigation ul {
-          right: 0; /* Slide in the menu */
-        }
-
-        /* Hide the menu again when mouse leaves the navigation area */
-        .navigation ul:hover {
-          right: 0; /* Keep the menu visible while hovering over it */
-        }
-
-        .navigation ul:not(:hover) {
-          right: -100%; /* Hide the menu again if not hovered */
-        }
-
-        /* Menu button visibility */
-        .menu-button {
-          display: inline-block;
-        }
-
-        /* Close button for optional manual closing of the menu */
-        .navigation ul .close-button {
-          top: 20px;
-          right: 20px;
-          left: auto;
-        }
-      }
-
-      /* Ensure logo remains visible */
-      .transparent-header .logo {
-        z-index: 102;
-      }
-
-      /* Close button inside the navigation (optional for mobile) */
-      .close-button {
-        display: none;
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        padding: 10px;
-        background-color: #fff;
-        color: #333;
-        border-radius: 50%;
-        font-size: 1rem;
-        cursor: pointer;
-      }
-
-      @media (max-width: 768px) {
-        .close-button {
-          display: block;
-        }
-      }
-    </style>
+  </style>
+  
   </head>
-  <body>
-    <header class="transparent-header">
-      <div class="logo">
-        <img src="/icons/VSA_logo.png" alt="Logo" />
-        <!-- Add your logo here -->
-      </div>
+<body>
+    <header class="modern-header">
+        <div class="header-container">
+            <div class="logo animate__animated animate__fadeIn">
+                <img src="/icons/VSA_logo.png" alt="Logo" />
+            </div>
 
-      <!-- Menu Button (visible on smaller screens) -->
-      <button class="menu-button">☰</button>
+            <button class="mobile-menu-btn" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
 
-      <nav class="navigation">
-        <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/joinUs">Join us</a></li>
-          <li><a href="/Cart">Cart</a></li>
-          <li><a href="/Shop">Shop</a></li>
-          <li class="nav-item dropdown">
-            <% if(Login) { %>
-              <a
-                class="btn btn-primary dropdown-toggle"
-                href="#"
-                role="button"
-                id="navbarDropdown"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <%= Login %>
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="/Profile">Profile</a></li>
-                <li><a class="dropdown-item" href="/Orders">Orders</a></li>
-                <li><a class="dropdown-item" href="/Password_change">Change Password</a></li>
-                <li><a class="dropdown-item" href="/Logout">LogOut</a></li>
-              </ul>
-            <% } else { %>
-              <a href="/newLogin" class="nav-link text-white">Login</a>
-            <% } %>
-          </li>
-          
-        </ul>
-      </nav>
-
-      <div class="cta">
-        <!-- <button class="cta-button">Sign in</button> -->
-      </div>
+            <nav>
+                <ul class="nav-links">
+                    <li style="--animation-order: 1"><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                    <li style="--animation-order: 2"><a href="/joinUs"><i class="fas fa-user-plus"></i> Join us</a></li>
+                    <li style="--animation-order: 3"><a href="/Cart"><i class="fas fa-shopping-cart"></i> Cart</a></li>
+                    <li style="--animation-order: 4"><a href="/Shop"><i class="fas fa-store"></i> Shop</a></li>
+                    <li class="nav-item dropdown" style="--animation-order: 5">
+                        <% if(Login) { %>
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle"></i> <%= Login %>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/Profile"><i class="fas fa-id-card"></i> Profile</a></li>
+                                <li><a class="dropdown-item" href="/Orders"><i class="fas fa-shopping-bag"></i> Orders</a></li>
+                                <li><a class="dropdown-item" href="/Password_change"><i class="fas fa-key"></i> Change Password</a></li>
+                                <li><a class="dropdown-item" href="/Logout"><i class="fas fa-sign-out-alt"></i> LogOut</a></li>
+                            </ul>
+                        <% } else { %>
+                            <a href="/newLogin" class="nav-link">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </a>
+                        <% } %>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </header>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const overlay = document.createElement('div');
+            overlay.className = 'nav-overlay';
+            document.body.appendChild(overlay);
+
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navLinks = document.querySelector('.nav-links');
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+
+            function toggleMobileMenu() {
+                navLinks.classList.toggle('active');
+                overlay.classList.toggle('active');
+                document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
+            }
+
+            mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+            overlay.addEventListener('click', toggleMobileMenu);
+
+            dropdownToggles.forEach(toggle => {
+                toggle.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768) {
+                        e.preventDefault();
+                        const dropdownMenu = this.nextElementSibling;
+                        dropdownMenu.classList.toggle('show');
+                    }
+                });
+            });
+
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768) {
+                    if (!navLinks.contains(e.target) && 
+                        !mobileMenuBtn.contains(e.target) && 
+                        navLinks.classList.contains('active')) {
+                        toggleMobileMenu();
+                    }
+                }
+            });
+        });
+    </script> -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'nav-overlay';
+            document.body.appendChild(overlay);
+
+            // Get necessary elements
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navLinks = document.querySelector('.nav-links');
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+
+            // Toggle mobile menu
+            function toggleMobileMenu() {
+                mobileMenuBtn.classList.toggle('active');
+                navLinks.classList.toggle('active');
+                overlay.classList.toggle('active');
+                
+                // Toggle menu icon
+                const icon = mobileMenuBtn.querySelector('i');
+                if (navLinks.classList.contains('active')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    icon.classList.add('fa-bars');
+                    icon.classList.remove('fa-times');
+                    document.body.style.overflow = '';
+                }
+            }
+
+            // Event listeners
+            mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+            overlay.addEventListener('click', toggleMobileMenu);
+
+            // Handle dropdown menus on mobile
+            dropdownToggles.forEach(toggle => {
+                toggle.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768) {
+                        e.preventDefault();
+                        const dropdownMenu = this.nextElementSibling;
+                        dropdownMenu.classList.toggle('show');
+                    }
+                });
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768) {
+                    const isClickInsideNav = navLinks.contains(e.target);
+                    const isClickOnMenuBtn = mobileMenuBtn.contains(e.target);
+                    
+                    if (!isClickInsideNav && !isClickOnMenuBtn && navLinks.classList.contains('active')) {
+                        toggleMobileMenu();
+                    }
+                }
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    navLinks.classList.remove('active');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                    mobileMenuBtn.querySelector('i').classList.remove('fa-times');
+                    mobileMenuBtn.querySelector('i').classList.add('fa-bars');
+                }
+            });
+        });
+    </script>
   </body>
 </html>

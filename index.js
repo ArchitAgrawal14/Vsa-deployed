@@ -518,207 +518,461 @@ app.get("/Shop", authenticateUser, async (req, res) => {
 // Endpoint to handle payment success
 
 // Razorpay instance setup
-app.post("/Buy_Now", authenticateUser, async (req, res) => {
-  const { item_id, item_type, quantity, size, color } = req.body;
+// app.post("/Buy_Now", authenticateUser, async (req, res) => {
+//   const { item_id, item_type, quantity, size, color } = req.body;
 
-  if (!req.user) {
-    console.log("User not logged in, unable to process purchase.");
-    return res.status(401).render("login.ejs", {
-      message: "You must be logged in to purchase items.",
-    });
+//   if (!req.user) {
+//     console.log("User not logged in, unable to process purchase.");
+//     return res.status(401).render("login.ejs", {
+//       message: "You must be logged in to purchase items.",
+//     });
+//   }
+//   const validItemTypes = ['skates', 'accessories','helmets','skinsuits','wheels']; // define valid types
+//   if (!validItemTypes.includes(item_type)) {
+//     return res.status(400).json({ error: "Invalid item type" });
+//   }
+//   if (!Number.isInteger(quantity) || quantity <= 0) {
+//     return res.status(400).json({ error: "Invalid quantity" });
+//   }
+//   const client = await db.connect(); // Start a database client connection
+
+//   try {
+//     await client.query("BEGIN"); // Start a transaction block
+
+//     // Check user details
+//     const user_check = await client.query(
+//       "SELECT * FROM users WHERE email = $1",
+//       [req.user.Email]
+//     );
+//     const user_check_address = await client.query(
+//       "SELECT * FROM users_address WHERE email = $1",
+//       [req.user.Email]
+//     );
+
+//     if (user_check.rows.length === 0 || user_check_address.rows.length === 0) {
+//       console.log("User or address details not found.");
+//       return res
+//         .status(404)
+//         .json({ error: "User or address details not found." });
+//     }
+
+//     const { name: full_name, email, mobile_number } = user_check.rows[0];
+//     const { address, zip_code, city, state } = user_check_address.rows[0];
+
+//     // Check item stock with version
+//     const itemCheck = await client.query(
+//       `SELECT * FROM stock_${item_type} WHERE item_id = $1`,
+//       [item_id]
+//     );
+
+//     if (itemCheck.rows.length === 0) {
+//       console.log("Item not found.");
+//       return res.status(404).json({ error: "Item not found." });
+//     }
+
+//     const purchase = itemCheck.rows[0];
+//     const currentVersion = purchase.version; // Current version of the stock row
+//     const stockQuantity = purchase.quantity;
+//     const newQuantity = Math.min(parseInt(quantity), stockQuantity);
+
+//     if (newQuantity > stockQuantity) {
+//       console.log(
+//         `Insufficient stock for item_id ${item_id}, requested: ${newQuantity}, available: ${stockQuantity}`
+//       );
+//       return res.status(400).json({ error: "Insufficient stock" });
+//     }
+
+//     // Attempt to update stock using optimistic locking
+//     const updateResult = await client.query(
+//       `UPDATE stock_${item_type}
+//         SET quantity = quantity - $1, version = version + 1
+//         WHERE item_id = $2 AND version = $3`,
+//       [newQuantity, item_id, currentVersion]
+//     );
+
+//     // If no rows were updated, it means the version was outdated
+//     if (updateResult.rowCount === 0) {
+//       console.log("Stock has been updated by another transaction.");
+//       return res.status(409).json({
+//         error:
+//           "The stock has been updated by another transaction. Please try again.",
+//       });
+//     }
+
+//     // Insert into orders with a pending status
+//     await client.query(
+//       "INSERT INTO orders (name, email, mobile_number, address, zip_code, city, state, item_id, item_type, price, quantity, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'pending')",
+//       [
+//         full_name,
+//         email,
+//         mobile_number,
+//         address,
+//         zip_code,
+//         city,
+//         state,
+//         item_id,
+//         item_type,
+//         purchase.price,
+//         newQuantity,
+//       ]
+//     );
+
+//     // Create Razorpay order
+//     const orderOptions = {
+//       amount: purchase.price * newQuantity, // amount in the smallest currency unit
+//       currency: "INR",
+//       receipt: `receipt_order_${item_id}_${Date.now()}`,
+//     };
+
+//     const order = await razorpayInstance.orders.create(orderOptions);
+
+//     await client.query("COMMIT"); // Commit the transaction if all queries succeed
+
+//     res.status(200).json({
+//       id: order.id,
+//       currency: order.currency,
+//       amount: order.amount,
+//       full_name,
+//       email,
+//       mobile_number,
+//       address,
+//     });
+//   } catch (error) {
+//     await client.query("ROLLBACK"); // Rollback the transaction in case of error
+//     console.error("Error processing purchase:", error);
+//     res
+//       .status(500)
+//       .json({ error: "An error occurred while processing your purchase." });
+//   } finally {
+//     client.release(); // Release the client back to the pool
+//   }
+// });
+
+// app.post("/payment_success", async (req, res) => {
+//   const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+//     req.body;
+
+//   // Verification of payment signature
+//   const razorpaySecret = process.env.RAZORPAY_SECRET; // Store secret securely
+//   const hmac = crypto.createHmac("sha256", razorpaySecret);
+//   hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
+//   const generated_signature = hmac.digest("hex");
+
+//   if (generated_signature === razorpay_signature) {
+//     // Payment verified
+//     const client = await db.connect(); // Start a database client connection
+
+//     try {
+//       await client.query("BEGIN"); // Start a transaction block
+
+//       // Find the order with the given Razorpay order ID and mark it as paid
+//       const order = await client.query(
+//         "SELECT * FROM orders WHERE order_id = $1",
+//         [razorpay_order_id]
+//       );
+
+//       if (order.rows.length === 0) {
+//         return res
+//           .status(404)
+//           .json({ success: false, error: "Order not found" });
+//       }
+
+//       const orderDetails = order.rows[0];
+//       const { item_id, item_type, quantity } = orderDetails;
+
+//       // Use optimistic locking during the stock update
+//       const itemCheck = await client.query(
+//         `SELECT * FROM stock_${item_type} WHERE item_id = $1`,
+//         [item_id]
+//       );
+
+//       const currentVersion = itemCheck.rows[0].version;
+
+//       const updateStockResult = await client.query(
+//         `UPDATE stock_${item_type} SET quantity = quantity - $1, version = version + 1 WHERE item_id = $2 AND version = $3`,
+//         [quantity, item_id, currentVersion]
+//       );
+
+//       // If no rows were updated, it means the version was outdated
+//       if (updateStockResult.rowCount === 0) {
+//         console.log(
+//           "Stock has been updated by another transaction after payment verification."
+//         );
+//         return res.status(409).json({
+//           success: false,
+//           error:
+//             "The stock has been updated by another transaction. Please try again.",
+//         });
+//       }
+
+//       // Update order status to 'completed'
+//       await client.query(
+//         "UPDATE orders SET status = 'completed', payment_id = $1 WHERE order_id = $2",
+//         [razorpay_payment_id, razorpay_order_id]
+//       );
+
+//       await client.query("COMMIT"); // Commit the transaction if all queries succeed
+
+//       res.json({ success: true });
+//     } catch (error) {
+//       await client.query("ROLLBACK"); // Rollback the transaction in case of error
+//       console.error("Error processing payment:", error);
+//       res.status(500).json({ success: false, error: "Database update failed" });
+//     } finally {
+//       client.release(); // Release the client back to the pool
+//     }
+//   } else {
+//     res
+//       .status(400)
+//       .json({ success: false, error: "Signature verification failed" });
+//   }
+// });
+
+const validateItemType = (req, res, next) => {
+  const validItemTypes = ['skates', 'accessories', 'helmets', 'skinsuits', 'wheels'];
+  if (!validItemTypes.includes(req.body.item_type)) {
+    return res.status(400).json({ error: "Invalid item type" });
   }
+  next();
+};
 
-  const client = await db.connect(); // Start a database client connection
+// Buy Now endpoint
+app.post("/Buy_Now", authenticateUser, validateItemType, async (req, res) => {
+  // Input validation
+  const validateInput = (data) => {
+      const { item_id, item_type, quantity, size, color } = data;
+      if (!item_id || !item_type || !size || !color) {
+          throw new Error("Missing required fields");
+      }
+      const parsedQuantity = parseInt(quantity);
+      if (!Number.isInteger(parsedQuantity) || parsedQuantity <= 0) {
+          throw new Error("Invalid quantity");
+      }
+      return parsedQuantity;
+  };
+
+  const client = await db.connect();
 
   try {
-    await client.query("BEGIN"); // Start a transaction block
+      const parsedQuantity = validateInput(req.body);
+      const { item_id, item_type, size, color } = req.body;
 
-    // Check user details
-    const user_check = await client.query(
-      "SELECT * FROM users WHERE email = $1",
-      [req.user.Email]
-    );
-    const user_check_address = await client.query(
-      "SELECT * FROM users_address WHERE email = $1",
-      [req.user.Email]
-    );
+      await client.query("BEGIN ISOLATION LEVEL SERIALIZABLE");
 
-    if (user_check.rows.length === 0 || user_check_address.rows.length === 0) {
-      console.log("User or address details not found.");
-      return res
-        .status(404)
-        .json({ error: "User or address details not found." });
-    }
+      // Batch fetch user and product data
+      const [userQuery, addressQuery, productQuery] = [
+          `SELECT name, email, mobile_number 
+           FROM users 
+           WHERE email = $1`,
+          `SELECT address, zip_code, city, state 
+           FROM users_address 
+           WHERE email = $1`,
+          `SELECT pd.*, s.quantity as stock_quantity, s.version 
+           FROM product_details pd
+           JOIN stock_${item_type} s ON pd.item_id = s.item_id
+           WHERE pd.item_id = $1 
+           AND pd.size = $2 
+           AND pd.color = $3
+           FOR UPDATE`
+      ];
 
-    const { name: full_name, email, mobile_number } = user_check.rows[0];
-    const { address, zip_code, city, state } = user_check_address.rows[0];
+      const [userResult, addressResult, productResult] = await Promise.all([
+          client.query(userQuery, [req.user.Email]),
+          client.query(addressQuery, [req.user.Email]),
+          client.query(productQuery, [item_id, size, color])
+      ]);
 
-    // Check item stock with version
-    const itemCheck = await client.query(
-      `SELECT * FROM stock_${item_type} WHERE item_id = $1`,
-      [item_id]
-    );
+      if (!userResult.rows.length || !addressResult.rows.length) {
+          throw Object.assign(
+              new Error("User or address details not found"),
+              { status: 404 }
+          );
+      }
 
-    if (itemCheck.rows.length === 0) {
-      console.log("Item not found.");
-      return res.status(404).json({ error: "Item not found." });
-    }
+      if (!productResult.rows.length) {
+          throw Object.assign(
+              new Error("Product variant not found"),
+              { status: 404 }
+          );
+      }
 
-    const purchase = itemCheck.rows[0];
-    const currentVersion = purchase.version; // Current version of the stock row
-    const stockQuantity = purchase.quantity;
-    const newQuantity = Math.min(parseInt(quantity), stockQuantity);
+      const { name, email, mobile_number } = userResult.rows[0];
+      const { address, zip_code, city, state } = addressResult.rows[0];
+      const product = productResult.rows[0];
 
-    if (newQuantity > stockQuantity) {
-      console.log(
-        `Insufficient stock for item_id ${item_id}, requested: ${newQuantity}, available: ${stockQuantity}`
-      );
-      return res.status(400).json({ error: "Insufficient stock" });
-    }
+      // Validate stock availability
+      if (parsedQuantity > product.stock_quantity) {
+          throw Object.assign(
+              new Error(`Insufficient stock. Available: ${product.stock_quantity}`),
+              { status: 400 }
+          );
+      }
 
-    // Attempt to update stock using optimistic locking
-    const updateResult = await client.query(
-      `UPDATE stock_${item_type}
-        SET quantity = quantity - $1, version = version + 1
-        WHERE item_id = $2 AND version = $3`,
-      [newQuantity, item_id, currentVersion]
-    );
-
-    // If no rows were updated, it means the version was outdated
-    if (updateResult.rowCount === 0) {
-      console.log("Stock has been updated by another transaction.");
-      return res.status(409).json({
-        error:
-          "The stock has been updated by another transaction. Please try again.",
+      // Create Razorpay order
+      const totalAmount = Math.round(product.price * parsedQuantity * 100);
+      const razorpayOrder = await razorpayInstance.orders.create({
+          amount: totalAmount,
+          currency: "INR",
+          notes: {
+              item_type,
+              size,
+              color,
+              quantity: parsedQuantity,
+              user_email: email
+          }
+      }).catch(error => {
+          throw Object.assign(
+              new Error("Failed to create payment order"),
+              { status: 502, originalError: error }
+          );
       });
-    }
 
-    // Insert into orders with a pending status
-    await client.query(
-      "INSERT INTO orders (name, email, mobile_number, address, zip_code, city, state, item_id, item_type, price, quantity, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'pending')",
-      [
-        full_name,
-        email,
-        mobile_number,
-        address,
-        zip_code,
-        city,
-        state,
-        item_id,
-        item_type,
-        purchase.price,
-        newQuantity,
-      ]
-    );
+      // Batch database updates
+      const [stockUpdateQuery, productUpdateQuery, orderInsertQuery] = [
+          `UPDATE stock_${item_type}
+           SET quantity = quantity - $1,
+               version = version + 1
+           WHERE item_id = $2 
+           AND version = $3
+           AND quantity >= $1
+           RETURNING *`,
+          `UPDATE product_details
+           SET quantity = quantity - $1
+           WHERE item_id = $2 
+           AND size = $3 
+           AND color = $4
+           AND quantity >= $1
+           RETURNING *`,
+          `INSERT INTO orders (
+              order_id, name, email, mobile_number, 
+              address, zip_code, city, state,
+              item_id, item_type, price, quantity, 
+              size, color, status, created_at
+           ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, 'pending', CURRENT_TIMESTAMP)
+           RETURNING id`
+      ];
 
-    // Create Razorpay order
-    const orderOptions = {
-      amount: purchase.price * newQuantity, // amount in the smallest currency unit
-      currency: "INR",
-      receipt: `receipt_order_${item_id}_${Date.now()}`,
-    };
+      const [stockUpdate, productUpdate, orderInsert] = await Promise.all([
+          client.query(stockUpdateQuery, [parsedQuantity, item_id, product.version]),
+          client.query(productUpdateQuery, [parsedQuantity, item_id, size, color]),
+          client.query(orderInsertQuery, [
+              razorpayOrder.id, name, email, mobile_number,
+              address, zip_code, city, state,
+              item_id, item_type, product.price, parsedQuantity,
+              size, color
+          ])
+      ]);
 
-    const order = await razorpayInstance.orders.create(orderOptions);
+      if (!stockUpdate.rows.length || !productUpdate.rows.length) {
+          throw Object.assign(
+              new Error("Stock update failed - concurrent modification detected"),
+              { status: 409 }
+          );
+      }
 
-    await client.query("COMMIT"); // Commit the transaction if all queries succeed
+      await client.query("COMMIT");
 
-    res.status(200).json({
-      id: order.id,
-      currency: order.currency,
-      amount: order.amount,
-      full_name,
-      email,
-      mobile_number,
-      address,
-    });
+      res.status(200).json({
+          order_id: razorpayOrder.id,
+          currency: razorpayOrder.currency,
+          amount: razorpayOrder.amount,
+          name,
+          email,
+          mobile_number,
+          address,
+          transaction_id: orderInsert.rows[0].id
+      });
+
   } catch (error) {
-    await client.query("ROLLBACK"); // Rollback the transaction in case of error
-    console.error("Error processing purchase:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while processing your purchase." });
+      await client.query("ROLLBACK");
+      console.error("Purchase processing error:", {
+          error: error.message,
+          originalError: error.originalError,
+          stack: error.stack,
+          user: req.user.Email,
+          item: req.body.item_id
+      });
+
+      res.status(error.status || 500).json({ 
+          error: error.message || "An error occurred while processing your purchase"
+      });
+
   } finally {
-    client.release(); // Release the client back to the pool
+      client.release();
   }
 });
+// Payment Success endpoint
+app.post("/payment_success", authenticateUser, async (req, res) => {
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+  
+  if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res.status(400).json({ error: "Missing required payment parameters" });
+  }
 
-app.post("/payment_success", async (req, res) => {
-  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
-    req.body;
+  const client = await db.connect();
 
-  // Verification of payment signature
-  const razorpaySecret = process.env.RAZORPAY_SECRET; // Store secret securely
-  const hmac = crypto.createHmac("sha256", razorpaySecret);
-  hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
-  const generated_signature = hmac.digest("hex");
+  try {
+      // Verify payment signature
+      const hmac = crypto.createHmac("sha256", process.env.RAZORPAY_SECRET);
+      hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+      const generated_signature = hmac.digest("hex");
 
-  if (generated_signature === razorpay_signature) {
-    // Payment verified
-    const client = await db.connect(); // Start a database client connection
-
-    try {
-      await client.query("BEGIN"); // Start a transaction block
-
-      // Find the order with the given Razorpay order ID and mark it as paid
-      const order = await client.query(
-        "SELECT * FROM orders WHERE order_id = $1",
-        [razorpay_order_id]
-      );
-
-      if (order.rows.length === 0) {
-        return res
-          .status(404)
-          .json({ success: false, error: "Order not found" });
+      if (generated_signature !== razorpay_signature) {
+          throw new Error("Invalid payment signature");
       }
 
-      const orderDetails = order.rows[0];
-      const { item_id, item_type, quantity } = orderDetails;
+      await client.query("BEGIN");
 
-      // Use optimistic locking during the stock update
-      const itemCheck = await client.query(
-        `SELECT * FROM stock_${item_type} WHERE item_id = $1`,
-        [item_id]
+      // Get order details with lock
+      const orderResult = await client.query(
+          `SELECT o.* 
+           FROM orders o
+           WHERE o.order_id = $1 AND o.status = 'pending'
+           FOR UPDATE`,
+          [razorpay_order_id]
       );
 
-      const currentVersion = itemCheck.rows[0].version;
-
-      const updateStockResult = await client.query(
-        `UPDATE stock_${item_type} SET quantity = quantity - $1, version = version + 1 WHERE item_id = $2 AND version = $3`,
-        [quantity, item_id, currentVersion]
-      );
-
-      // If no rows were updated, it means the version was outdated
-      if (updateStockResult.rowCount === 0) {
-        console.log(
-          "Stock has been updated by another transaction after payment verification."
-        );
-        return res.status(409).json({
-          success: false,
-          error:
-            "The stock has been updated by another transaction. Please try again.",
-        });
+      if (orderResult.rows.length === 0) {
+          throw new Error("Order not found or already processed");
       }
 
-      // Update order status to 'completed'
+      const order = orderResult.rows[0];
+
+      // Verify payment amount with Razorpay
+      const payment = await razorpayInstance.payments.fetch(razorpay_payment_id);
+      
+      if (payment.order_id !== razorpay_order_id) {
+          throw new Error("Payment verification failed: Order ID mismatch");
+      }
+
+      // Update order status
       await client.query(
-        "UPDATE orders SET status = 'completed', payment_id = $1 WHERE order_id = $2",
-        [razorpay_payment_id, razorpay_order_id]
+          `UPDATE orders 
+           SET status = 'completed', 
+               payment_id = $1
+           WHERE order_id = $2`,
+          [razorpay_payment_id, razorpay_order_id]
       );
 
-      await client.query("COMMIT"); // Commit the transaction if all queries succeed
+      await client.query("COMMIT");
 
-      res.json({ success: true });
-    } catch (error) {
-      await client.query("ROLLBACK"); // Rollback the transaction in case of error
-      console.error("Error processing payment:", error);
-      res.status(500).json({ success: false, error: "Database update failed" });
-    } finally {
-      client.release(); // Release the client back to the pool
-    }
-  } else {
-    res
-      .status(400)
-      .json({ success: false, error: "Signature verification failed" });
+      res.json({
+          success: true,
+          order_id: razorpay_order_id,
+          payment_id: razorpay_payment_id
+      });
+
+  } catch (error) {
+      await client.query("ROLLBACK");
+      console.error("Payment verification error:", error);
+      
+      res.status(error.status || 500).json({
+          success: false,
+          error: error.message || "Payment verification failed"
+      });
+
+  } finally {
+      client.release();
   }
 });
 
