@@ -90,6 +90,7 @@ const db = new Pool({
 
 
 
+
 app.use((req, res, next) => {
   res.set("Cache-Control", "no-store");
   next();
@@ -2317,7 +2318,9 @@ app.use("/FAQ", authenticateUser, async (req, res) => {
     res.render("FAQ.ejs", { FAQ_data: FAQ_data, Login: null });
   }
 });
-
+app.get("/aboutUs",(req,res)=>{
+  res.render("aboutUsPage.ejs");
+})
 //yaha pe newsletter ka hai
 // app.post("/subscribedToNewsLetter", authenticateUser, async (req, res) => {
 //     if (req.user) {
