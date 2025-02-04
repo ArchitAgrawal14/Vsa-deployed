@@ -3,94 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Orders</title>
+    <title>Orders</title>
+    
+    <!-- Bootstrap 5.3 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- Lightbox2 for image gallery -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" rel="stylesheet">
+
     <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #f4f6f7;
+        }
+
+        body {
+            background-color: var(--background-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .orders-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
         .card-collage {
             position: relative;
+            height: 250px;
             overflow: hidden;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
         }
+
         .card-collage img {
             position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
-            height: auto;
+            height: 100%;
             object-fit: cover;
+            transition: transform 0.3s ease;
         }
-        .card-collage .collage-overlay {
+
+        .card:hover .card-collage img {
+            transform: scale(1.1);
+        }
+
+        .collage-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            color: #fff;
+            background: rgba(0, 0, 0, 0.4);
             display: flex;
             justify-content: center;
             align-items: center;
-            text-align: center;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
-        .card-collage .collage-overlay h5 {
-            margin: 0;
+
+        .card:hover .collage-overlay {
+            opacity: 1;
+        }
+
+        .orders-header {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .orders-section {
+                padding: 15px;
+            }
+            .card-collage {
+                height: 200px;
+            }
         }
     </style>
 </head>
 <body>
-    <h2>Current Orders</h2>
-    <% if (ordersDataOngoing.length > 0) { %>
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            <% ordersDataOngoing.forEach(order => { %>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <div class="card-collage">
-                                <% order.items.forEach((item, index) => { %>
-                                    <img src="<%= item.img %>" class="card-img-top" alt="<%= item.name %>" style="z-index: <%= order.items.length - index %>;">
-                                <% }) %>
-                                <div class="collage-overlay">
-                                    <h5>Order ID: <%= order.order_id %></h5>
+    
+    <div class="container py-5">
+        <div class="orders-section animate__animated animate__fadeIn">
+            <h2 class="orders-header">Current Orders</h2>
+            <% if (ordersDataOngoing && ordersDataOngoing.length > 0) { %>
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    <% ordersDataOngoing.forEach(order => { %>
+                        <div class="col">
+                            <div class="card h-100 animate__animated animate__zoomIn">
+                                <div class="card-body p-0">
+                                    <div class="card-collage">
+                                        <% order.items.forEach((item, index) => { %>
+                                            <a href="<%= item.img %>" data-lightbox="order-<%= order.order_id %>">
+                                                <img 
+                                                    src="<%= item.img %>" 
+                                                    alt="<%= item.name %>" 
+                                                    style="z-index: <%= order.items.length - index %>;"
+                                                >
+                                            </a>
+                                        <% }) %>
+                                        <div class="collage-overlay">
+                                            <h5>Order ID: <%= order.order_id %></h5>
+                                        </div>
+                                    </div>
+                                    <div class="p-3">
+                                        <p class="card-text text-muted">Click images to enlarge</p>
+                                        <a href="/orderDetailsUser?order_id=<%= order.order_id %>" class="btn btn-primary w-100">
+                                            <i class="bi bi-eye me-2"></i>View Order Details
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                            <p class="card-text">Click on the card to view details</p>
                         </div>
-                        <div class="card-footer">
-                            <a href="/orderDetailsUser?order_id=<%= order.order_id %>" class="btn btn-primary">View Details</a>
-                        </div>
-                    </div>
+                    <% }) %>
                 </div>
-            <% }) %>
+            <% } else { %>
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-info-circle me-2"></i>No ongoing orders
+                </div>
+            <% } %>
         </div>
-    <% } else { %>
-        <h2>No orders yet</h2>
-    <% } %>
 
-    <h2>Previous Completed Orders</h2>
-    <% if (ordersDataDelivered.length > 0) { %>
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            <% ordersDataDelivered.forEach(order => { %>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <div class="card-collage">
-                                <% order.items.forEach((item, index) => { %>
-                                    <img src="<%= item.img %>" class="card-img-top" alt="<%= item.name %>" style="z-index: <%= order.items.length - index %>;">
-                                <% }) %>
-                                <div class="collage-overlay">
-                                    <h5>Order ID: <%= order.order_id %></h5>
+        <div class="orders-section animate__animated animate__fadeIn">
+            <h2 class="orders-header">Completed Orders</h2>
+            <% if (ordersDataDelivered && ordersDataDelivered.length > 0) { %>
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    <% ordersDataDelivered.forEach(order => { %>
+                        <div class="col">
+                            <div class="card h-100 animate__animated animate__zoomIn">
+                                <div class="card-body p-0">
+                                    <div class="card-collage">
+                                        <% order.items.forEach((item, index) => { %>
+                                            <a href="<%= item.img %>" data-lightbox="order-<%= order.order_id %>">
+                                                <img 
+                                                    src="<%= item.img %>" 
+                                                    alt="<%= item.name %>" 
+                                                    style="z-index: <%= order.items.length - index %>;"
+                                                >
+                                            </a>
+                                        <% }) %>
+                                        <div class="collage-overlay">
+                                            <h5>Order ID: <%= order.order_id %></h5>
+                                        </div>
+                                    </div>
+                                    <div class="p-3">
+                                        <p class="card-text text-muted">Click images to enlarge</p>
+                                        <a href="/orderDetailsUser?order_id=<%= order.order_id %>" class="btn btn-success w-100">
+                                            <i class="bi bi-archive me-2"></i>View Completed Order
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                            <p class="card-text">Click on the card to view details</p>
                         </div>
-                        <div class="card-footer">
-                            <a href="/orderDetailsUser?order_id=<%= order.order_id %>" class="btn btn-primary">View Details</a>
-                        </div>
-                    </div>
+                    <% }) %>
                 </div>
-            <% }) %>
+            <% } else { %>
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-archive me-2"></i>No completed orders
+                </div>
+            <% } %>
         </div>
-    <% } else { %>
-        <h2>No completed orders yet</h2>
-    <% } %>
+    </div>
+    <%- include("footer.ejs") %>
+    <!-- Bootstrap 5.3 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Lightbox2 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </body>
 </html>

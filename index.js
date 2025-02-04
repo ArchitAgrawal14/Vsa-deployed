@@ -90,6 +90,7 @@ const db = new Pool({
 
 
 
+
 app.use((req, res, next) => {
   res.set("Cache-Control", "no-store");
   next();
@@ -1944,40 +1945,126 @@ app.post("/EnterZip", authenticateUser, async (req, res) => {
     }
   }
 });
-// yaha pe previous orders page ke liye hai.
-//below two end points not working
-app.get("/Orders", authenticateUser, (req, res) => {
-  if (req.user) {
-    const userEmail = req.user.Email;
-    admin.userPreviousOrders(req, res, userEmail);
+
+// yaha pe previous orders page ke liye hai for users not admin below two endpoints.
+app.get("/Orders", authenticateUser, async (req, res) => {
+  try {
+    const userResult = await db.query(`SELECT * FROM users WHERE email=$1`, [
+      req.user.Email,
+    ]);
+
+    if (userResult.rows.length === 0) {
+      console.log("User was not logged in");
+      return res.redirect("/newLogin");
+    }
+
+    // Fetch orders first
+    const userOrders = await db.query(
+      `SELECT order_id, status, item_id, item_type FROM orders WHERE email = $1 ORDER BY order_id DESC`,
+      [req.user.Email]
+    );
+
+    let allOrdersData = [];
+
+    // Loop through orders and fetch corresponding stock data dynamically
+    for (const order of userOrders.rows) {
+      const stockTable = `stock_${order.item_type}`;
+      const stockQuery = `SELECT name, price FROM ${stockTable} WHERE item_id = $1`;
+
+      try {
+        const stockResult = await db.query(stockQuery, [order.item_id]);
+
+        allOrdersData.push({
+          order_id: order.order_id,
+          status: order.status,
+          item: stockResult.rows[0] || { name: "Unknown", price: 0 },
+        });
+      } catch (error) {
+        console.error(`Error fetching data from ${stockTable}:`, error);
+      }
+    }
+
+    // Process orders for rendering
+    const ordersMap = new Map();
+
+    allOrdersData.forEach((row) => {
+      if (!ordersMap.has(row.order_id)) {
+        ordersMap.set(row.order_id, {
+          order_id: row.order_id,
+          status: row.status,
+          items: [],
+        });
+      }
+
+      const order = ordersMap.get(row.order_id);
+      order.items.push({
+        name: row.item.name,
+        price: row.item.price,
+      });
+    });
+
+    const allOrders = Array.from(ordersMap.values());
+    const ongoingOrders = allOrders.filter(
+      (order) => order.status !== "Delivered"
+    );
+    const completedOrders = allOrders.filter(
+      (order) => order.status === "Delivered"
+    );
+
+    res.render("orders.ejs", {
+      ordersDataOngoing: ongoingOrders,
+      ordersDataDelivered: completedOrders,
+    });
+  } catch (error) {
+    console.error("Error retrieving orders:", error);
+    res.status(500).render("error", {
+      message: "Internal server error",
+      error: { status: 500, stack: error.stack },
+    });
   }
 });
+
 app.get("/orderDetailsUser", authenticateUser, async (req, res) => {
-  if (req.user) {
+  try {
+    if (!req.user) {
+      return res.redirect("/newLogin");
+    }
+
     const orderId = req.query.order_id;
     const userEmail = req.user.Email;
+
+    if (!orderId) {
+      return res.status(400).send("Order ID is required");
+    }
 
     // Fetch order details
     const orderData = await db.query(
       "SELECT * FROM orders WHERE order_id=$1 AND email=$2",
       [orderId, userEmail]
     );
-    const orderItems = orderData.rows;
 
-    // Fetch details for each item in the order
-    const itemDetails = [];
-    for (const item of orderItems) {
-      const details = await db.query(
-        `SELECT * FROM stock_${item.item_type} WHERE item_id=$1`,
-        [item.item_id]
-      );
-      itemDetails.push(details.rows[0]);
+    if (orderData.rows.length === 0) {
+      return res.status(404).send("Order not found or does not belong to you");
     }
 
-    res.render("orderDetailsUser.ejs", {
-      order: orderItems,
+    // Fetch all item details **in parallel** to improve performance
+    const itemDetailsPromises = orderData.rows.map((item) =>
+      db
+        .query(`SELECT * FROM stock_${item.item_type} WHERE item_id=$1`, [
+          item.item_id,
+        ])
+        .then((result) => result.rows[0])
+    );
+
+    const itemDetails = await Promise.all(itemDetailsPromises);
+
+    return res.render("orderDetailsUser.ejs", {
+      order: orderData.rows,
       itemDetails: itemDetails,
     });
+  } catch (error) {
+    console.error("Error fetching order details:", error);
+    return res.status(500).send("Internal Server Error");
   }
 });
 

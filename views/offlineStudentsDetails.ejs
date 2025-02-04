@@ -3,73 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <title>Student Details</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Animate.css for animations -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <title>Student Achievement Profile</title>
     <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #f4f6f7;
+            --card-bg: #ffffff;
+            --text-color: #333;
+        }
+
         body {
-            background-color: #f8f9fa;
-            font-family: Arial, sans-serif;
+            background-color: var(--background-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
         }
-        .featurette-heading {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
+
+        .student-profile-container {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 40px;
+            margin-top: 30px;
+            transition: all 0.3s ease;
         }
-        .achievement-item {
-            background-color: #fff;
-            border-radius: 5px;
-            padding: 15px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+        .student-image {
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            transition: transform 0.4s ease;
+        }
+
+        .student-image:hover {
+            transform: scale(1.05) rotate(2deg);
+        }
+
+        .student-name {
+            color: var(--primary-color);
+            font-weight: 700;
             margin-bottom: 20px;
         }
-        .featurette-image {
-            border-radius: 10px;
+
+        .achievement-card {
+            background: linear-gradient(135deg, #f6f8f9 0%, #e5ebee 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
         }
+
+        .achievement-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .achievement-label {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
         .no-achievements {
-            font-style: italic;
-            color: #6c757d;
+            background-color: #f8d7da;
+            color: #721c24;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .parent-info {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .student-profile-container {
+                padding: 20px;
+            }
+
+            .student-image {
+                margin-top: 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="container">
         <% if (studentDetails && studentDetails.length > 0) { %>
             <% studentDetails.forEach((studDetails) => { %>
-                <div class="row featurette mb-5">
-                    <div class="col-md-7">
-                        <h2 class="featurette-heading fw-normal lh-1">
-                            <%= studDetails.student_name %> 
-                            <span class="text-body-secondary">(Smt <%= studDetails.mother_name %>, Shri <%= studDetails.father_name %>)</span>
-                        </h2>
-                        
-                        <!-- Section to display achievements -->
-                        <h3 class="mt-4">Achievements:</h3>
-                        <div class="achievement-item">
-                            <% if (studDetails.medals_won || studDetails.speciality || studDetails.description || studDetails.experience) { %>
-                                <p><strong>Medals Won:</strong> <%= studDetails.medals_won || 'N/A' %></p>
-                                <p><strong>Speciality:</strong> <%= studDetails.speciality || 'N/A' %></p>
-                                <p><strong>Description:</strong> <%= studDetails.description || 'N/A' %></p>
-                                <p><strong>Experience:</strong> <%= studDetails.experience || 'N/A' %></p>
-                            <% } else { %>
-                                <p class="no-achievements">No achievements listed.</p>
-                            <% } %>
+                <div class="student-profile-container animate__animated animate__fadeIn">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <h1 class="student-name animate__animated animate__slideInLeft">
+                                <%= studDetails.student_name %>
+                            </h1>
+                            
+                            <div class="parent-info">
+                                <p class="mb-0">
+                                    <i class="fas fa-female text-danger"></i> Mother: <%= studDetails.mother_name %> 
+                                    <br>
+                                    <i class="fas fa-male text-primary"></i> Father: <%= studDetails.father_name %>
+                                </p>
+                            </div>
+
+                            <div class="achievement-card">
+                                <h3 class="mb-4">
+                                    <i class="fas fa-trophy text-warning"></i> Achievements
+                                </h3>
+                                <% if (studDetails.medals_won || studDetails.speciality || studDetails.description || studDetails.experience) { %>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p class="mb-2">
+                                                <span class="achievement-label">Medals Won:</span> 
+                                                <%= studDetails.medals_won || 'N/A' %>
+                                            </p>
+                                            <p class="mb-2">
+                                                <span class="achievement-label">Speciality:</span> 
+                                                <%= studDetails.speciality || 'N/A' %>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="mb-2">
+                                                <span class="achievement-label">Description:</span> 
+                                                <%= studDetails.description || 'N/A' %>
+                                            </p>
+                                            <p class="mb-2">
+                                                <span class="achievement-label">Experience:</span> 
+                                                <%= studDetails.experience || 'N/A' %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                <% } else { %>
+                                    <div class="no-achievements">
+                                        <i class="fas fa-exclamation-circle"></i> No achievements listed.
+                                    </div>
+                                <% } %>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-5 text-center">
-                        <img class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" 
-                             src="<%= studDetails.img %>" 
-                             alt="Student Image" 
-                             width="500" 
-                             height="500" />
+                        <div class="col-md-5 text-center">
+                            <img 
+                                src="<%= studDetails.img %>" 
+                                alt="<%= studDetails.student_name %>" 
+                                class="img-fluid student-image" 
+                                width="500" 
+                                height="500"
+                            />
+                        </div>
                     </div>
                 </div>
             <% }) %>
         <% } else { %>
-            <div class="alert alert-warning" role="alert">
-                No student details found.
+            <div class="alert alert-warning text-center animate__animated animate__shake" role="alert">
+                <i class="fas fa-exclamation-triangle"></i> No student details found.
             </div>
         <% } %>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-Ob8eNeFxM4hYcU+kKZ4WvRoc6+sDrR6wPAX1y5eU9nq6VR7AWIk2qqD4U+ElQ/p5" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS and Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
