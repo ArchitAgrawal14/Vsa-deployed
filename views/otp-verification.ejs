@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Animate.css for animations -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <title>OTP Verification</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #f4f6f7;
+            --text-color: #333;
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .otp-verification-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            padding: 20px;
+        }
+
+        .otp-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .otp-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+        }
+
+        .form-control {
+            border-radius: 25px;
+            padding: 12px 20px;
+            text-align: center;
+            letter-spacing: 10px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            border-radius: 25px;
+            padding: 12px 20px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08);
+        }
+
+        .resend-otp {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 576px) {
+            .otp-card {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="otp-verification-container">
+        <div class="otp-card animate__animated animate__fadeIn">
+            <div class="text-center mb-4">
+                <h2>OTP Verification</h2>
+                <p>Enter the 6-digit OTP sent to your email</p>
+                
+                <% if (locals.message) { %>
+                    <div class="alert alert-info"><%= message %></div>
+                <% } %>
+                
+                <% if (locals.errorMessage) { %>
+                    <div class="alert alert-danger"><%= errorMessage %></div>
+                <% } %>
+            </div>
+            
+            <form action="/verify-otp" method="POST">
+                <input type="hidden" name="email" value="<%= email %>">
+                <div class="mb-3">
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        id="otp" 
+                        name="otp" 
+                        placeholder="Enter OTP" 
+                        maxlength="6" 
+                        required
+                    >
+                </div>
+                <button type="submit" class="btn btn-submit mt-3">
+                    Verify OTP
+                </button>
+            </form>
+            
+            <div class="resend-otp">
+                <a href="#" onclick="resendOTP('<%= email %>')" class="text-muted">
+                    <i class="fas fa-redo"></i> Resend OTP
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function resendOTP(email) {
+            fetch('/forgetPasswordChangeIt', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: email })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('New OTP sent to your email');
+                } else {
+                    alert('Error sending OTP');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred');
+            });
+        }
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

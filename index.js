@@ -246,16 +246,28 @@ app.post("/SignUp", async (req, res) => {
         },
       });
 
-      // const verificationLink = `http://localhost:3000/verify-email?token=${verificationToken}`;
-      const verificationLink = `https://vsa-deployed.onrender.com/verify-email?token=${verificationToken}`;
+      const verificationLink = `http://localhost:3000/verify-email?token=${verificationToken}`;
+      // const verificationLink = `https://vsa-deployed.onrender.com/verify-email?token=${verificationToken}`;
 
       const mailOptions = {
         from: process.env.nodeMailerEmailValidatorEmail,
         to: SignUp_Email,
         subject: "Verify your email for sign-up",
-        html: `<p>Hi ${firstName},</p>
-                 <p>Please click the link below to verify your email:</p>
-                 <a href="${verificationLink}">Verify Email</a>`,
+        html: `<div style="font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <h2 style="color: #3498db; text-align: center;">Welcome, ${firstName}!</h2>
+            <p style="font-size: 16px; color: #333333; text-align: center;">Thank you for signing up. Please verify your email address to complete your registration.</p>
+            <p style="font-size: 16px; color: #333333; text-align: center;">To verify your email, please click the button below:</p>
+            <div style="text-align: center; margin: 20px;">
+                <a href="${verificationLink}" style="background-color: #3498db; color: #ffffff; padding: 12px 30px; text-decoration: none; font-size: 16px; border-radius: 5px; box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2);">Verify Email</a>
+            </div>
+            <p style="font-size: 14px; color: #777777; text-align: center;">If you did not sign up, please ignore this email.</p>
+            <footer style="font-size: 12px; color: #aaaaaa; text-align: center; margin-top: 30px;">
+                <p>Best regards,</p>
+                <p>Your Company Team</p>
+            </footer>
+        </div>
+    </div>`,
       };
 
       await transporter.sendMail(mailOptions);
@@ -404,6 +416,7 @@ app.get("/newLogin", (req, res) => {
   console.log("Successfully rendered login page");
 });
 
+
 const authenticateUser = (req, res, next) => {
   const token = req.cookies.token;
 
@@ -425,7 +438,135 @@ const authenticateUser = (req, res, next) => {
     next();
   });
 };
+app.get("/forgetPassword",async(req,res)=>{  
+    // const firstName = req.user.fullName.split(" ")[0];    
+    res.render("forgetPasswordPage.ejs");
+})
+// Forget Password Route
+app.post("/forgetPasswordChangeIt", async (req, res) => {
+  const { email } = req.body;
+  
+  try {
+    // Check if user exists
+    const userExist = await db.query("SELECT * FROM users WHERE email=$1", [email]);
+    
+    if (userExist.rows.length === 0) {
+      res.redirect("/newLogin");
+    }
 
+    // Generate OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // OTP valid for 10 minutes
+
+    // Store OTP in database
+    await db.query(
+      "UPDATE users SET reset_otp=$1, otp_expiry=$2 WHERE email=$3", 
+      [otp, otpExpiry, email]
+    );
+
+    // Send OTP via email
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.nodeMailerEmailValidatorEmail,
+        pass: process.env.nodeMailerEmailValidatorPass,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.nodeMailerEmailValidatorEmail,
+      to: email,
+      subject: "Password Reset OTP",
+      html: `<div style="font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+          <h2 style="color: #3498db; text-align: center;">Password Reset OTP</h2>
+          <p style="font-size: 16px; color: #333333; text-align: center;">Your One-Time Password (OTP) for password reset is:</p>
+          <div style="text-align: center; margin: 20px;">
+            <h3 style="background-color: #3498db; color: #ffffff; display: inline-block; padding: 10px 20px; border-radius: 5px;">${otp}</h3>
+          </div>
+          <p style="font-size: 14px; color: #777777; text-align: center;">This OTP is valid for 10 minutes. Do not share this with anyone.</p>
+          <footer style="font-size: 12px; color: #aaaaaa; text-align: center; margin-top: 30px;">
+            <p>If you did not request a password reset, please ignore this email.</p>
+          </footer>
+        </div>
+      </div>`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    // Render OTP verification page
+    return res.render("otp-verification.ejs", { 
+      email: email, 
+      message: "OTP has been sent to your email" 
+    });
+
+  } catch (error) {
+    console.error("Error in forget password process:", error);
+    return res.redirect("/newLogin");
+  }
+});
+
+// OTP Verification Route
+app.post("/verify-otp", async (req, res) => {
+  const { email, otp } = req.body;
+
+  try {
+    // Check OTP in database
+    const result = await db.query(
+      "SELECT * FROM users WHERE email=$1 AND reset_otp=$2 AND otp_expiry > NOW()", 
+      [email, otp]
+    );
+
+    if (result.rows.length === 0) {
+      return res.render("otp-verification.ejs", { 
+        email: email, 
+        errorMessage: "Invalid or expired OTP" 
+      });
+    }
+
+    // OTP is valid, render password reset page
+    return res.render("reset-password.ejs", { 
+      email: email 
+    });
+
+  } catch (error) {
+    console.error("Error in OTP verification:", error);
+    return res.render("otp-verification.ejs", { 
+      email: email, 
+      errorMessage: "An error occurred. Please try again." 
+    });
+  }
+});
+
+// Password Reset Route
+app.post("/reset-password", async (req, res) => {
+  const { email, newPassword, confirmPassword } = req.body;
+
+  try {
+    // Validate passwords match
+    if (newPassword !== confirmPassword) {
+      return res.redirect("/newLogin?status=error&message=Passwords%20do%20not%20match");
+    }
+
+    // Hash the new password
+    const saltRounds = 10;
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update password in database and clear OTP fields
+    await db.query(
+      "UPDATE users SET password_entered=$1, reset_otp=NULL, otp_expiry=NULL WHERE email=$2", 
+      [hashedPassword, email]
+    );
+
+    // Redirect to login with success message
+    return res.redirect("/newLogin?status=success&message=Password%20reset%20successfully");
+
+  } catch (error) {
+    console.error("Error in password reset:", error);
+    return res.redirect("/newLogin?status=error&message=Password%20reset%20failed");
+  }
+});
 app.get("/", authenticateUser, async (req, res) => {
   if (req.user) {
     const firstName = req.user.fullName.split(" ")[0];
