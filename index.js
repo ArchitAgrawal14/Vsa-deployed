@@ -90,7 +90,6 @@ const db = new Pool({
 
 
 
-
 app.use((req, res, next) => {
   res.set("Cache-Control", "no-store");
   next();
@@ -247,8 +246,8 @@ app.post("/SignUp", async (req, res) => {
         },
       });
 
-      const verificationLink = `http://localhost:3000/verify-email?token=${verificationToken}`;
-      // const verificationLink = `https://vsa-deployed.onrender.com/verify-email?token=${verificationToken}`;
+      // const verificationLink = `http://localhost:3000/verify-email?token=${verificationToken}`;
+      const verificationLink = `https://vsa-deployed.onrender.com/verify-email?token=${verificationToken}`;
 
       const mailOptions = {
         from: process.env.nodeMailerEmailValidatorEmail,
