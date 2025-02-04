@@ -89,8 +89,6 @@ const db = new Pool({
 });
 
 
-
-
 app.use((req, res, next) => {
   res.set("Cache-Control", "no-store");
   next();
@@ -2247,6 +2245,7 @@ app.get("/achievements", async (req, res) => {
     });
   }
 });
+
 //yaha pe academy students details ka hai
 app.get("/StudentsAchievements", authenticateUser, async (req, res) => {
   try {
