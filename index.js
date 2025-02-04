@@ -246,8 +246,8 @@ app.post("/SignUp", async (req, res) => {
         },
       });
 
-      const verificationLink = `http://localhost:3000/verify-email?token=${verificationToken}`;
-      // const verificationLink = `https://vsa-deployed.onrender.com/verify-email?token=${verificationToken}`;
+      // const verificationLink = `http://localhost:3000/verify-email?token=${verificationToken}`;
+      const verificationLink = `https://vsa-deployed.onrender.com/verify-email?token=${verificationToken}`;
 
       const mailOptions = {
         from: process.env.nodeMailerEmailValidatorEmail,
@@ -567,6 +567,7 @@ app.post("/reset-password", async (req, res) => {
     return res.redirect("/newLogin?status=error&message=Password%20reset%20failed");
   }
 });
+
 app.get("/", authenticateUser, async (req, res) => {
   if (req.user) {
     const firstName = req.user.fullName.split(" ")[0];
