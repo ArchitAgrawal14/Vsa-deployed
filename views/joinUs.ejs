@@ -2,464 +2,348 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>New Student</title>
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Registration</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
   <style>
-    body {
-      background-color: #f0f4f8;
-      /* Softer background color */
-      font-family: "Arial", sans-serif;
-    }
-
-    .form-container {
-      max-width: 600px;
-      margin: 30px auto;
-      padding: 20px;
-      background-color: #ffffff;
-      /* White background for form */
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .form-container h1 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #007bff;
-      /* Primary color for headings */
-      font-weight: bold;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-      /* Reduced space between form groups */
-    }
-
-    .form-group label {
-      margin-bottom: 5px;
-      font-weight: bold;
-      color: #333;
-      /* Dark gray for labels */
-      display: block;
-      /* Align labels above the inputs */
-    }
-
-    .form-control,
-    .form-select {
-      width: 100%;
-      /* Full width */
-      height: 38px;
-      /* Reduced height */
-      border-radius: 10px;
-      border: 1px solid #ced4da;
-      padding: 8px;
-      /* Reduced padding */
-      font-size: 14px;
-      /* Slightly smaller font size */
-      box-sizing: border-box;
-      /* Include padding in width calculations */
-      background-color: #f9f9f9;
-      /* Light gray background for inputs */
-    }
-
-    .form-control:focus,
-    .form-select:focus {
-      border-color: #007bff;
-      /* Primary color on focus */
-      box-shadow: 0 0 5px rgba(38, 143, 255, 0.5);
-    }
-
-    .btn-submit {
-      width: 100%;
-      /* Full width */
-      background-color: #28a745;
-      /* Success color for button */
-      border: none;
-      border-radius: 10px;
-      padding: 10px;
-      /* Reduced padding */
-      font-size: 16px;
-      /* Slightly smaller font size */
-      color: #ffffff;
-      /* White text color */
-      cursor: pointer;
-    }
-
-    .btn-submit:hover {
-      background-color: #218838;
-      /* Darker shade of green on hover */
-    }
-
-    .toast {
-      background-color: #28a745;
-      /* Success color */
-      color: #ffffff;
-      /* White text color */
-      border-radius: 8px;
-    }
-
-    .toast-body {
-      font-size: 16px;
-    }
-
-    .toast-container {
-      display: none;
-    }
-
-    .toast-container.show {
-      display: block;
-    }
-
-    .custom-select {
-      height: 38px;
-      /* Consistent height */
-      border-radius: 10px;
-      border: 1px solid #ced4da;
-      background-color: #f9f9f9;
-      /* Light gray background */
-    }
-
-    .custom-select:focus {
-      border-color: #007bff;
-      /* Primary color on focus */
-      box-shadow: 0 0 5px rgba(38, 143, 255, 0.5);
-    }
-
-    .form-check {
-      display: flex;
-      /* Align checkbox and label in one line */
-      align-items: center;
-      /* Center vertically */
-      margin-bottom: 10px;
-      /* Space below checkbox */
-    }
-
-    .form-check-label {
-      margin-left: 5px;
-      /* Space between checkbox and label */
-      font-size: 14px;
-      /* Consistent font size */
-      color: #333;
-      /* Dark gray for labels */
-    }
-
-    #termsAndConditionPopup {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      justify-content: center;
-      align-items: center;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 1000;
-    }
-
-    #termsAndConditionPopup>div {
-      background-color: #ffffff;
-      /* White background for popup */
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-      width: 90%;
-      max-width: 500px;
-      max-height: 80vh;
-      overflow-y: auto;
-      position: relative;
-      /* For positioning the close button */
-    }
-
-    #termsAndConditionPopup h2 {
-      margin-bottom: 10px;
-      color: #dc3545;
-      /* Danger color for heading */
-    }
-
-    #termsAndConditionPopup button {
-      margin-top: 15px;
-      border-radius: 8px;
-      background-color: #dc3545;
-      /* Danger color for close button */
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      /* Consistent padding */
-      cursor: pointer;
-    }
-
-    #termsAndConditionPopup button:hover {
-      background-color: #c82333;
-      /* Darker shade on hover */
-    }
-
-    /* Close Button for the Popup */
-    .close-popup {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: transparent;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      color: #dc3545;
-      /* Danger color for close button */
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      .form-container {
-        margin: 10px;
-        padding: 15px;
+      :root {
+          --primary-color: #3498db;
+          --secondary-color: #2ecc71;
+          --bg-light: #f4f6f7;
       }
 
-      .form-container h1 {
-        font-size: 24px;
+      body {
+          background: linear-gradient(135deg, var(--bg-light), #e0e8f0);
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .form-container {
+          background: white;
+          border-radius: 15px;
+          box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+          padding: 40px;
+          max-width: 600px;
+          margin: 50px auto;
+      }
+
+      .form-group {
+          margin-bottom: 20px;
       }
 
       .btn-submit {
-        font-size: 16px;
-        padding: 10px;
+          background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+          border: none;
+          color: white;
+          padding: 12px 20px;
+          border-radius: 25px;
+          width: 100%;
+          transition: all 0.3s ease;
       }
 
-      .form-control,
-      .form-select {
-        padding: 8px;
-        /* Slightly smaller padding */
-        font-size: 14px;
+      .btn-submit:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08);
       }
 
-      .toast-body {
-        font-size: 14px;
+      .popup {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0,0,0,0.5);
+          display: none;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
       }
-    }
-    /* below css is for register button */
-  .transition {
-    transition: opacity 0.3s ease-in-out;
-  }
-  .fade-out {
-    opacity: 0; /* Start transparent */
-  }
 
+      .popup-content {
+          background: white;
+          border-radius: 10px;
+          padding: 30px;
+          max-width: 500px;
+          max-height: 80vh;
+          overflow-y: auto;
+          position: relative;
+      }
 
+      .close-btn {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+      }
   </style>
 </head>
-
 <body>
-  <% if (typeof toastMessage !=='undefined' ) { %>
-    <div id="toast-container"
-      class="position-fixed bottom-0 end-0 p-3 toast-container <%= toastMessage ? 'show' : '' %>">
-      <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header">
-          <strong class="me-auto">Message</strong>
-          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body">
-          <% if (toastMessage===true) {%>Successfully added student<% } %>
-              <%if (toastMessage==='e' ) { %>
-                Student already exists in the
-                database.
-                <% } %>
-                  <% if (toastMessage===false) { %>
-                    Couldnt add student. Try again later.
-                    <% } %>
-        </div>
-      </div>
-    </div>
-    <% } %>
-
+  <div class="container">
       <div class="form-container">
-        <h1>Register New Student</h1>
-        <form action="/joinUsStudentRegistered" method="post">
-          <div class="form-group">
-            <label for="studentName">Enter Student Name</label>
-            <input type="text" id="studentName" class="form-control" name="Student_Name" required />
-          </div>
-          <div class="form-group">
-            <label for="motherName">Enter Mother's Name</label>
-            <input type="text" id="motherName" class="form-control" name="Mother_name" required />
-          </div>
-          <div class="form-group">
-            <label for="fatherName">Enter Father's Name</label>
-            <input type="text" id="fatherName" class="form-control" name="Father_name" required />
-          </div>
-          <div class="form-group">
-            <label for="mobileNumber">Enter Mobile Number</label>
-            <input type="text" id="mobileNumber" class="form-control" name="mobile_number" required />
-          </div>
-          <div class="form-group">
-            <label for="email">Enter Email</label>
-            <input type="email" id="email" class="form-control" name="email" required />
-          </div>
-          <div class="form-group">
-            <label for="feeStructure">Enter Fee Structure</label>
-            <select id="feeStructure" name="feeStructure" class="form-select custom-select" required>
-              <option value="1_month">Monthly Plan : 2000/- </option>
-              <option value="3_month">Quaterly Plan : 5500/-</option>
-              <option value="6_month">Half-Yearly Plan : 10000/-</option>
-              <option value="11_month">Yearly Plan : 16000/-</option>
-            </select>
-          </div>          
+          <h1 class="text-center mb-4">Join Our Academy</h1>
+          
+          <form action="/joinUsStudentRegistered" method="post">
+              <div class="row">
+                  <div class="col-md-6 form-group">
+                      <label for="studentName">Student Name</label>
+                      <input type="text" id="studentName" class="form-control" name="Student_Name" required />
+                  </div>
+                  <div class="col-md-6 form-group">
+                      <label for="mobileNumber">Mobile Number</label>
+                      <input type="text" id="mobileNumber" class="form-control" name="mobile_number" required />
+                  </div>
+              </div>
 
-          <div class="form-group">
-            <div class="form-check">
-              <input type="checkbox" class="form-check-input" id="terms" name="terms" required />
-              <label class="form-check-label" for="terms">
-                I accept the
-                <a href="#" id="termsAndConditionLink">Terms and Conditions</a>
-              </label>
+              <div class="row">
+                  <div class="col-md-6 form-group">
+                      <label for="motherName">Mother's Name</label>
+                      <input type="text" id="motherName" class="form-control" name="Mother_name" required />
+                  </div>
+                  <div class="col-md-6 form-group">
+                      <label for="fatherName">Father's Name</label>
+                      <input type="text" id="fatherName" class="form-control" name="Father_name" required />
+                  </div>
+              </div>
 
-            </div>
-            <label class="form-check-label" for="feesStructure">
-              <a href="#" id="feesStructureLink">Fees Structure</a>
-            </label>
-          </div>
+              <div class="form-group">
+                  <label for="email">Email</label>
+                  <input type="email" id="email" class="form-control" name="email" required />
+              </div>
 
-          <button type="submit" class="btn-submit transition" id="razorpay-payment-button">Register</button>
-        </form>
+              <div class="form-group">
+                  <label for="feeStructure">Fee Structure</label>
+                  <select id="feeStructure" name="feeStructure" class="form-select" required>
+                      <option value="1_month">Monthly Plan : 2000/-</option>
+                      <option value="3_month">Quaterly Plan : 5500/-</option>
+                      <option value="6_month">Half-Yearly Plan : 10000/-</option>
+                      <option value="11_month">Yearly Plan : 16000/-</option>
+                  </select>
+              </div>
+
+              <div class="form-group">
+                  <div class="form-check">
+                      <input type="checkbox" class="form-check-input" id="terms" name="terms" required />
+                      <label class="form-check-label" for="terms">
+                          I accept the 
+                          <a href="#" id="termsAndConditionLink">Terms and Conditions</a>
+                      </label>
+                  </div>
+                  <div class="form-check">
+                      <label class="form-check-label">
+                          <a href="#" id="feesStructureLink">View Fees Structure</a>
+                      </label>
+                  </div>
+              </div>
+
+              <button type="submit" class="btn-submit transition" id="razorpay-payment-button">
+                  Register - Fees: ₹2000
+              </button>
+          </form>
       </div>
-      <!-- // Below is the div for terms and condition popup box -->
-      <div id="termsAndConditionPopup" style="
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-      ">
-        <div style="
-          background-color: white;
-          padding: 20px;
-          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-          width: 80%;
-          max-width: 500px;
-          max-height: 80vh;
-          overflow-y: auto;
-        ">
-          <h2>Terms and Condition :</h2>
+  </div>
+
+  <!-- Terms and Conditions Popup -->
+  <div id="termsAndConditionPopup" class="popup">
+      <div class="popup-content">
+          <button id="closePopup" class="btn btn-danger close-btn">Close</button>
+          <h2>Terms and Conditions</h2>
           <ol>
-            <li>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe,
-              repudiandae eius tenetur a reprehenderit libero animi. Aut quasi,
-              nulla ipsum deleniti a rerum similique, nam laboriosam pariatur
-              soluta dolores reprehenderit.
+            <li><strong>General Information:</strong> The website content, including information about our programs, coaches, and events, is subject to change without prior notice.</li>
+            <br>
+            <li><strong>Eligibility for Enrollment:</strong>
+               <ul>
+                  <li>Enrollment in VSA programs is open to individuals of all ages, subject to medical fitness and waiver of liability.</li>
+                  <li>Minors (below 18 years) require consent from a parent or legal guardian for enrollment.</li>
+                  <li>Participants must adhere to the age and skill requirements as specified in each program.</li>
+               </ul>
             </li>
-            <li>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Suscipit
-              perferendis reprehenderit cumque fugit aliquam dolore cupiditate
-              voluptatibus laborum hic? Aperiam eos vel fuga nulla obcaecati porro
-              assumenda facilis eius nostrum!
+            <br>
+            <li><strong>Fees and Payments:</strong>
+               <ul>
+                  <li>Fees for all programs, camps, and events are clearly stated on the website and are subject to revision without notice.</li>
+                  <li>Full payment must be made in advance before the commencement of any program.</li>
+                  <li>Payment methods accepted include credit/debit cards and UPI.</li>
+                  <li>Fees once paid are non-refundable, except in cases of program cancellation by VSA.</li>
+                  <li>All prices for products and services are listed in Indian Rupees (INR).</li>
+               </ul>
             </li>
-            <li>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe,
-              repudiandae eius tenetur a reprehenderit libero animi. Aut quasi,
-              nulla ipsum deleniti a rerum similique, nam laboriosam pariatur
-              soluta dolores reprehenderit.
+            <br>
+            <li><strong>Program and Service Delivery:</strong>
+               <ul>
+                  <li>VSA will make reasonable efforts to ensure the continuity of its programs, including regular classes, camps, and events.</li>
+                  <li>Classes may be rescheduled or canceled in case of unforeseen circumstances such as weather conditions, emergencies, or government directives.</li>
+                  <li>VSA reserves the right to change coaches or instructors without prior notice.</li>
+                  <li>Program timings and schedules are subject to change based on availability and operational requirements.</li>
+               </ul>
             </li>
-            <li>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Suscipit
-              perferendis reprehenderit cumque fugit aliquam dolore cupiditate
-              voluptatibus laborum hic? Aperiam eos vel fuga nulla obcaecati porro
-              assumenda facilis eius nostrum!
+            <br>
+            <li><strong>Code of Conduct:</strong>
+               <ul>
+                  <li>All participants are expected to behave respectfully and responsibly during sessions.</li>
+                  <li>The use of abusive language, violence, harassment, or any form of disruptive behavior is strictly prohibited and will lead to immediate removal from the program without refund.</li>
+                  <li>VSA reserves the right to terminate the participation of any individual who does not comply with these terms or engages in behavior that endangers others.</li>
+               </ul>
             </li>
-          </ol>
-          <button id="closePopup" class="btn btn-danger">Close</button>
-        </div>
+            <br>
+            <li><strong>Use of Skating Gear and Equipment:</strong>
+               <ul>
+                  <li>Participants may bring their safety gear, including helmets, knee pads, elbow pads, and wrist guards. Alternatively, safety gear can be bought/ordered in advance or after enrollment from VSA.</li>
+                  <li>Products related to skating and sports equipment are sold through our website.</li>
+                  <li>Equipment once sold will not be returned if used or damaged.</li>
+                  <li>VSA will not be held responsible for any injury, damage, or loss caused by the improper use of personal or purchased equipment.</li>
+               </ul>
+            </li>
+            <br>
+            <li><strong>Cancellations and Refunds:</strong>
+               <ul>
+                  <li>In the event of a program cancellation by VSA, participants will be offered either a full refund or the option to enroll in an alternate program.</li>
+                  <li>Refunds will not be provided for voluntary cancellations or withdrawals by participants once the program has commenced.</li>
+                  <li>Refund requests for medical emergencies will be considered on a case-by-case basis and must be supported by appropriate documentation.</li>
+                  <li>Refunds will be processed within 15 working days of approval.</li>
+               </ul>
+            </li>
+            <br>
+            <li><strong>Waiver of Liability:</strong>
+               <ul>
+                  <li>Participants acknowledge that inline skating is a physically demanding and potentially dangerous activity. By enrolling, they assume all risks associated with skating, including the risk of injury.</li>
+                  <li>VSA, its staff, coaches, and agents shall not be held liable for any injury, loss, or damage sustained during participation in our programs, except in cases of gross negligence.</li>
+                  <li>All participants (or their guardians) must sign a waiver of liability before the commencement of any program. Failure to do so will result in exclusion from the program.</li>
+               </ul>
+            </li>
+            <br>
+            <li><strong>Health and Safety:</strong>
+               <ul>
+                  <li>Participants are responsible for disclosing any medical conditions or injuries that may affect their ability to safely participate in skating activities.</li>
+                  <li>VSA reserves the right to deny participation to individuals who appear unfit for physical activity or fail to meet safety requirements.</li>
+                  <li>VSA adheres to all local health and safety regulations. In case of emergencies, basic first aid will be administered, and medical assistance will be sought as necessary.</li>
+               </ul>
+            </li>
+            <br>
+            <li><strong>Intellectual Property:</strong>
+               <ul>
+                  <li>All content on the VSA website, including text, images, videos, and logos, is the intellectual property of Vaibhav Skating Academy.</li>
+                  <li>Unauthorized use, reproduction, or distribution of this content is strictly prohibited.</li>
+                  <li>Participants agree that VSA may use photos and videos from training sessions and events for promotional purposes, unless explicitly stated otherwise by the participant in writing.</li>
+               </ul>
+            </li>
+            <br>
+            <li><strong>Privacy Policy:</strong>
+               <ul>
+                  <li>VSA is committed to protecting the privacy of its participants. Personal information provided during enrollment will be used solely for communication and internal purposes.</li>
+                  <li>We do not share participant information with third parties without consent, except where required by law.</li>
+               </ul>
+            </li>
+            <br>
+            <li><strong>Shipping Policy:</strong>
+               <ul>
+                  <li>Products ordered via the website are shipped within India.</li>
+                  <li>Shipping timelines are 10 working days from the date of order confirmation.</li>
+                  <li>Shipping charges will be calculated at checkout and depend on the delivery location.</li>
+                  <li>VSA is not responsible for delays caused by third-party shipping services.</li>
+               </ul>
+            </li>
+            <br>
+            <li><strong>Dispute Resolution and Jurisdiction:</strong>
+               <ul>
+                  <li>Any disputes arising from these terms will be resolved through amicable negotiation. If unresolved, the matter will be subject to arbitration as per the provisions of Indian Laws.</li>
+                  <li>These Terms and Conditions are governed by the laws of India, and any legal action shall be subject to the jurisdiction of courts in Madhya Pradesh.</li>
+               </ul>
+            </li>
+            <br>
+            <li><strong>Return Policy:</strong>
+               <ul>
+                  <li>Returns are accepted only for unused and undamaged products within 5 working days of delivery.</li>
+                  <li>To initiate a return, participants must contact VSA customer support with proof of purchase and reason for return.</li>
+                  <li>The cost of return shipping is the responsibility of the customer unless the product is defective or incorrect. The returns shall only be sent to the provided address by the customer themselves after approval from VSA.</li>
+                  <li>Refunds for approved returns will be processed within 15 working days after the returned product is received and inspected.</li>
+                  <li>No returns or refunds will be provided for products that are used, damaged, or do not meet the return criteria.</li>
+               </ul>
+            </li>
+            <br>
+            <li><strong>Exchange Policy:</strong>
+               <ul>
+                  <li>Exchanges are allowed only if you have received the wrong size or color, or if you wish to exchange for another size.</li>
+                  <li>Items must be in unused, original condition with tags intact and in their original packaging.</li>
+                  <li>Exchanges must be requested within 7 days of receiving the item.</li>
+                  <li>Once your exchange request is approved, you will need to ship the item back to us at your own cost.</li>
+                  <li>If you receive a damaged or incorrect item, please initiate an exchange within 48 hours of delivery. We will arrange a replacement at no additional cost.</li>
+               </ul>
+            </li>
+            <br>
+            <li><strong>Modifications:</strong>
+               <ul>
+                  <li>VSA reserves the right to modify these Terms and Conditions at any time. Any changes will be updated on the website, and continued use of the website or services after such changes constitutes acceptance of the new terms.</li>
+               </ul>
+            </li>
+         </ol>
       </div>
-      <!-- //below is the div for showing fees structure to the user -->
-      <div id="feesStructurePopup" style="
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-      ">
-        <div style="
-          background-color: white;
-          padding: 20px;
-          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-          width: 80%;
-          max-width: 500px;
-          max-height: 80vh;
-          overflow-y: auto;
-        ">
+  </div>
+
+  <!-- Fees Structure Popup -->
+  <div id="feesStructurePopup" class="popup">
+      <div class="popup-content">
+          <button id="closePopupFeesStructure" class="btn btn-danger close-btn">Close</button>
           <h2>Fees Structure</h2>
-          <ul>
-            <li>
-              <img src="/images/Fees Structure.jpeg" alt="Fees structure photo" height="300px" width="500px">
-            </li>
-          </ul>
-          <button id="closePopupFeesStructure" class="btn btn-danger">Close</button>
-        </div>
+          <img src="/images/Fees Structure.jpeg" alt="Fees structure" class="img-fluid">
       </div>
-      <!-- Below is the script for terms and condition popup -->
-      <script>
-        document
-          .getElementById("termsAndConditionLink")
-          .addEventListener("click", function (event) {
-            event.preventDefault();
-            document.getElementById("termsAndConditionPopup").style.display =
-              "flex";
-          });
+  </div>
 
-        document
-          .getElementById("closePopup")
-          .addEventListener("click", function () {
-            document.getElementById("termsAndConditionPopup").style.display =
-              "none";
-          });
-      </script>
-      <!-- below is th script for fees structure popup -->
-      <script>
-        document
-          .getElementById("feesStructureLink")
-          .addEventListener("click", function (event) {
-            event.preventDefault();
-            document.getElementById("feesStructurePopup").style.display =
-              "flex";
-          });
+  <!-- Toast Notification -->
+  <% if (typeof toastMessage !=='undefined' ) { %>
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+      <div class="toast" role="alert">
+          <div class="toast-header">
+              <strong class="me-auto">Message</strong>
+              <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+          </div>
+          <div class="toast-body">
+              <% if (toastMessage===true) { %>Successfully added student<% } %>
+              <% if (toastMessage==='e' ) { %>Student already exists in the database.<% } %>
+              <% if (toastMessage===false) { %>Couldn't add student. Try again later.<% } %>
+          </div>
+      </div>
+  </div>
+  <% } %>
 
-        document
-          .getElementById("closePopupFeesStructure")
-          .addEventListener("click", function () {
-            document.getElementById("feesStructurePopup").style.display =
-              "none";
-          });
-      </script>
-      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-      <!-- This below script fits the amount in the register button-->
-<script>
-  // Get the elements
-  const feeStructureSelect = document.getElementById("feeStructure");
-  const registerButton = document.querySelector(".btn-submit");
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+      // Popup Scripts
+      document.getElementById("termsAndConditionLink").addEventListener("click", function (event) {
+          event.preventDefault();
+          document.getElementById("termsAndConditionPopup").style.display = "flex";
+      });
 
-  // Function to update button text with selected fee amount
-  function updateRegisterButton() {
-    // Get the selected fee structure
-    const selectedOption = feeStructureSelect.options[feeStructureSelect.selectedIndex];
-    // Extract the amount from the selected option's text
-    const feeAmount = selectedOption.textContent.match(/(\d+,?\d*)/)[0];
-    // Update the register button text
-    registerButton.textContent = `Register - Fees: ₹${feeAmount}`;
-  }
+      document.getElementById("closePopup").addEventListener("click", function () {
+          document.getElementById("termsAndConditionPopup").style.display = "none";
+      });
 
-  // Add an event listener to update the button whenever the fee structure changes
-  feeStructureSelect.addEventListener("change", updateRegisterButton);
+      document.getElementById("feesStructureLink").addEventListener("click", function (event) {
+          event.preventDefault();
+          document.getElementById("feesStructurePopup").style.display = "flex";
+      });
 
-  // Initial call to set button text on page load
-  updateRegisterButton();
-</script>
+      document.getElementById("closePopupFeesStructure").addEventListener("click", function () {
+          document.getElementById("feesStructurePopup").style.display = "none";
+      });
 
+      // Fee Structure Button Update
+      const feeStructureSelect = document.getElementById("feeStructure");
+      const registerButton = document.querySelector(".btn-submit");
+
+      function updateRegisterButton() {
+          const selectedOption = feeStructureSelect.options[feeStructureSelect.selectedIndex];
+          const feeAmount = selectedOption.textContent.match(/(\d+,?\d*)/)[0];
+          registerButton.textContent = `Register - Fees: ₹${feeAmount}`;
+      }
+
+      feeStructureSelect.addEventListener("change", updateRegisterButton);
+      updateRegisterButton();
+  </script>
 </body>
+
 
 <!-- Below is for razor pay -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
