@@ -277,11 +277,38 @@
                         </div>
                     </div>
     
-                    <!-- Description -->
-                    <div class="mb-4">
-                        <h3 class="text-xl font-semibold mb-2">Description</h3>
-                        <p class="text-gray-600"><%= itemDetails[0].description %></p>
-                    </div>
+                    <% if (itemDetails[0].short_description) { %>
+                        <div class="mb-4">
+                            <h3 class="text-xl font-semibold mb-2">Overview</h3>
+                            <p class="text-gray-600"><%= itemDetails[0].short_description %></p>
+                        </div>
+                    <% } %>
+
+                    <% if (itemDetails[0].detailed_description) { %>
+                        <div class="mb-4">
+                            <h3 class="text-xl font-semibold mb-2">Details</h3>
+                            <p class="text-gray-600"><%= itemDetails[0].detailed_description %></p>
+                        </div>
+                    <% } %>
+
+                    <% if (itemDetails[0].features && itemDetails[0].features.length > 0) { %>
+                        <div class="mb-4">
+                            <h3 class="text-xl font-semibold mb-2">Features</h3>
+                            <ul class="list-disc pl-5">
+                                <% itemDetails[0].features.forEach(feature => { %>
+                                    <li class="text-gray-600"><%= feature %></li>
+                                <% }); %>
+                            </ul>
+                        </div>
+                    <% } %>
+
+                    <% if (itemDetails[0].why_choose) { %>
+                        <div class="mb-4">
+                            <h3 class="text-xl font-semibold mb-2">Why Choose This</h3>
+                            <p class="text-gray-600"><%= itemDetails[0].why_choose %></p>
+                        </div>
+                    <% } %>
+
     
                     <!-- Action Buttons -->
                     <div class="action-buttons">

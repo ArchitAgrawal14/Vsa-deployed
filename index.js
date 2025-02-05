@@ -89,8 +89,6 @@ const db = new Pool({
 });
 
 
-
-
 app.use((req, res, next) => {
   res.set("Cache-Control", "no-store");
   next();
@@ -594,34 +592,29 @@ app.get("/", authenticateUser, async (req, res) => {
     console.log("Sucessfully opened Home without user logged in");
   }
 });
+
 app.get("/Shop", authenticateUser, async (req, res) => {
   if (req.user) {    
     try {
-    //   const { rows: item_data } = await db.query("SELECT * FROM stock_skates");
-    //   console.log(
-    //     "Stocks successfully retrieved from database with user login"
-    //   );
-    //   res.render("Shop.ejs", {
-    //     Login: firstName,
-    //     items_data: item_data,
-    //   });
-    //   console.log(
-    //     "Sucessfully opened shop with user log in and item displayed"
-    //   );
-
-    renderItems(req, res, "Skates", "stock_skates");
+      renderItems(req, res, "Skates", "stock_skates");
     } catch (error) {
-      console.log("Unable to retrive stock", error);
+      console.log("Unable to retrieve stock", error);
     }
   } else {
-    const { rows: item_data } = await db.query(`SELECT 
+    try {
+      const { rows: item_data } = await db.query(`
+        SELECT 
         s.item_id,           
         s.item_type,         
         s.img,               
         s.name,
         s.price,
-        ARRAY_AGG(pd.size) AS sizes,  
-        ARRAY_AGG(pd.color) AS colors 
+        s.short_description,
+        s.detailed_description,
+        s.features,
+        s.why_choose,
+        ARRAY_AGG(DISTINCT pd.size) AS sizes,  
+        ARRAY_AGG(DISTINCT pd.color) AS colors
         FROM stock_skates s
         LEFT JOIN product_details pd ON s.item_id = pd.item_id
         GROUP BY 
@@ -629,248 +622,22 @@ app.get("/Shop", authenticateUser, async (req, res) => {
         s.item_type,
         s.img,
         s.name,
-        s.price`);
-    console.log(
-      "Stocks successfully retrieved from database without user login"
-    );
-    res.render("Shop.ejs", {
-      Login: null,
-      items_data: item_data,
-    });
-    console.log("Sucessfully opened shop without user logged in");
+        s.price,
+        s.short_description,
+        s.detailed_description,
+        s.features,
+        s.why_choose
+      `);
+
+      res.render("Shop.ejs", {
+        Login: null,
+        items_data: item_data,
+      });
+    } catch (error) {
+      console.log("Unable to retrieve stock", error);
+    }
   }
 });
-
-// yaha pe buy karne ke liye hai.
-// app.get("/Buy_Now", authenticateUser, async (req, res) => {
-//     if (req.user) {
-//       const firstName = req.user.fullName.split(" ")[0];
-//       const purchasedItem = await db.query(
-//         "SELECT * FROM orders WHERE email=$1",
-//         [req.user.Email]
-//       );
-//       if (purchasedItem.rows.length > 0) {
-//         res.render("checkOutPage.ejs", {
-//           Login: firstName,
-//           purchasing_item: purchasedItem,
-//         });
-//       }
-//     }
-// });
-
-// Endpoint to handle payment success
-
-// Razorpay instance setup
-// app.post("/Buy_Now", authenticateUser, async (req, res) => {
-//   const { item_id, item_type, quantity, size, color } = req.body;
-
-//   if (!req.user) {
-//     console.log("User not logged in, unable to process purchase.");
-//     return res.status(401).render("login.ejs", {
-//       message: "You must be logged in to purchase items.",
-//     });
-//   }
-//   const validItemTypes = ['skates', 'accessories','helmets','skinsuits','wheels']; // define valid types
-//   if (!validItemTypes.includes(item_type)) {
-//     return res.status(400).json({ error: "Invalid item type" });
-//   }
-//   if (!Number.isInteger(quantity) || quantity <= 0) {
-//     return res.status(400).json({ error: "Invalid quantity" });
-//   }
-//   const client = await db.connect(); // Start a database client connection
-
-//   try {
-//     await client.query("BEGIN"); // Start a transaction block
-
-//     // Check user details
-//     const user_check = await client.query(
-//       "SELECT * FROM users WHERE email = $1",
-//       [req.user.Email]
-//     );
-//     const user_check_address = await client.query(
-//       "SELECT * FROM users_address WHERE email = $1",
-//       [req.user.Email]
-//     );
-
-//     if (user_check.rows.length === 0 || user_check_address.rows.length === 0) {
-//       console.log("User or address details not found.");
-//       return res
-//         .status(404)
-//         .json({ error: "User or address details not found." });
-//     }
-
-//     const { name: full_name, email, mobile_number } = user_check.rows[0];
-//     const { address, zip_code, city, state } = user_check_address.rows[0];
-
-//     // Check item stock with version
-//     const itemCheck = await client.query(
-//       `SELECT * FROM stock_${item_type} WHERE item_id = $1`,
-//       [item_id]
-//     );
-
-//     if (itemCheck.rows.length === 0) {
-//       console.log("Item not found.");
-//       return res.status(404).json({ error: "Item not found." });
-//     }
-
-//     const purchase = itemCheck.rows[0];
-//     const currentVersion = purchase.version; // Current version of the stock row
-//     const stockQuantity = purchase.quantity;
-//     const newQuantity = Math.min(parseInt(quantity), stockQuantity);
-
-//     if (newQuantity > stockQuantity) {
-//       console.log(
-//         `Insufficient stock for item_id ${item_id}, requested: ${newQuantity}, available: ${stockQuantity}`
-//       );
-//       return res.status(400).json({ error: "Insufficient stock" });
-//     }
-
-//     // Attempt to update stock using optimistic locking
-//     const updateResult = await client.query(
-//       `UPDATE stock_${item_type}
-//         SET quantity = quantity - $1, version = version + 1
-//         WHERE item_id = $2 AND version = $3`,
-//       [newQuantity, item_id, currentVersion]
-//     );
-
-//     // If no rows were updated, it means the version was outdated
-//     if (updateResult.rowCount === 0) {
-//       console.log("Stock has been updated by another transaction.");
-//       return res.status(409).json({
-//         error:
-//           "The stock has been updated by another transaction. Please try again.",
-//       });
-//     }
-
-//     // Insert into orders with a pending status
-//     await client.query(
-//       "INSERT INTO orders (name, email, mobile_number, address, zip_code, city, state, item_id, item_type, price, quantity, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'pending')",
-//       [
-//         full_name,
-//         email,
-//         mobile_number,
-//         address,
-//         zip_code,
-//         city,
-//         state,
-//         item_id,
-//         item_type,
-//         purchase.price,
-//         newQuantity,
-//       ]
-//     );
-
-//     // Create Razorpay order
-//     const orderOptions = {
-//       amount: purchase.price * newQuantity, // amount in the smallest currency unit
-//       currency: "INR",
-//       receipt: `receipt_order_${item_id}_${Date.now()}`,
-//     };
-
-//     const order = await razorpayInstance.orders.create(orderOptions);
-
-//     await client.query("COMMIT"); // Commit the transaction if all queries succeed
-
-//     res.status(200).json({
-//       id: order.id,
-//       currency: order.currency,
-//       amount: order.amount,
-//       full_name,
-//       email,
-//       mobile_number,
-//       address,
-//     });
-//   } catch (error) {
-//     await client.query("ROLLBACK"); // Rollback the transaction in case of error
-//     console.error("Error processing purchase:", error);
-//     res
-//       .status(500)
-//       .json({ error: "An error occurred while processing your purchase." });
-//   } finally {
-//     client.release(); // Release the client back to the pool
-//   }
-// });
-
-// app.post("/payment_success", async (req, res) => {
-//   const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
-//     req.body;
-
-//   // Verification of payment signature
-//   const razorpaySecret = process.env.RAZORPAY_SECRET; // Store secret securely
-//   const hmac = crypto.createHmac("sha256", razorpaySecret);
-//   hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
-//   const generated_signature = hmac.digest("hex");
-
-//   if (generated_signature === razorpay_signature) {
-//     // Payment verified
-//     const client = await db.connect(); // Start a database client connection
-
-//     try {
-//       await client.query("BEGIN"); // Start a transaction block
-
-//       // Find the order with the given Razorpay order ID and mark it as paid
-//       const order = await client.query(
-//         "SELECT * FROM orders WHERE order_id = $1",
-//         [razorpay_order_id]
-//       );
-
-//       if (order.rows.length === 0) {
-//         return res
-//           .status(404)
-//           .json({ success: false, error: "Order not found" });
-//       }
-
-//       const orderDetails = order.rows[0];
-//       const { item_id, item_type, quantity } = orderDetails;
-
-//       // Use optimistic locking during the stock update
-//       const itemCheck = await client.query(
-//         `SELECT * FROM stock_${item_type} WHERE item_id = $1`,
-//         [item_id]
-//       );
-
-//       const currentVersion = itemCheck.rows[0].version;
-
-//       const updateStockResult = await client.query(
-//         `UPDATE stock_${item_type} SET quantity = quantity - $1, version = version + 1 WHERE item_id = $2 AND version = $3`,
-//         [quantity, item_id, currentVersion]
-//       );
-
-//       // If no rows were updated, it means the version was outdated
-//       if (updateStockResult.rowCount === 0) {
-//         console.log(
-//           "Stock has been updated by another transaction after payment verification."
-//         );
-//         return res.status(409).json({
-//           success: false,
-//           error:
-//             "The stock has been updated by another transaction. Please try again.",
-//         });
-//       }
-
-//       // Update order status to 'completed'
-//       await client.query(
-//         "UPDATE orders SET status = 'completed', payment_id = $1 WHERE order_id = $2",
-//         [razorpay_payment_id, razorpay_order_id]
-//       );
-
-//       await client.query("COMMIT"); // Commit the transaction if all queries succeed
-
-//       res.json({ success: true });
-//     } catch (error) {
-//       await client.query("ROLLBACK"); // Rollback the transaction in case of error
-//       console.error("Error processing payment:", error);
-//       res.status(500).json({ success: false, error: "Database update failed" });
-//     } finally {
-//       client.release(); // Release the client back to the pool
-//     }
-//   } else {
-//     res
-//       .status(400)
-//       .json({ success: false, error: "Signature verification failed" });
-//   }
-// });
-
 const validateItemType = (req, res, next) => {
   const validItemTypes = ['skates', 'accessories', 'helmets', 'skinsuits', 'wheels'];
   if (!validItemTypes.includes(req.body.item_type)) {
@@ -1292,8 +1059,12 @@ const renderItems = async (req, res, productType, tableName) => {
         s.img,               
         s.name,
         s.price,
-        ARRAY_AGG(pd.size) AS sizes,  
-        ARRAY_AGG(pd.color) AS colors 
+        s.short_description,
+        s.detailed_description,
+        s.features,
+        s.why_choose,
+        ARRAY_AGG(DISTINCT pd.size) AS sizes,  
+        ARRAY_AGG(DISTINCT pd.color) AS colors
         FROM ${tableName} s
         LEFT JOIN product_details pd ON s.item_id = pd.item_id
         GROUP BY 
@@ -1301,30 +1072,21 @@ const renderItems = async (req, res, productType, tableName) => {
         s.item_type,
         s.img,
         s.name,
-        s.price
-
+        s.price,
+        s.short_description,
+        s.detailed_description,
+        s.features,
+        s.why_choose
     `);
-
-    console.log(
-      `Stocks successfully retrieved ${productType} from database ${
-        req.user ? "with" : "without"
-      } user login`
-    );
 
     res.render("Shop.ejs", {
       Login: firstName,
       items_data: item_data,
     });
-    console.log(
-      `Successfully opened ${productType} ${
-        req.user ? "with" : "without"
-      } user logged in`
-    );
   } catch (error) {
     console.log("Unable to retrieve stock", error);
   }
 };
-
 // Route for Wheels
 app.get("/Wheels", authenticateUser, (req, res) => {
   renderItems(req, res, "Wheels", "stock_wheels");
