@@ -153,13 +153,19 @@ Close
         </div> -->
   
         <div class="col-6 col-md-2 mb-3" >
-          <h5 class="text-primary">Section</h5>
+          <h5 class="text-primary">Policies</h5>
           <ul class="nav flex-column">
              <!-- <li class="nav-item mb-2"><a href="/BookFreeTrialSession" class="nav-link p-0 text-body-secondary">Book free trial session</a></li> --> 
-            <li class="nav-item mb-2"><a href="/TermsAndCondition" id="TermsAndConditionLink"  class="nav-link p-0 text-body-secondary">Terms and condition</a></li>
-            <!-- <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Pricing</a></li> -->
-            <!-- <li class="nav-item mb-2"><a href="" class="nav-link p-0 text-body-secondary">FAQs</a></li> -->
-            <!-- <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About</a></li> -->
+            <li class="nav-item mb-2"><a href="#" id="TermsAndConditionLink"  class="nav-link p-0 text-body-secondary">Terms and condition</a></li>
+            <li class="nav-item mb-2">
+               <a href="#" class="nav-link p-0 text-body-secondary" onclick="openPrivacyPolicy()">Privacy Policy</a>
+             </li>
+             <li class="nav-item mb-2">
+               <a href="#" class="nav-link p-0 text-body-secondary" onclick="openShippingPolicy()">Shipping Policy</a>
+             </li>
+             <li class="nav-item mb-2">
+               <a href="#" class="nav-link p-0 text-body-secondary" onclick="openRefundPolicy()">Cancellation and Refunds</a>
+             </li>             
           </ul>
         </div>     
         
@@ -323,15 +329,14 @@ Close
       <li><strong>Shipping Policy:</strong>
          <ul>
             <li>Products ordered through our website are shipped within India.</li>
-            <li>All orders are processed within 8 to 10 business days (excluding weekends and holidays) after receiving your order confirmation email. You will receive another notification when your order has shipped , In case of high demand the order can take upto business 13 days . 
+            <li>All orders are processed within 8 to 10 business days (excluding weekends and holidays) after receiving your order confirmation email. You will receive another notification when your order has shipped , In case of high demand the order can take upto business 14 days . 
             </li>
-            <!-- <li>Delivery typically takes 10 working days from order confirmation.</li> -->
-             <li>Free local delivery is available for orders over ₹8000  [area of coverage]. For orders under  ₹8000, we charge ₹65 for local delivery.</li>
-             <li><h4>In-store pickup</h4>
+            <li>Delivery typically takes minimum 8 to 10 working days from order confirmation and may take up to a maximum of 14 days.</li>
+             <li>Free local delivery is available for orders over ₹8000  [Within Satna]. For orders under  ₹8000, we charge ₹65 for local delivery.</li>
+             <li><h5>In-store pickup</h5>
               You can skip the shipping fees with free local pickup at [Shri Rama krishna college Bharhut Nagar , Satna , Madhya pradesh]. After placing your order and selecting local pickup at checkout, your order will be prepared and ready for pick up within 1 to 2 business days. We will send you an email when your order is ready along with instructions. 
               Our in-store pickup hours are [6PM] on [WeekDays]. Please have your order confirmation email with you when you come.
-              </li>
-
+              </li>                                                           
               <li>No international shipping available right now.</li>
              <li>Deliveries are made from [9AM - 7PM] on [All Days]. We will contact you via email with the email and phone number you provided at checkout to notify you on the day of our arrival. 
             </li>
@@ -381,7 +386,63 @@ Close
     </button>
   </div>
 </div>
-<div id="termsOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
+
+
+<div id="privacyPolicyPopup" style="display: none; position: fixed; top: 0; left: 0; height: 100%; width: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
+   <div style="background-color: white; padding: 20px; box-shadow: 0px 0px 10px rgba(0,0,0,0.5); width: 80%; max-width: 500px; max-height: 80vh; overflow-y: auto; border-radius: 8px;">
+     <h2>Privacy Policy</h2>
+     <li><strong>Privacy Policy:</strong>
+      <ul>
+         <li>Vaibhav Skating Academy (VSA) values customer privacy. Personal information collected during purchases and account registration is used solely for order processing, communication, and internal purposes.</li>
+         <li>When you purchase from our store, we collect personal information such as your name, address, and email as part of the buying and selling process.</li>           
+         <li>We do not share customer data with third parties without consent, except where required by law.</li>
+         <li>Email marketing (if applicable): With your permission, we may send emails about new products, promotions, and other updates.</li>
+      </ul>
+   </li>
+     <button onclick="closePrivacyPolicy()" style="margin-top: 10px; padding: 8px 16px; border: none; background-color: #007bff; color: white; border-radius: 4px; cursor: pointer;">Close</button>
+   </div>
+ </div>
+
+<!-- For Shipping Policy -->
+<div id="shippingPolicyPopup" style="display: none; position: fixed; top: 0; left: 0; height: 100%; width: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
+   <div style="background-color: white; padding: 20px; box-shadow: 0px 0px 10px rgba(0,0,0,0.5); width: 80%; max-width: 500px; max-height: 80vh; overflow-y: auto; border-radius: 8px;">
+      <h3><strong>Shipping Policy:</strong></h3>
+         <ul>
+            <li>Products ordered through our website are shipped within India.</li>
+            <li>All orders are processed within 8 to 10 business days (excluding weekends and holidays) after receiving your order confirmation email. You will receive another notification when your order has shipped , In case of high demand the order can take upto business 14 days . 
+            </li>
+            <li>Delivery typically takes minimum 8 to 10 working days from order confirmation and may take up to a maximum of 14 days.</li>
+             <li>Free local delivery is available for orders over ₹8000  [Within Satna]. For orders under  ₹8000, we charge ₹65 for local delivery.</li>
+             <li><h5>In-store pickup</h5>
+              You can skip the shipping fees with free local pickup at [Shri Rama krishna college Bharhut Nagar , Satna , Madhya pradesh]. After placing your order and selecting local pickup at checkout, your order will be prepared and ready for pick up within 1 to 2 business days. We will send you an email when your order is ready along with instructions. 
+              Our in-store pickup hours are [6PM] on [WeekDays]. Please have your order confirmation email with you when you come.
+              </li>                                                           
+              <li>No international shipping available right now.</li>
+             <li>Deliveries are made from [9AM - 7PM] on [All Days]. We will contact you via email with the email and phone number you provided at checkout to notify you on the day of our arrival. 
+            </li>
+            <li>Shipping charges vary based on the delivery location and are calculated at checkout.</li>
+            <li>VSA is not responsible for shipping delays caused by third-party services.</li>
+         </ul>      
+     <button onclick="closeShippingPolicy()" style="margin-top: 10px; padding: 8px 16px; border: none; background-color: #007bff; color: white; border-radius: 4px; cursor: pointer;">Close</button>
+   </div>
+ </div>
+ 
+ <!-- For callecelation and refunds -->
+
+ <div id="refundPolicyPopup" style="display: none; position: fixed; top: 0; left: 0; height: 100%; width: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
+   <div style="background-color: white; padding: 20px; box-shadow: 0px 0px 10px rgba(0,0,0,0.5); width: 80%; max-width: 500px; max-height: 80vh; overflow-y: auto; border-radius: 8px;">
+     <h2>Cancellation and Refunds</h2>
+      <ul>
+         <li>If a program is canceled by VSA, participants may choose a full refund or an alternative program.</li>
+         <li>Refunds are not provided for voluntary cancellations or withdrawals after the program has begun.</li>
+         <li>Refund requests for medical emergencies will be reviewed on a case-by-case basis and must be supported by relevant documentation.</li>
+         <li>Approved refunds will be processed within 15 working days.</li>
+      </ul>
+    <button onclick="closeRefundPolicy()" style="margin-top: 10px; padding: 8px 16px; border: none; background-color: #007bff; color: white; border-radius: 4px; cursor: pointer;">Close</button>
+   </div>
+ </div>
+ 
+ <!-- <div id="termsOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;"></div> -->
            <!-- Popup modal  for Terms and condition policy ends here--> 
       <!-- Below is for newsletter -->
       <div class="col-md-5 offset-md-1 mb-3">
@@ -527,7 +588,25 @@ document.getElementById('overlay').style.display = 'none';
         function closeTermsPopup() {
           document.getElementById('termsAndConditionPopup').style.display = 'none';
           document.getElementById('termsOverlay').style.display = 'none';
-        }
+        }        
         </script>
+
+
+        <!-- Script for privacy policy,Shipping policy -->
+         <script>
+      function openPrivacyPolicy() {
+    document.getElementById("privacyPolicyPopup").style.display = "flex";
+  }
+  function closePrivacyPolicy() {
+    document.getElementById("privacyPolicyPopup").style.display = "none";
+  }
+  function openShippingPolicy() {
+    document.getElementById("shippingPolicyPopup").style.display = "flex";
+  }
+  function closeShippingPolicy() {
+    document.getElementById("shippingPolicyPopup").style.display = "none";
+  }
+</script>
+      
 </body>
 </html>
