@@ -43,39 +43,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(_dirname + "/public"));
 
-// app.use(function(req,res,next){
-//   res.setHeader('Access-Control-Allow-Origin','*');
-//   res.setHeader('Access-Control-Allow-Methods','GET,POST,PUT,DELETE');
-//   res.setHeader('Access-Control-Allow-Headers','Content-Type');
-//   res.setHeader('Access-Control-Allow-Credentials','true');
-// })
-// app.use((req, res, next) => {
-//   res.removeHeader('Cross-Origin-Opener-Policy');
-//   res.removeHeader('Cross-Origin-Embedder-Policy');
-//   next();
-// });
-
 const Secret_key = process.env.jwtSecretKey;
-
-//Database_url mei internal server ka link dala jaata hai
-// const db = new pg.Client({
-//   host: process.env.databaseHost,       // Fetch from env
-//   user: process.env.DATABASE_USER,       // Fetch from env
-//   password: process.env.databasePassword, // Fetch from env
-//   database: process.env.DATABASE_NAME || "vsa",  // Fetch from env with a fallback
-//   port: process.env.DATABASE_PORT || 4000 // Fetch from env with default 5432
-// });
-
-// Connect to the database
-// connection.connect((err) => {
-//   if (err) {
-//     console.error('Error connecting to the database:', err.stack);
-//     return;
-//   }
-//   console.log('Connected to the database as id ' + connection.threadId);
-// });
-
-// export default connection;
 
 const db = new Pool({
   host: process.env.DATABASE_HOST,       // Fetch from env
@@ -107,18 +75,18 @@ passport.use(
   new GoogleStrategy(
     {
       // This below is for local host
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/secrets",
-      userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
-      passReqToCallback: true, // This allows accessing req in the verify callback
-
-      // //This below is for render`
       // clientID: process.env.GOOGLE_CLIENT_ID,
       // clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      // callbackURL: "https://vsa-deployed.onrender.com/auth/google/secrets",
+      // callbackURL: "http://localhost:3000/auth/google/secrets",
       // userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
-      // passReqToCallback: true // This allows accessing req in the verify callback
+      // passReqToCallback: true, // This allows accessing req in the verify callback
+
+      // //This below is for render`
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "https://vsa-deployed.onrender.com/auth/google/secrets",
+      userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
+      passReqToCallback: true // This allows accessing req in the verify callback
     },
     async (req, accessToken, refreshToken, profile, done) => {
       try {
