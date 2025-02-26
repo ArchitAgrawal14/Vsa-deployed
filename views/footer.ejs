@@ -1,619 +1,903 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-    <title>Footer</title>
-</head>
-<style>
-  .ContactUsDiv {
-    background-color: #f8f9fa; /* Light background color */
-    border: 1px solid #ddd; /* Border for definition */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
-}
-
-.ContactUsDiv h2 {
-    font-size: 2rem; /* Larger heading size */
-    font-weight: bold; /* Bold text */
-}
-
-.ContactUsDiv p {
-    font-size: 1rem; /* Normal paragraph size */
-}
-
-.ContactUsDiv .lead {
-    font-size: 1.2rem; /* Slightly larger size for emphasis */
-}
-
-/* Responsive icons */
-.ContactUsDiv i {
-    color: #007bff; /* Primary color for icons */
-}
-
-/* Media Queries for Responsive Design */
-@media (max-width: 768px) {
-    .ContactUsDiv {
-        padding: 20px; /* Padding for smaller screens */
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enhanced Footer</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #3a86ff;
+      --secondary-color: #8338ec;
+      --accent-color: #ff006e;
+      --light-bg: #f8f9fa;
+      --dark-bg: #212529;
+      --text-light: #f8f9fa;
+      --text-dark: #212529;
     }
-}
-
-</style>
-<body>
-  <div class="ContactUsDiv container my-5 p-4 bg-light rounded shadow">
-    <h2 class="text-center text-primary mb-4">Contact Us</h2>
-    <p class="lead text-center">
-        You can reach us at:
-    </p>
-    <div class="row">
-        <div class="col-md-4 text-center mb-3">
-            <i class="fas fa-envelope fa-2x text-primary mb-2"></i>
-            <p>Email:<a href="https://mail.google.com/mail/?view=cm&fs=1&to=info@vaibhavskatingacademy.com" class="text-body-secondary">info@vaibhavskatingacademy.com</a>
-            </p>
-        </div>
-        <div class="col-md-4 text-center mb-3">
-            <i class="fas fa-phone fa-2x text-primary mb-2"></i>
-            <p>Phone: <a href="tel:+919301139998" class="text-body-secondary">+91 9301139998</a></p>
-        </div>
-        <div class="col-md-4 text-center mb-3">
-            <i class="fas fa-map-marker-alt fa-2x text-primary mb-2"></i>
-            <p>Address: <a href="https://maps.app.goo.gl/MSeH18NH33EmMJVF7" target="_blank" class="text-body-secondary">Shri Ramakrishna College</a><br>
-            </p>
-        </div>
-    </div>
-    <p class="text-center">
-        Office Hours: Mon-Fri, 9:00 AM - 6:00 PM
-    </p>
-    <p class="text-center">
-        Feel free to contact us with any inquiries!
-    </p>
-</div>
-  <div class="px-3 py-3 border-bottom gradient-background">
-  <div class="container">
-    <footer class="py-5">
-      <div class="row">
-          <div class="col-6 col-md-2 mb-3">
-              <h5 class="text-primary">For Visitors</h5>
-              <ul class="nav flex-column">
-                <li class="nav-item mb-2"><a href="/" class="nav-link p-0 text-body-secondary">Home</a></li>
-                <li class="nav-item mb-2"><a href="/contactUs"  id="ContactUsLink" class="nav-link p-0 text-body-secondary">Contact Us</a></li>
-                <li class="nav-item mb-2"><a href="/returnPolicy" id="returnPolicyLink" class="nav-link p-0 text-body-secondary">Return Policy</a></li>
-                <li class="nav-item mb-2"><a href="/FAQ" class="nav-link p-0 text-body-secondary">FAQs</a></li>
-                <li class="nav-item mb-2"><a href="/aboutUs" class="nav-link p-0 text-body-secondary">About</a></li>
-              </ul>
-            </div>
-            
-            <!-- Popup modal  for return policy-->
-<div id="returnPolicyPopup"  style="display: none; position: fixed; top: 0; left: 0; height: 100%; width: 100%;  justify-content: center; align-items: center; z-index: 1000;">
-  <div style="background-color: white; padding: 20px; box-shadow: 0px 0px 10px rgba(0,0,0,0.5); width: 80%; max-width: 500px; max-height: 80vh; overflow-y: auto;" >
-    <h2>Return Policy</h2>
-   <ol>
-      <li> Returns are accepted only for unused and undamaged products within 5 
-        working days of delivery.
-        </li>
-      <li>To initiate a return, participants must contact VSA customer support with 
-        proof of purchase and reason for return.</li>
-      
-      <li>The cost of return shipping is the responsibility of the customer unless 
-        the product is defective or incorrect. The returns shall only be sent to the 
-        provided address by the customer themselves after the approval from VSA.
-        </li>
-      <li>Refunds for approved returns will be processed within 15 working days 
-        after the returned product is received and inspected.</li>
-      
-      <li> No returns or refunds will be provided for products that are used, 
-        damaged, or do not meet the return criteria.
-        </li>
-   </ol>
-   <button id="closePopup" style="display: block; margin: 20px auto; padding: 10px 20px; background-color: #87CEEB; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: background-color 0.3s ease;"  onmouseover="this.style.backgroundColor='#5db8e5';" 
-   onmouseout="this.style.backgroundColor='#87CEEB';">
-      Close
-    </button>
-  </div>
-</div>
-<div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
-<!-- Popup modal  for return policy ends here-->           
-        
-        <!-- Contact Us Popup -->
-        <div id="contactUsPopup"  style="display: none; position: fixed; top: 0; left: 0; height: 100%; width: 100%;  justify-content: center; align-items: center; z-index: 1000;">
-          <div style="background-color: white; padding: 20px; box-shadow: 0px 0px 10px rgba(0,0,0,0.5); width: 80%; max-width: 500px; max-height: 80vh; overflow-y: auto;">
-            <h2>Contact Us</h2>
-            <p>
-              You can reach us at:<br>
-              Email: info@vaibhavskatingacademy.com<br>
-              Phone: +91 9301139998<br>
-              Address: 1234 Example St, City, Country<br>
-              Office Hours: Mon-Fri, 9:00 AM - 6:00 PM<br>
-              <br>
-              Feel free to contact us with any inquiries!
-            </p>
-            <button id="closeContactPopup" style="display: block; margin: 20px auto; padding: 10px 20px; background-color: #87CEEB; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='#5db8e5';" 
-            onmouseout="this.style.backgroundColor='#87CEEB';">
-Close
-</button>
-
-          </div>
-        </div>
-        
-        <!-- Overlay -->
-        <div id="contactOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
-        
-          <!-- popup for contact us ends here -->
-        <!-- <div class="col-6 col-md-2 mb-3">
-          <h5 class="text-primary">Services</h5>
-          <ul class="nav flex-column">
-            <li class="nav-item mb-2"><a href="/Volunteer" class="nav-link p-0 text-body-secondary">Volunteer</a></li>
-            <li class="nav-item mb-2"><a href="/WorkWithUs" class="nav-link p-0 text-body-secondary">Work with us</a></li>
-            <li class="nav-item mb-2"><a href="/Membership" class="nav-link p-0 text-body-secondary">Membership</a></li>
-            <li class="nav-item mb-2"><a href="/joinUs" class="nav-link p-0 text-body-secondary">Athelete Training</a></li> -->
-            <!-- <li class="nav-item mb-2"><a href="/BookMyTour" class="nav-link p-0 text-body-secondary">Book My Tour</a></li> -->
-          <!-- </ul>
-        </div> -->
-  
-        <div class="col-6 col-md-2 mb-3" >
-          <h5 class="text-primary">Policies</h5>
-          <ul class="nav flex-column">
-             <!-- <li class="nav-item mb-2"><a href="/BookFreeTrialSession" class="nav-link p-0 text-body-secondary">Book free trial session</a></li> --> 
-            <li class="nav-item mb-2"><a href="#" id="TermsAndConditionLink"  class="nav-link p-0 text-body-secondary">Terms and condition</a></li>
-            <li class="nav-item mb-2">
-               <a href="#" class="nav-link p-0 text-body-secondary" onclick="openPrivacyPolicy()">Privacy Policy</a>
-             </li>
-             <li class="nav-item mb-2">
-               <a href="#" class="nav-link p-0 text-body-secondary" onclick="openShippingPolicy()">Shipping Policy</a>
-             </li>
-             <li class="nav-item mb-2">
-               <a href="#" class="nav-link p-0 text-body-secondary" onclick="openRefundPolicy()">Cancellation and Refunds</a>
-             </li>             
-          </ul>
-        </div>     
-        
-           <!-- Popup modal  for Terms and condition policy-->
-<div id="termsAndConditionPopup"  style="display: none; position: fixed; top: 0; left: 0; height: 100%; width: 100%;  justify-content: center; align-items: center; z-index: 1000;">
-  <div style="background-color: white; padding: 20px; box-shadow: 0px 0px 10px rgba(0,0,0,0.5); width: 80%; max-width: 500px; max-height: 80vh; overflow-y: auto;" >
-    <h2>Terms and Conditions:</h2>
-    <ol>
-      <li><strong>General Information:</strong> The website content, including details about our programs, coaches, and events, may change without prior notice.</li>
-      
-      <li><strong>Eligibility for Enrollment:</strong>
-         <ul>
-            <li>Enrollment in VSA programs is open to individuals of all ages, subject to medical clearance and a signed waiver of liability.</li>
-            <li>Minors (under 18) must have consent from a parent or legal guardian to enroll.</li>
-            <li>Participants must meet the age and skill requirements specified for each program.</li>
-         </ul>
-      </li>
-      
-      <li><strong>Fees and Payments:</strong>
-         <ul>
-            <li>Program, camp, and event fees are displayed on the website and may change without notice.</li>
-            <li>Full payment is required before the start of any program.</li>
-            <li>Accepted payment methods include credit/debit cards and UPI.</li>
-            <li>Fees are non-refundable except in cases of program cancellation by VSA.</li>
-            <li>All prices are listed in Indian Rupees (INR).</li>
-         </ul>
-      </li>
-      
-      <li><strong>Program and Service Delivery:</strong>
-         <ul>
-            <li>VSA strives to maintain the continuity of its programs, including regular classes, camps, and events.</li>
-            <li>Classes may be rescheduled or canceled due to unforeseen circumstances such as weather, emergencies, or government regulations.</li>
-            <li>VSA reserves the right to change coaches or instructors without prior notice.</li>
-            <li>Program schedules are subject to change based on availability and operational needs.</li>
-         </ul>
-      </li>
-      
-      <li><strong>Code of Conduct:</strong>
-         <ul>
-            <li>Participants must behave respectfully and responsibly at all times.</li>
-            <li>Abusive language, violence, harassment, or disruptive behavior will result in immediate removal from the program without a refund.</li>
-            <li>VSA reserves the right to terminate participation for individuals who fail to comply with these terms or jeopardize the safety of others.</li>
-         </ul>
-      </li>
-      
-      <li><strong>Use of Skating Gear and Equipment:</strong>
-         <ul>
-            <li>Participants may bring their safety gear, including helmets, knee pads, elbow pads, and wrist guards. Gear can also be purchased through VSA before or after enrollment.</li>
-            <li>Skating and sports equipment are available for purchase via our website.</li>
-            <li>Once sold, equipment cannot be returned if used or damaged.</li>
-            <li>VSA is not responsible for injuries, damage, or loss resulting from improper use of personal or purchased equipment.</li>
-         </ul>
-      </li>
-      
-      <li><strong>Cancellations and Refunds:</strong>
-         <ul>
-            <li>If a program is canceled by VSA, participants may choose a full refund or an alternative program.</li>
-            <li>Refunds are not provided for voluntary cancellations or withdrawals after the program has begun.</li>
-            <li>Refund requests for medical emergencies will be reviewed on a case-by-case basis and must be supported by relevant documentation.</li>
-            <li>Approved refunds will be processed within 15 working days.</li>
-         </ul>
-      </li>
-      
-      <li><strong>Waiver of Liability:</strong>
-         <ul>
-            <li>Participants acknowledge that inline skating is physically demanding and carries inherent risks, including injury.</li>
-            <li>VSA, its staff, and affiliates are not liable for any injuries, losses, or damages sustained during participation, except in cases of gross negligence.</li>
-            <li>All participants (or their guardians) must sign a waiver before joining any program. Failure to do so will result in exclusion from participation.</li>
-         </ul>
-      </li>
-      
-      <li><strong>Health and Safety:</strong>
-         <ul>
-            <li>Participants must disclose any medical conditions or injuries that could affect their ability to participate safely.</li>
-            <li>VSA reserves the right to deny participation to individuals deemed unfit for physical activity.</li>
-            <li>VSA follows all local health and safety regulations. In emergencies, basic first aid will be administered, and medical help will be sought if needed.</li>
-         </ul>
-      </li>
-      
-      <li><strong>Intellectual Property:</strong>
-         <ul>
-            <li>All website content, including text, images, videos, and logos, is the intellectual property of Vaibhav Skating Academy.</li>
-            <li>Unauthorized use, reproduction, or distribution of content is prohibited.</li>
-            <li>VSA may use photos and videos from training sessions and events for promotional purposes unless a participant explicitly opts out in writing.</li>
-         </ul>
-      </li>
-      
-      <li><strong>Privacy Policy:</strong>
-        <ul>
-           <li>Vaibhav Skating Academy (VSA) values customer privacy. Personal information collected during purchases and account registration is used solely for order processing, communication, and internal purposes.</li>
-           <li>When you purchase from our store, we collect personal information such as your name, address, and email as part of the buying and selling process.</li>           
-           <li>We do not share customer data with third parties without consent, except where required by law.</li>
-           <li>Email marketing (if applicable): With your permission, we may send emails about new products, promotions, and other updates.</li>
-        </ul>
-     </li>
-     
-     <li><strong>Consent:</strong>
-        <ul>
-           <li>By providing personal information to complete a purchase, verify a payment method, or arrange for delivery, you consent to our collection and use of that information for the specified purpose.</li>
-           <li>If we require personal information for secondary purposes, such as marketing, we will ask for explicit consent or provide an option to opt out.</li>
-           <li>You may withdraw consent at any time by contacting us at info@vaibhavskatingacademy.com.</li>
-        </ul>
-     </li>
-     
-     <li><strong>Disclosure:</strong>
-        <ul>
-           <li>We may disclose your personal information if required by law or if you violate our Terms of Service.</li>
-        </ul>
-     </li>
-     
-     <li><strong>Payment:</strong>
-        <ul>
-           <li>We use Razorpay for payment processing. Razorpay and VSA do not store card details on their servers.</li>
-           <li>Payment data is encrypted in compliance with PCI-DSS standards for secure transactions.</li>
-           <li>For further details, please refer to Razorpay’s terms at <a href="https://razorpay.com">https://razorpay.com</a>.</li>
-        </ul>
-     </li>
-     
-     <li><strong>Third-Party Services:</strong>
-        <ul>
-           <li>Third-party providers we use collect and handle customer data only to the extent necessary for their services.</li>
-           <li>Payment gateways and transaction processors have their own privacy policies, which we recommend reviewing.</li>
-           <li>Some third-party providers may be located in different jurisdictions, meaning your data may be subject to different laws.</li>
-           <li>Once you leave our website or are redirected to a third-party platform, our Privacy Policy and Terms of Service no longer apply.</li>
-        </ul>
-     </li>
-     
-     <li><strong>Security:</strong>
-        <ul>
-           <li>We implement industry-standard security measures to protect personal information from unauthorized access, misuse, or loss.</li>
-        </ul>
-     </li>
-     
-     <li><strong>Cookies:</strong>
-        <ul>
-           <li>We use cookies to maintain user sessions. Cookies do not personally identify users on external websites.</li>
-        </ul>
-     </li>
-     
-     <li><strong>Age of Consent:</strong>
-        <ul>
-           <li>By using this website, you confirm that you are of legal age in your region or have parental consent to use this site.</li>
-        </ul>
-     </li>
-     
-     <li><strong>Changes to This Policy:</strong>
-        <ul>
-           <li>We reserve the right to update this Privacy Policy at any time, with changes taking effect upon posting.</li>
-           <li>If significant changes occur, we will notify users accordingly.</li>
-           <li>If VSA is acquired or merged with another company, customer data may be transferred to the new entity.</li>
-        </ul>
-     </li>
-     
-     <li><strong>Contact Information:</strong>
-        <ul>
-           <li>For inquiries regarding personal data access, updates, or deletion, contact our Privacy Compliance Officer at info@vaibhavskatingacademy.com</li>
-           <li>Vaibhav Skating Academy, Shri Rama Krishna college, Bharhut nagar , Satna (M.P)</li>
-        </ul>
-     </li>
-     
-      <li><strong>Shipping Policy:</strong>
-         <ul>
-            <li>Products ordered through our website are shipped within India.</li>
-            <li>All orders are processed within 8 to 10 business days (excluding weekends and holidays) after receiving your order confirmation email. You will receive another notification when your order has shipped , In case of high demand the order can take upto business 14 days . 
-            </li>
-            <li>Delivery typically takes minimum 8 to 10 working days from order confirmation and may take up to a maximum of 14 days.</li>
-             <li>Free local delivery is available for orders over ₹8000  [Within Satna]. For orders under  ₹8000, we charge ₹65 for local delivery.</li>
-             <li><h5>In-store pickup</h5>
-              You can skip the shipping fees with free local pickup at [Shri Rama krishna college Bharhut Nagar , Satna , Madhya pradesh]. After placing your order and selecting local pickup at checkout, your order will be prepared and ready for pick up within 1 to 2 business days. We will send you an email when your order is ready along with instructions. 
-              Our in-store pickup hours are [6PM] on [WeekDays]. Please have your order confirmation email with you when you come.
-              </li>                                                           
-              <li>No international shipping available right now.</li>
-             <li>Deliveries are made from [9AM - 7PM] on [All Days]. We will contact you via email with the email and phone number you provided at checkout to notify you on the day of our arrival. 
-            </li>
-            <li>Shipping charges vary based on the delivery location and are calculated at checkout.</li>
-            <li>VSA is not responsible for shipping delays caused by third-party services.</li>
-         </ul>
-      </li>
-      
-      <li><strong>Dispute Resolution and Jurisdiction:</strong>
-         <ul>
-            <li>Disputes will first be attempted to be resolved amicably. If unresolved, arbitration will follow Indian legal provisions.</li>
-            <li>These Terms and Conditions are governed by Indian law, and disputes fall under the jurisdiction of courts in Madhya Pradesh.</li>
-         </ul>
-      </li>
-      
-      <li><strong>Return Policy:</strong>
-         <ul>
-            <li>Returns are accepted only for unused, undamaged products within 5 working days of delivery.</li>
-            <li>To initiate a return, customers must contact VSA customer support with proof of purchase.</li>
-            <li>Return shipping costs are the customer’s responsibility unless the product is defective or incorrect.</li>
-            <li>Refunds for approved returns will be processed within 15 working days after the returned item is received and inspected.</li>
-            <li>Used, damaged, or non-compliant products are not eligible for return or refund.</li>
-         </ul>
-      </li>
-      
-      <li><strong>Exchange Policy:</strong>
-         <ul>
-            <li>Exchanges are allowed for incorrect size, color, or if the wrong item was received.</li>
-            <li>Items must be unused, with tags intact, and in original packaging.</li>
-            <li>Exchange requests must be made within 7 days of receiving the item.</li>
-            <li>Approved exchanges require customers to ship the item back at their own cost.</li>
-            <li>If an item is defective or incorrect, an exchange request must be made within 48 hours of delivery, and VSA will arrange a replacement at no extra cost.</li>
-         </ul>
-      </li>
-      
-      <li><strong>Modifications:</strong>
-         <ul>
-            <li>VSA reserves the right to modify these Terms and Conditions at any time. Updates will be posted on the website, and continued use of services implies acceptance of the revised terms.</li>
-         </ul>
-      </li>
-   </ol>
-
-
-   <button id="closeTermsPopup" style="display: block; margin: 20px auto; padding: 10px 20px; background-color: #87CEEB; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: background-color 0.3s ease;"  onmouseover="this.style.backgroundColor='#5db8e5';" 
-   onmouseout="this.style.backgroundColor='#87CEEB';">
-      Close
-    </button>
-  </div>
-</div>
-
-
-<div id="privacyPolicyPopup" style="display: none; position: fixed; top: 0; left: 0; height: 100%; width: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
-   <div style="background-color: white; padding: 20px; box-shadow: 0px 0px 10px rgba(0,0,0,0.5); width: 80%; max-width: 500px; max-height: 80vh; overflow-y: auto; border-radius: 8px;">
-     <h2>Privacy Policy</h2>
-     <li><strong>Privacy Policy:</strong>
-      <ul>
-         <li>Vaibhav Skating Academy (VSA) values customer privacy. Personal information collected during purchases and account registration is used solely for order processing, communication, and internal purposes.</li>
-         <li>When you purchase from our store, we collect personal information such as your name, address, and email as part of the buying and selling process.</li>           
-         <li>We do not share customer data with third parties without consent, except where required by law.</li>
-         <li>Email marketing (if applicable): With your permission, we may send emails about new products, promotions, and other updates.</li>
-      </ul>
-   </li>
-     <button onclick="closePrivacyPolicy()" style="margin-top: 10px; padding: 8px 16px; border: none; background-color: #007bff; color: white; border-radius: 4px; cursor: pointer;">Close</button>
-   </div>
- </div>
-
-<!-- For Shipping Policy -->
-<div id="shippingPolicyPopup" style="display: none; position: fixed; top: 0; left: 0; height: 100%; width: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
-   <div style="background-color: white; padding: 20px; box-shadow: 0px 0px 10px rgba(0,0,0,0.5); width: 80%; max-width: 500px; max-height: 80vh; overflow-y: auto; border-radius: 8px;">
-      <h3><strong>Shipping Policy:</strong></h3>
-         <ul>
-            <li>Products ordered through our website are shipped within India.</li>
-            <li>All orders are processed within 8 to 10 business days (excluding weekends and holidays) after receiving your order confirmation email. You will receive another notification when your order has shipped , In case of high demand the order can take upto business 14 days . 
-            </li>
-            <li>Delivery typically takes minimum 8 to 10 working days from order confirmation and may take up to a maximum of 14 days.</li>
-             <li>Free local delivery is available for orders over ₹8000  [Within Satna]. For orders under  ₹8000, we charge ₹65 for local delivery.</li>
-             <li><h5>In-store pickup</h5>
-              You can skip the shipping fees with free local pickup at [Shri Rama krishna college Bharhut Nagar , Satna , Madhya pradesh]. After placing your order and selecting local pickup at checkout, your order will be prepared and ready for pick up within 1 to 2 business days. We will send you an email when your order is ready along with instructions. 
-              Our in-store pickup hours are [6PM] on [WeekDays]. Please have your order confirmation email with you when you come.
-              </li>                                                           
-              <li>No international shipping available right now.</li>
-             <li>Deliveries are made from [9AM - 7PM] on [All Days]. We will contact you via email with the email and phone number you provided at checkout to notify you on the day of our arrival. 
-            </li>
-            <li>Shipping charges vary based on the delivery location and are calculated at checkout.</li>
-            <li>VSA is not responsible for shipping delays caused by third-party services.</li>
-         </ul>      
-     <button onclick="closeShippingPolicy()" style="margin-top: 10px; padding: 8px 16px; border: none; background-color: #007bff; color: white; border-radius: 4px; cursor: pointer;">Close</button>
-   </div>
- </div>
- 
- <!-- For callecelation and refunds -->
-
- <div id="refundPolicyPopup" style="display: none; position: fixed; top: 0; left: 0; height: 100%; width: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
-   <div style="background-color: white; padding: 20px; box-shadow: 0px 0px 10px rgba(0,0,0,0.5); width: 80%; max-width: 500px; max-height: 80vh; overflow-y: auto; border-radius: 8px;">
-     <h2>Cancellation and Refunds</h2>
-      <ul>
-         <li>If a program is canceled by VSA, participants may choose a full refund or an alternative program.</li>
-         <li>Refunds are not provided for voluntary cancellations or withdrawals after the program has begun.</li>
-         <li>Refund requests for medical emergencies will be reviewed on a case-by-case basis and must be supported by relevant documentation.</li>
-         <li>Approved refunds will be processed within 15 working days.</li>
-      </ul>
-    <button onclick="closeRefundPolicy()" style="margin-top: 10px; padding: 8px 16px; border: none; background-color: #007bff; color: white; border-radius: 4px; cursor: pointer;">Close</button>
-   </div>
- </div>
- 
- <!-- <div id="termsOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;"></div> -->
-           <!-- Popup modal  for Terms and condition policy ends here--> 
-      <!-- Below is for newsletter -->
-      <div class="col-md-5 offset-md-1 mb-3">
-        <form id="newsletterForm" action="/subscribedToNewsLetter" method="post" class="text-primary">
-            <h5>Subscribe to our newsletter</h5>
-            <p>Monthly digest of what's new and exciting from us.</p>
-            <div class="d-flex flex-column flex-sm-row w-100 gap-2">
-                <label for="newsletter1" class="visually-hidden">Email address</label>
-                <input id="newsletter1" type="email" name="Email" class="form-control" placeholder="Email address" required>
-                <button class="btn btn-primary" type="submit">Subscribe</button>
-            </div>
-            <p id="successMessage" class="text-success mt-2" style="display: none;">Successfully subscribed!</p>
-            <p id="errorMessage" class="text-danger mt-2" style="display: none;">This email is already subscribed.</p>
-        </form>
-    </div>
     
-      <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
-        <p class="text-primary">© 2024 Company, Inc. All rights reserved.</p>
-        <ul class="list-unstyled d-flex">
-          <li class="ms-3"><a class="text-body-secondary" target="_blank" href="https://x.com/vaibhavskating"><img src="icons/X logo.jpg" alt="X link" class="bi" width="24" height="24"></a></li>
-          <li class="ms-3"><a class="text-body-secondary" target="_blank" href="https://instagram.com/vaibhavskatingacademy?igshid=NGVhN2U2NjQ0Yg=="><img src="icons/insta logo.jpg" alt="instagram link" class="bi" width="24" height="24"></a></li>
-          <li class="ms-3"><a class="text-body-secondary" target="_blank" href="https://www.facebook.com/vaibhavskating?mibextid=LQQJ4d"><img src="icons/facebook logo.png" alt="Facebook link" class="bi" width="24" height="24"></a></li>
-          <li class="ms-3"><a class="text-body-secondary" target="_blank" href="#"><img src="icons/linkedIn_logo.jpg" alt="LinkedIn link" class="bi" width="24" height="24"></a></li>
-          <li class="ms-3"><a class="text-body-secondary" target="_blank" href="https://youtube.com/@vaibhavskatingacademy2986?si=p0SfAinyjSgrdstE"><img src="icons/youtube_logo.jpg" alt="Youtube link" class="bi" width="24" height="24"></a></li>
-           
+    /* Footer Main Styling */
+    .footer-main {
+      background: linear-gradient(135deg, var(--dark-bg) 0%, #2c3e50 100%);
+      color: var(--text-light);
+      border-top: 5px solid var(--primary-color);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    /* Contact Us Section */
+    .contact-us-section {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+    
+    .contact-us-section:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    }
+    
+    .contact-us-header {
+      background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 16px 16px 0 0;
+      margin-bottom: 0 !important;
+    }
+    
+    .contact-us-body {
+      padding: 1.5rem;
+    }
+    
+    .contact-item {
+      transition: transform 0.2s ease;
+      padding: 1rem;
+      border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.05);
+      height: 100%;
+    }
+    
+    .contact-item:hover {
+      transform: scale(1.05);
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .contact-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      color: white;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Footer Links */
+    .footer-heading {
+      position: relative;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      color: white;
+    }
+    
+    .footer-heading:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 50px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      border-radius: 3px;
+    }
+    
+    .footer-links {
+      list-style: none;
+      padding-left: 0;
+    }
+    
+    .footer-link {
+      padding: 0.6rem 0;
+      transition: all 0.3s ease;
+      display: block;
+      color: rgba(255, 255, 255, 0.7) !important;
+      text-decoration: none !important;
+      position: relative;
+      padding-left: 1.5rem;
+    }
+    
+    .footer-link:before {
+      content: '\f054';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      left: 0;
+      color: var(--primary-color);
+      font-size: 0.8rem;
+      transition: transform 0.3s ease;
+    }
+    
+    .footer-link:hover {
+      color: white !important;
+      transform: translateX(5px);
+    }
+    
+    .footer-link:hover:before {
+      transform: translateX(3px);
+      color: var(--accent-color);
+    }
+    
+    /* Newsletter Section */
+    .newsletter-section {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .newsletter-form input {
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 0.8rem 1.2rem;
+      border-radius: 8px 0 0 8px;
+      transition: all 0.3s ease;
+    }
+    
+    .newsletter-form input:focus {
+      background-color: rgba(255, 255, 255, 0.15);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.25rem rgba(58, 134, 255, 0.25);
+      color: white;
+    }
+    
+    .newsletter-form input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .newsletter-btn {
+      background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      border: none;
+      color: white;
+      padding: 0.8rem 1.5rem;
+      border-radius: 0 8px 8px 0;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+    }
+    
+    .newsletter-btn:hover {
+      background: linear-gradient(90deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Bottom Bar */
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    
+    .social-links {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .social-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      color: white !important;
+    }
+    
+    .social-link:hover {
+      transform: translateY(-5px);
+      background: var(--primary-color);
+      color: white !important;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Popup Styling */
+    .policy-popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    
+    .popup-content {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      animation: popup-appear 0.3s ease-out forwards;
+    }
+    
+    @keyframes popup-appear {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    
+    .popup-header {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--primary-color);
+      color: var(--dark-bg);
+    }
+    
+    .popup-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background-color: var(--light-bg);
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: var(--dark-bg);
+    }
+    
+    .popup-close:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .popup-button {
+      background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      color: white;
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: block;
+      margin: 1.5rem auto 0;
+    }
+    
+    .popup-button:hover {
+      background: linear-gradient(90deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 999;
+      backdrop-filter: blur(5px);
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 992px) {
+      .contact-us-section {
+        margin-bottom: 1rem;
+      }
+      
+      .footer-column {
+        margin-bottom: 2rem;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .contact-item {
+        margin-bottom: 1rem;
+      }
+      
+      .newsletter-form input,
+      .newsletter-btn {
+        border-radius: 8px;
+        width: 100%;
+        margin-bottom: 1rem;
+      }
+      
+      .footer-bottom {
+        text-align: center;
+      }
+      
+      .social-links {
+        justify-content: center;
+        margin-top: 1rem;
+      }
+    }
+    
+    /* Animation for newsletter success message */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .success-message {
+      animation: fadeInUp 0.5s ease-out forwards;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Contact Us Section -->
+<div class="contact-us-section container my-5">
+  <h2 class="text-center contact-us-header">Contact Us</h2>
+  <div class="contact-us-body">
+    <p class="lead text-center mb-4">We're here to help! Reach out to us through any of these channels:</p>
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <div class="contact-item text-center">
+          <div class="contact-icon mx-auto">
+            <i class="fas fa-envelope fa-lg"></i>
+          </div>
+          <h5>Email Us</h5>
+          <p><a href="mailto:info@vaibhavskatingacademy.com" class="text-dark">info@vaibhavskatingacademy.com</a></p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="contact-item text-center">
+          <div class="contact-icon mx-auto">
+            <i class="fas fa-phone-alt fa-lg"></i>
+          </div>
+          <h5>Call Us</h5>
+          <p><a href="tel:+919301139998" class="text-dark">+91 9301139998</a></p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="contact-item text-center">
+          <div class="contact-icon mx-auto">
+            <i class="fas fa-map-marker-alt fa-lg"></i>
+          </div>
+          <h5>Visit Us</h5>
+          <p><a href="https://maps.app.goo.gl/MSeH18NH33EmMJVF7" target="_blank" class="text-dark">Shri Ramakrishna College</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="text-center mt-3">
+      <p><i class="far fa-clock me-2"></i> Office Hours: Mon-Fri, 9:00 AM - 6:00 PM</p>
+      <p class="lead">Feel free to contact us with any inquiries!</p>
+    </div>
+  </div>
+</div>
+
+<!-- Main Footer -->
+<footer class="footer-main py-5">
+  <div class="container">
+    <div class="row">
+      <!-- For Visitors Column -->
+      <div class="col-lg-3 col-md-6 footer-column mb-4">
+        <h5 class="footer-heading">For Visitors</h5>
+        <ul class="footer-links">
+          <li><a href="/" class="footer-link">Home</a></li>
+          <li><a href="/contactUs" id="ContactUsLink" class="footer-link">Contact Us</a></li>
+          <li><a href="/returnPolicy" id="returnPolicyLink" class="footer-link">Return Policy</a></li>
+          <li><a href="/FAQ" class="footer-link">FAQs</a></li>
+          <li><a href="/aboutUs" class="footer-link">About Us</a></li>
         </ul>
       </div>
       
-    </footer>  
-</div>
-</div>
-<!-- Below is for newsletter -->
-  <script>
-    document.getElementById('newsletterForm').addEventListener('submit', async function(event) {
-    event.preventDefault(); // Prevents default form submission
-  
-    const emailInput = document.getElementById('newsletter1').value;
-    const successMessage = document.getElementById('successMessage');
-    const errorMessage = document.getElementById('errorMessage');
-  
-    successMessage.style.display = 'none';
-    errorMessage.style.display = 'none';
-  
-    try {
-      const response = await fetch('/subscribedToNewsLetter', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ Email: emailInput })
-      });
-  
-      if (response.status === 401) {
-        // Redirect the user if they are not logged in
-        const result = await response.json();
-        window.location.href = result.redirectTo;
-      } else if (response.ok) {
-        const result = await response.text();
-  
-        if (result.includes("Email already exists")) {
-          errorMessage.style.display = 'block';
-          errorMessage.innerText = "This email is already subscribed.";
-        } else {
-          successMessage.style.display = 'block';
-          successMessage.innerText = "Successfully subscribed!";
-          document.getElementById('newsletterForm').reset();
-        }
-      } else {
-        errorMessage.style.display = 'block';
-        errorMessage.innerText = "An error occurred. Please try again.";
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      errorMessage.style.display = 'block';
-      errorMessage.innerText = "Network error. Please try again.";
-    }
-  });
-</script>  
-  <!-- for return policy -->
-<script>
-  document.getElementById('returnPolicyLink').addEventListener('click', function(event) {
-event.preventDefault(); // Prevent the default link behavior
-
-// Show the popup and overlay
-document.getElementById('returnPolicyPopup').style.display = 'flex';
-document.getElementById('overlay').style.display = 'block';
-
-// Optionally set a timer to automatically close the popup after 5 seconds
-setTimeout(function() {
-closePopup();
-}, 10000); // 5 seconds
-});
-
-document.getElementById('closePopup').addEventListener('click', function() {
-closePopup();
-});
-
-function closePopup() {
-// Hide the popup and overlay
-document.getElementById('returnPolicyPopup').style.display = 'none';
-document.getElementById('overlay').style.display = 'none';
-}
-
-
-</script>
-<!-- for contact us popup -->
-<script>
-// Event listener for the "Contact Us" link
-  document.getElementById('ContactUsLink').addEventListener('click', function(event) {
-    event.preventDefault(); // Prevent the default link behavior
-  
-    // Show the Contact Us popup and overlay
-    document.getElementById('contactUsPopup').style.display = 'flex';
-    document.getElementById('contactOverlay').style.display = 'block';
-  });
-  
-  // Event listener for the close button in the Contact Us popup
-  document.getElementById('closeContactPopup').addEventListener('click', function() {
-    closeContactPopup();
-  });
-  
-  // Function to close the Contact Us popup
-  function closeContactPopup() {
-    document.getElementById('contactUsPopup').style.display = 'none';
-    document.getElementById('contactOverlay').style.display = 'none';
-  }
-  </script>
-  <!-- for terms and condition popup -->
-  <script>
-      // Event listener for the "Terms and condition" link
-        document.getElementById('TermsAndConditionLink').addEventListener('click', function(event) {
-          event.preventDefault(); // Prevent the default link behavior
-        
-          // Show the Terms and condition popup and overlay
-          document.getElementById('termsAndConditionPopup').style.display = 'flex';
-          document.getElementById('termsOverlay').style.display = 'block';
-        });
-        
-        // Event listener for the close button in the Terms and condition popup
-        document.getElementById('closeTermsPopup').addEventListener('click', function() {
-          closeTermsPopup();
-        });
-        
-        // Function to close the Terms and condition popup
-        function closeTermsPopup() {
-          document.getElementById('termsAndConditionPopup').style.display = 'none';
-          document.getElementById('termsOverlay').style.display = 'none';
-        }        
-        </script>
-
-
-        <!-- Script for privacy policy,Shipping policy -->
-         <script>
-      function openPrivacyPolicy() {
-    document.getElementById("privacyPolicyPopup").style.display = "flex";
-  }
-  function closePrivacyPolicy() {
-    document.getElementById("privacyPolicyPopup").style.display = "none";
-  }
-  function openShippingPolicy() {
-    document.getElementById("shippingPolicyPopup").style.display = "flex";
-  }
-  function closeShippingPolicy() {
-    document.getElementById("shippingPolicyPopup").style.display = "none";
-  }
-
-  function openRefundPolicy() {
-    document.getElementById("refundPolicyPopup").style.display = "flex";
-  }
-  function closeRefundPolicy() {
-    document.getElementById("refundPolicyPopup").style.display = "none";
-  }
-</script>
+      <!-- Policies Column -->
+      <div class="col-lg-3 col-md-6 footer-column mb-4">
+        <h5 class="footer-heading">Our Policies</h5>
+        <ul class="footer-links">
+          <li><a href="#" id="TermsAndConditionLink" class="footer-link">Terms & Conditions</a></li>
+          <li><a href="#" onclick="openPrivacyPolicy()" class="footer-link">Privacy Policy</a></li>
+          <li><a href="#" onclick="openShippingPolicy()" class="footer-link">Shipping Policy</a></li>
+          <li><a href="#" onclick="openRefundPolicy()" class="footer-link">Cancellation & Refunds</a></li>
+        </ul>
+      </div>
       
+      <!-- Newsletter Column -->
+      <div class="col-lg-6 col-md-12 footer-column">
+        <div class="newsletter-section">
+          <h5 class="footer-heading">Join Our Newsletter</h5>
+          <p>Stay updated with our latest news, products, and exclusive offers!</p>
+          
+          <form id="newsletterForm" action="/subscribedToNewsLetter" method="post" class="newsletter-form d-flex flex-column flex-md-row mt-4">
+            <input id="newsletter1" type="email" name="Email" class="form-control" placeholder="Your email address" required>
+            <button class="newsletter-btn" type="submit">
+              Subscribe <i class="fas fa-paper-plane ms-1"></i>
+            </button>
+          </form>
+          
+          <p id="successMessage" class="text-success mt-3 success-message" style="display: none;">
+            <i class="fas fa-check-circle me-2"></i> Successfully subscribed!
+          </p>
+          <p id="errorMessage" class="text-danger mt-3 success-message" style="display: none;">
+            <i class="fas fa-exclamation-circle me-2"></i> This email is already subscribed.
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      <div class="row align-items-center">
+        <div class="col-md-6 text-center text-md-start">
+          <p class="mb-md-0">© 2024 Vaibhav Skating Academy. All rights reserved.</p>
+        </div>
+        <div class="col-md-6">
+          <div class="social-links ms-md-auto">
+            <a href="https://x.com/vaibhavskating" target="_blank" class="social-link">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="https://instagram.com/vaibhavskatingacademy?igshid=NGVhN2U2NjQ0Yg==" target="_blank" class="social-link">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://www.facebook.com/vaibhavskating?mibextid=LQQJ4d" target="_blank" class="social-link">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" target="_blank" class="social-link">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="https://youtube.com/@vaibhavskatingacademy2986?si=p0SfAinyjSgrdstE" target="_blank" class="social-link">
+              <i class="fab fa-youtube"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Return Policy Popup -->
+<div id="returnPolicyPopup" class="policy-popup">
+  <div class="popup-content">
+    <button id="closePopup" class="popup-close"><i class="fas fa-times"></i></button>
+    <h2 class="popup-header">Return Policy</h2>
+    <ol>
+      <li>Returns are accepted only for unused and undamaged products within 5 working days of delivery.</li>
+      <li>To initiate a return, participants must contact VSA customer support with proof of purchase and reason for return.</li>
+      <li>The cost of return shipping is the responsibility of the customer unless the product is defective or incorrect. The returns shall only be sent to the provided address by the customer themselves after the approval from VSA.</li>
+      <li>Refunds for approved returns will be processed within 15 working days after the returned product is received and inspected.</li>
+      <li>No returns or refunds will be provided for products that are used, damaged, or do not meet the return criteria.</li>
+    </ol>
+    <button id="closePopupBtn" class="popup-button">Close</button>
+  </div>
+</div>
+
+<!-- Terms and Conditions Popup -->
+<div id="termsAndConditionPopup" class="policy-popup">
+  <div class="popup-content">
+    <button id="closeTermsPopup" class="popup-close"><i class="fas fa-times"></i></button>
+    <h2 class="popup-header">Terms and Conditions</h2>
+    <ol>
+      <li><strong>General Information:</strong> The website content, including details about our programs, coaches, and events, may change without prior notice.</li>
+      <li><strong>Modifications:</strong>
+        <ul>
+          <li>VSA reserves the right to modify these Terms and Conditions at any time. Updates will be posted on the website, and continued use of services implies acceptance of the revised terms.</li>
+        </ul>
+        <li><strong>Eligibility for Enrollment:</strong>
+          <ul>
+             <li>Enrollment in VSA programs is open to individuals of all ages, subject to medical clearance and a signed waiver of liability.</li>
+             <li>Minors (under 18) must have consent from a parent or legal guardian to enroll.</li>
+             <li>Participants must meet the age and skill requirements specified for each program.</li>
+          </ul>
+       </li>
+       
+       <li><strong>Fees and Payments:</strong>
+          <ul>
+             <li>Program, camp, and event fees are displayed on the website and may change without notice.</li>
+             <li>Full payment is required before the start of any program.</li>
+             <li>Accepted payment methods include credit/debit cards and UPI.</li>
+             <li>Fees are non-refundable except in cases of program cancellation by VSA.</li>
+             <li>All prices are listed in Indian Rupees (INR).</li>
+          </ul>
+       </li>
+       
+       <li><strong>Program and Service Delivery:</strong>
+          <ul>
+             <li>VSA strives to maintain the continuity of its programs, including regular classes, camps, and events.</li>
+             <li>Classes may be rescheduled or canceled due to unforeseen circumstances such as weather, emergencies, or government regulations.</li>
+             <li>VSA reserves the right to change coaches or instructors without prior notice.</li>
+             <li>Program schedules are subject to change based on availability and operational needs.</li>
+          </ul>
+       </li>
+       
+       <li><strong>Code of Conduct:</strong>
+          <ul>
+             <li>Participants must behave respectfully and responsibly at all times.</li>
+             <li>Abusive language, violence, harassment, or disruptive behavior will result in immediate removal from the program without a refund.</li>
+             <li>VSA reserves the right to terminate participation for individuals who fail to comply with these terms or jeopardize the safety of others.</li>
+          </ul>
+       </li>
+       
+       <li><strong>Use of Skating Gear and Equipment:</strong>
+          <ul>
+             <li>Participants may bring their safety gear, including helmets, knee pads, elbow pads, and wrist guards. Gear can also be purchased through VSA before or after enrollment.</li>
+             <li>Skating and sports equipment are available for purchase via our website.</li>
+             <li>Once sold, equipment cannot be returned if used or damaged.</li>
+             <li>VSA is not responsible for injuries, damage, or loss resulting from improper use of personal or purchased equipment.</li>
+          </ul>
+       </li>
+       
+       <li><strong>Cancellations and Refunds:</strong>
+          <ul>
+             <li>If a program is canceled by VSA, participants may choose a full refund or an alternative program.</li>
+             <li>Refunds are not provided for voluntary cancellations or withdrawals after the program has begun.</li>
+             <li>Refund requests for medical emergencies will be reviewed on a case-by-case basis and must be supported by relevant documentation.</li>
+             <li>Approved refunds will be processed within 15 working days.</li>
+          </ul>
+       </li>
+       
+       <li><strong>Waiver of Liability:</strong>
+          <ul>
+             <li>Participants acknowledge that inline skating is physically demanding and carries inherent risks, including injury.</li>
+             <li>VSA, its staff, and affiliates are not liable for any injuries, losses, or damages sustained during participation, except in cases of gross negligence.</li>
+             <li>All participants (or their guardians) must sign a waiver before joining any program. Failure to do so will result in exclusion from participation.</li>
+          </ul>
+       </li>
+       
+       <li><strong>Health and Safety:</strong>
+          <ul>
+             <li>Participants must disclose any medical conditions or injuries that could affect their ability to participate safely.</li>
+             <li>VSA reserves the right to deny participation to individuals deemed unfit for physical activity.</li>
+             <li>VSA follows all local health and safety regulations. In emergencies, basic first aid will be administered, and medical help will be sought if needed.</li>
+          </ul>
+       </li>
+       
+       <li><strong>Intellectual Property:</strong>
+          <ul>
+             <li>All website content, including text, images, videos, and logos, is the intellectual property of Vaibhav Skating Academy.</li>
+             <li>Unauthorized use, reproduction, or distribution of content is prohibited.</li>
+             <li>VSA may use photos and videos from training sessions and events for promotional purposes unless a participant explicitly opts out in writing.</li>
+          </ul>
+       </li>
+       
+       <li><strong>Privacy Policy:</strong>
+         <ul>
+            <li>Vaibhav Skating Academy (VSA) values customer privacy. Personal information collected during purchases and account registration is used solely for order processing, communication, and internal purposes.</li>
+            <li>When you purchase from our store, we collect personal information such as your name, address, and email as part of the buying and selling process.</li>           
+            <li>We do not share customer data with third parties without consent, except where required by law.</li>
+            <li>Email marketing (if applicable): With your permission, we may send emails about new products, promotions, and other updates.</li>
+         </ul>
+      </li>
+      
+      <li><strong>Consent:</strong>
+         <ul>
+            <li>By providing personal information to complete a purchase, verify a payment method, or arrange for delivery, you consent to our collection and use of that information for the specified purpose.</li>
+            <li>If we require personal information for secondary purposes, such as marketing, we will ask for explicit consent or provide an option to opt out.</li>
+            <li>You may withdraw consent at any time by contacting us at info@vaibhavskatingacademy.com.</li>
+         </ul>
+      </li>
+      
+      <li><strong>Disclosure:</strong>
+         <ul>
+            <li>We may disclose your personal information if required by law or if you violate our Terms of Service.</li>
+         </ul>
+      </li>
+      
+      <li><strong>Payment:</strong>
+         <ul>
+            <li>We use Razorpay for payment processing. Razorpay and VSA do not store card details on their servers.</li>
+            <li>Payment data is encrypted in compliance with PCI-DSS standards for secure transactions.</li>
+            <li>For further details, please refer to Razorpay’s terms at <a href="https://razorpay.com">https://razorpay.com</a>.</li>
+         </ul>
+      </li>
+      
+      <li><strong>Third-Party Services:</strong>
+         <ul>
+            <li>Third-party providers we use collect and handle customer data only to the extent necessary for their services.</li>
+            <li>Payment gateways and transaction processors have their own privacy policies, which we recommend reviewing.</li>
+            <li>Some third-party providers may be located in different jurisdictions, meaning your data may be subject to different laws.</li>
+            <li>Once you leave our website or are redirected to a third-party platform, our Privacy Policy and Terms of Service no longer apply.</li>
+         </ul>
+      </li>
+      
+      <li><strong>Security:</strong>
+         <ul>
+            <li>We implement industry-standard security measures to protect personal information from unauthorized access, misuse, or loss.</li>
+         </ul>
+      </li>
+      
+      <li><strong>Cookies:</strong>
+         <ul>
+            <li>We use cookies to maintain user sessions. Cookies do not personally identify users on external websites.</li>
+         </ul>
+      </li>
+      
+      <li><strong>Age of Consent:</strong>
+         <ul>
+            <li>By using this website, you confirm that you are of legal age in your region or have parental consent to use this site.</li>
+         </ul>
+      </li>
+      
+      <li><strong>Changes to This Policy:</strong>
+         <ul>
+            <li>We reserve the right to update this Privacy Policy at any time, with changes taking effect upon posting.</li>
+            <li>If significant changes occur, we will notify users accordingly.</li>
+            <li>If VSA is acquired or merged with another company, customer data may be transferred to the new entity.</li>
+         </ul>
+      </li>
+      
+      <li><strong>Contact Information:</strong>
+         <ul>
+            <li>For inquiries regarding personal data access, updates, or deletion, contact our Privacy Compliance Officer at info@vaibhavskatingacademy.com</li>
+            <li>Vaibhav Skating Academy, Shri Rama Krishna college, Bharhut nagar , Satna (M.P)</li>
+         </ul>
+      </li>
+      
+       <li><strong>Shipping Policy:</strong>
+          <ul>
+             <li>Products ordered through our website are shipped within India.</li>
+             <li>All orders are processed within 8 to 10 business days (excluding weekends and holidays) after receiving your order confirmation email. You will receive another notification when your order has shipped , In case of high demand the order can take upto business 14 days . 
+             </li>
+             <li>Delivery typically takes minimum 8 to 10 working days from order confirmation and may take up to a maximum of 14 days.</li>
+              <li>Free local delivery is available for orders over ₹8000  [Within Satna]. For orders under  ₹8000, we charge ₹65 for local delivery.</li>
+              <li><h5>In-store pickup</h5>
+               You can skip the shipping fees with free local pickup at [Shri Rama krishna college Bharhut Nagar , Satna , Madhya pradesh]. After placing your order and selecting local pickup at checkout, your order will be prepared and ready for pick up within 1 to 2 business days. We will send you an email when your order is ready along with instructions. 
+               Our in-store pickup hours are [6PM] on [WeekDays]. Please have your order confirmation email with you when you come.
+               </li>                                                           
+               <li>No international shipping available right now.</li>
+              <li>Deliveries are made from [9AM - 7PM] on [All Days]. We will contact you via email with the email and phone number you provided at checkout to notify you on the day of our arrival. 
+             </li>
+             <li>Shipping charges vary based on the delivery location and are calculated at checkout.</li>
+             <li>VSA is not responsible for shipping delays caused by third-party services.</li>
+          </ul>
+       </li>
+       
+       <li><strong>Dispute Resolution and Jurisdiction:</strong>
+          <ul>
+             <li>Disputes will first be attempted to be resolved amicably. If unresolved, arbitration will follow Indian legal provisions.</li>
+             <li>These Terms and Conditions are governed by Indian law, and disputes fall under the jurisdiction of courts in Madhya Pradesh.</li>
+          </ul>
+       </li>
+       
+       <li><strong>Return Policy:</strong>
+          <ul>
+             <li>Returns are accepted only for unused, undamaged products within 5 working days of delivery.</li>
+             <li>To initiate a return, customers must contact VSA customer support with proof of purchase.</li>
+             <li>Return shipping costs are the customer’s responsibility unless the product is defective or incorrect.</li>
+             <li>Refunds for approved returns will be processed within 15 working days after the returned item is received and inspected.</li>
+             <li>Used, damaged, or non-compliant products are not eligible for return or refund.</li>
+          </ul>
+       </li>
+       
+       <li><strong>Exchange Policy:</strong>
+          <ul>
+             <li>Exchanges are allowed for incorrect size, color, or if the wrong item was received.</li>
+             <li>Items must be unused, with tags intact, and in original packaging.</li>
+             <li>Exchange requests must be made within 7 days of receiving the item.</li>
+             <li>Approved exchanges require customers to ship the item back at their own cost.</li>
+             <li>If an item is defective or incorrect, an exchange request must be made within 48 hours of delivery, and VSA will arrange a replacement at no extra cost.</li>
+          </ul>
+       </li>
+       
+      </li>
+    </ol>
+    <button id="closeTermsPopupBtn" class="popup-button">Close</button>
+  </div>
+</div>
+
+<!-- Privacy Policy Popup -->
+<div id="privacyPolicyPopup" class="policy-popup">
+  <div class="popup-content">
+    <button onclick="closePrivacyPolicy()" class="popup-close"><i class="fas fa-times"></i></button>
+    <h2 class="popup-header">Privacy Policy</h2>
+    <ul>
+      <li><strong>Privacy Policy:</strong>
+        <ul>
+          <li>Vaibhav Skating Academy (VSA) values customer privacy. Personal information collected during purchases and account registration is used solely for order processing, communication, and internal purposes.</li>
+          <li>When you purchase from our store, we collect personal information such as your name, address, and email as part of the buying and selling process.</li>
+          <li>We do not share customer data with third parties without consent, except where required by law.</li>
+          <li>Email marketing (if applicable): With your permission, we may send emails about new products, promotions, and other updates.</li>
+        </ul>
+      </li>
+    </ul>
+    <button onclick="closePrivacyPolicy()" class="popup-button">Close</button>
+  </div>
+</div>
+
+<!-- Shipping Policy Popup -->
+<div id="shippingPolicyPopup" class="policy-popup">
+  <div class="popup-content">
+    <button onclick="closeShippingPolicy()" class="popup-close"><i class="fas fa-times"></i></button>
+    <h2 class="popup-header">Shipping Policy</h2>
+    <ul>
+      <li>Products ordered through our website are shipped within India.</li>
+      <li>All orders are processed within 8 to 10 business days (excluding weekends and holidays) after receiving your order confirmation email. You will receive another notification when your order has shipped, In case of high demand the order can take up to 14 business days.</li>
+      <li>Delivery typically takes minimum 8 to 10 working days from order confirmation and may take up to a maximum of 14 days.</li>
+      <li>Free local delivery is available for orders over ₹8000 [Within Satna]. For orders under ₹8000, we charge ₹65 for local delivery.</li>
+      <li><h5>In-store pickup</h5>
+        You can skip the shipping fees with free local pickup at [Shri Rama krishna college Bharhut Nagar, Satna, Madhya pradesh]. After placing your order and selecting local pickup at checkout, your order will be prepared and ready for pick up within 1 to 2 business days. We will send you an email when your order is ready along with instructions. 
+        Our in-store pickup hours are [6PM] on [WeekDays]. Please have your order confirmation email with you when you come.
+      </li>
+      <li>No international shipping available right now.</li>
+      <li>Deliveries are made from [9AM - 7PM] on [All Days]. We will contact you via email with the email and phone number you provided at checkout to notify you on the day of our arrival.</li>
+      <li>Shipping charges vary based on the delivery location and are calculated at checkout.</li>
+      <li>VSA is not responsible for shipping delays caused by third-party services.</li>
+    </ul>
+    <button onclick="closeShippingPolicy()" class="popup-button">Close</button>
+  </div>
+</div>
+
+<!-- Refund Policy Popup -->
+<div id="refundPolicyPopup" class="policy-popup">
+  <div class="popup-content">
+    <button onclick="closeRefundPolicy()" class="popup-close"><i class="fas fa-times"></i></button>
+    <h2 class="popup-header">Cancellation and Refunds</h2>
+    <ul>
+      <li>If a program is canceled by VSA, participants may choose a full refund or an alternative program.</li>
+      <li>Refunds are not provided for voluntary cancellations or withdrawals after the program has begun.</li>
+      <li>Refund requests for medical emergencies will be reviewed on a case-by-case basis and must be supported by relevant documentation.</li>
+      <li>Approved refunds will be processed within 15 working days.</li>
+    </ul>
+    <button onclick="closeRefundPolicy()" class="popup-button">Close</button>
+  </div>
+</div>
+
+<!-- Popup Overlay -->
+<div id="overlay" class="popup-overlay"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Function to open and close popups
+  function openPopup(popupId) {
+    document.getElementById(popupId).style.display = 'flex';
+    document.getElementById('overlay').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+  
+  function closePopup(popupId) {
+    document.getElementById(popupId).style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+    document.body.style.overflow = 'auto';
+  }
+  
+  // Return Policy
+  document.getElementById('returnPolicyLink').addEventListener('click', function(e) {
+    e.preventDefault();
+    openPopup('returnPolicyPopup');
+  });
+  
+  document.getElementById('closePopup').addEventListener('click', function() {
+    closePopup('returnPolicyPopup');
+  });
+  
+  document.getElementById('closePopupBtn').addEventListener('click', function() {
+    closePopup('returnPolicyPopup');
+  });
+  
+  // Terms and Conditions
+  document.getElementById('TermsAndConditionLink').addEventListener('click', function(e) {
+    e.preventDefault();
+    openPopup('termsAndConditionPopup');
+  });
+  
+  document.getElementById('closeTermsPopup').addEventListener('click', function() {
+    closePopup('termsAndConditionPopup');
+  });
+  
+  document.getElementById('closeTermsPopupBtn').addEventListener('click', function() {
+    closePopup('termsAndConditionPopup');
+  });
+  
+  // Contact Us
+  document.getElementById('ContactUsLink').addEventListener('click', function(e) {
+    e.preventDefault();
+    // Scroll to Contact Us section
+    document.querySelector('.contact-us-section').scrollIntoView({ behavior: 'smooth' });
+  });
+  
+  // Privacy Policy
+  function openPrivacyPolicy() {
+    openPopup('privacyPolicyPopup');
+  }
+  
+  function closePrivacyPolicy() {
+    closePopup('privacyPolicyPopup');
+  }
+  
+  // Shipping Policy
+  function openShippingPolicy() {
+    openPopup('shippingPolicyPopup');
+  }
+  
+  function closeShippingPolicy() {
+    closePopup('shippingPolicyPopup');
+  }
+  
+  // Refund Policy
+  function openRefundPolicy() {
+    openPopup('refundPolicyPopup');
+  }
+  
+  function closeRefundPolicy() {
+    closePopup('refundPolicyPopup');
+  }
+  
+  // Close modal if clicked outside
+  document.getElementById('overlay').addEventListener('click', function() {
+    closePopup('returnPolicyPopup');
+    closePopup('termsAndConditionPopup');
+    closePopup('privacyPolicyPopup');
+    closePopup('shippingPolicyPopup');
+    closePopup('refundPolicyPopup');
+  });  
+</script>
+
+<!-- Below is for newsletter -->
+<script>
+  document.getElementById('newsletterForm').addEventListener('submit', async function(event) {
+  event.preventDefault(); // Prevents default form submission
+
+  const emailInput = document.getElementById('newsletter1').value;
+  const successMessage = document.getElementById('successMessage');
+  const errorMessage = document.getElementById('errorMessage');
+
+  successMessage.style.display = 'none';
+  errorMessage.style.display = 'none';
+
+  try {
+    const response = await fetch('/subscribedToNewsLetter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ Email: emailInput })
+    });
+
+    if (response.status === 401) {
+      // Redirect the user if they are not logged in
+      const result = await response.json();
+      window.location.href = result.redirectTo;
+    } else if (response.ok) {
+      const result = await response.text();
+
+      if (result.includes("Email already exists")) {
+        errorMessage.style.display = 'block';
+        errorMessage.innerText = "This email is already subscribed.";
+      } else {
+        successMessage.style.display = 'block';
+        successMessage.innerText = "Successfully subscribed!";
+        document.getElementById('newsletterForm').reset();
+      }
+    } else {
+      errorMessage.style.display = 'block';
+      errorMessage.innerText = "An error occurred. Please try again.";
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    errorMessage.style.display = 'block';
+    errorMessage.innerText = "Network error. Please try again.";
+  }
+});
+</script>  
 </body>
 </html>
