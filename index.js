@@ -77,18 +77,24 @@ const Secret_key = process.env.jwtSecretKey;
 
 // export default connection;
 
-const db = new Pool({
-  host: process.env.DATABASE_HOST,       // Fetch from env
-  user: process.env.DATABASE_USER,       // Fetch from env
-  password: process.env.DATABASE_PASSWORD, // Fetch from env
-  database: process.env.DATABASE_NAME || "vsa_database",  // Fetch from env with a fallback
-  port: process.env.DATABASE_PORT || 5432, // Fetch from env with default 5432
-  ssl: {
-    rejectUnauthorized: false, // Required for Render-managed PostgreSQL
-  },
-});
+// const db = new Pool({
+//   host: process.env.DATABASE_HOST,       // Fetch from env
+//   user: process.env.DATABASE_USER,       // Fetch from env
+//   password: process.env.DATABASE_PASSWORD, // Fetch from env
+//   database: process.env.DATABASE_NAME || "vsa_database",  // Fetch from env with a fallback
+//   port: process.env.DATABASE_PORT || 5432, // Fetch from env with default 5432
+//   ssl: {
+//     rejectUnauthorized: false, // Required for Render-managed PostgreSQL
+//   },
+// });
 
-
+// const db = new Pool({
+//   host: "localhost",
+//   password: "SdvhiyFHp345#",
+//   database: "vsa",
+//   port: 4000,
+//   user: "postgres",
+// });
 
 
 app.use((req, res, next) => {
