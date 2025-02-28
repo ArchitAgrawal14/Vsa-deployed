@@ -913,3 +913,136 @@ body{
         width: 18px; /* Adjust size of exclamation mark circle */
     }
 }
+
+
+   /* Global Tooltip System */
+   #global-tooltip-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000; /* Extremely high z-index to ensure visibility */
+    pointer-events: none; /* Allow clicking through when not needed */
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .global-tooltip {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    max-width: 350px;
+    transform: translateY(-20px);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    pointer-events: auto; /* Make the tooltip itself clickable */
+  }
+
+  .global-tooltip.visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .global-tooltip .tooltip-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    margin-right: 12px;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .global-tooltip .tooltip-message {
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.4;
+    flex-grow: 1;
+  }
+
+  /* Tooltip types */
+  .global-tooltip.error {
+    border-left: 4px solid #ff3860;
+  }
+  
+  .global-tooltip.error .tooltip-icon {
+    background-color: #ff3860;
+  }
+
+  .global-tooltip.warning {
+    border-left: 4px solid #ffdd57;
+  }
+  
+  .global-tooltip.warning .tooltip-icon {
+    background-color: #ffdd57;
+    color: #333;
+  }
+
+  .global-tooltip.info {
+    border-left: 4px solid #3e8ed0;
+  }
+  
+  .global-tooltip.info .tooltip-icon {
+    background-color: #3e8ed0;
+  }
+
+  .global-tooltip.success {
+    border-left: 4px solid #48c78e;
+  }
+  
+  .global-tooltip.success .tooltip-icon {
+    background-color: #48c78e;
+  }
+
+  /* Close button for tooltips */
+  .global-tooltip .close-tooltip {
+    background: transparent;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    font-size: 1.2rem;
+    margin-left: 8px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    width: 24px;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+  }
+
+  .global-tooltip .close-tooltip:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #333;
+  }
+
+  /* Animation for attention */
+  @keyframes pulse-tooltip {
+    0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+    50% { box-shadow: 0 4px 25px rgba(0, 0, 0, 0.25); }
+    100% { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); }
+  }
+
+  .global-tooltip.visible {
+    animation: pulse-tooltip 2s infinite;
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    #global-tooltip-container {
+      left: 20px;
+      right: 20px;
+    }
+    
+    .global-tooltip {
+      width: 100%;
+      max-width: none;
+    }
+  }
+
+  

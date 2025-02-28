@@ -2,9 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />        
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/style/login.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
     <link
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
       rel="stylesheet"
@@ -14,26 +17,18 @@
   </head>
   <body>
     <div class="container" id="container">
-      <div class="form-container sign-up">        
+      <div class="form-container sign-up">
         <form
           action="/SignUp"
           method="post"
           class="Form_StyleForSignUp Form_Responsiveness"
         >
           <h1 class="SignUp_Text">Create Account</h1>
-          <div class="signUpToolTip">
-            <img
-              src="/icons/error-circle-regular-24.png"
-              alt=""
-              class="Exclam_mark_circle"
-              style="background-color: aliceblue; border-radius: 50%"
-            />
-            <span class="tooltiptext">Email Already Exist's</span>
-          </div>
+
           <div class="social-icons">
             <div class="g-signin2" data-onsuccess="onSignIn">
               <a href="/auth/google" class="btn btn-block icons" role="button">
-                <i class="bx bxl-google"></i>                
+                <i class="bx bxl-google"></i>
               </a>
             </div>
             <!-- <a href="#" class="icons"><i class='bx bxl-facebook'></i></a>
@@ -64,7 +59,7 @@
             class="SignUp_Password_Box SignUp_Boxes"
             placeholder="Password"
             required
-            minlength="8"            
+            minlength="8"
           />
 
           <input
@@ -90,17 +85,9 @@
           <div
             class="social-icons login_container_text grossAnnualIncome inputBox"
           >
-            <div class="tooltip-container tipTool">
-              <img
-                src="/icons/error-circle-regular-24.png"
-                alt=""
-                class="Exclam_mark_circle"
-              />
-              <span class="tooltiptext">Incorrect Email or Password</span>
-            </div>
             <div class="g-signin2" data-onsuccess="onSignIn">
               <a href="/auth/google" class="btn btn-block icons" role="button">
-                <i class="bx bxl-google"></i>                
+                <i class="bx bxl-google"></i>
               </a>
             </div>
             <!-- <a href="#" class="icons"><i class='bx bxl-facebook'></i></a>
@@ -146,47 +133,66 @@
 
     <!-- Below is the toast for forget password -->
 
-<div class="position-fixed top-0 start-0 p-3" style="z-index: 1100">
-  <div id="notificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="toast-header" id="toastHeader">
-      <strong class="me-auto" id="toastTitle">Notification</strong>
-      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    <div class="position-fixed top-0 start-0 p-3" style="z-index: 1100">
+      <div
+        id="notificationToast"
+        class="toast"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="toast-header" id="toastHeader">
+          <strong class="me-auto" id="toastTitle">Notification</strong>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="toast-body" id="toastMessage">
+          <!-- Dynamic message will be inserted here -->
+        </div>
+      </div>
     </div>
-    <div class="toast-body" id="toastMessage">
-      <!-- Dynamic message will be inserted here -->
+    <div id="global-tooltip-container" style="display: none">
+      <div class="global-tooltip">
+        <div class="tooltip-icon">
+          <i class="bx bx-error"></i>
+        </div>
+        <span class="tooltip-message">Message goes here</span>
+      </div>
     </div>
-  </div>
-</div>
-<!-- Script for showing the toast for password reset -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const status = urlParams.get('status');
-    const message = urlParams.get('message');
+    <!-- Script for showing the toast for password reset -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const status = urlParams.get("status");
+        const message = urlParams.get("message");
 
-    if (status && message) {
-      const toastEl = document.getElementById('notificationToast');
-      const toastTitle = document.getElementById('toastTitle');
-      const toastMessage = document.getElementById('toastMessage');
-      const toastHeader = document.getElementById('toastHeader');
+        if (status && message) {
+          const toastEl = document.getElementById("notificationToast");
+          const toastTitle = document.getElementById("toastTitle");
+          const toastMessage = document.getElementById("toastMessage");
+          const toastHeader = document.getElementById("toastHeader");
 
-      if (status === 'success') {
-        toastHeader.classList.add('bg-success', 'text-white');
-        toastTitle.textContent = 'Success';
-      } else if (status === 'error') {
-        toastHeader.classList.add('bg-danger', 'text-white');
-        toastTitle.textContent = 'Error';
-      }
+          if (status === "success") {
+            toastHeader.classList.add("bg-success", "text-white");
+            toastTitle.textContent = "Success";
+          } else if (status === "error") {
+            toastHeader.classList.add("bg-danger", "text-white");
+            toastTitle.textContent = "Error";
+          }
 
-      toastMessage.textContent = decodeURIComponent(message);
+          toastMessage.textContent = decodeURIComponent(message);
 
-      const toast = new bootstrap.Toast(toastEl);
-      toast.show();
-    }
-  });
-</script>
-
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+          const toast = new bootstrap.Toast(toastEl);
+          toast.show();
+        }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- This below script is responsible for movement of cover which is in z-index -->
     <script>
       const container = document.getElementById("container");
       const registerBtn = document.getElementById("register");
@@ -200,130 +206,131 @@
         container.classList.remove("active");
       });
     </script>
-    <% if (typeof signUp_ToolTip !== 'undefined') { %>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-          if (<%= signUp_ToolTip %>) {
-              document.querySelector(".signUpToolTip").style.visibility = "visible";
-              setTimeout(()=>{
-                  document.querySelector(".signUpToolTip").style.visibility = "hidden";
-              },5000);
-          }
-      });
-    </script>
-    <% } %> <% if (typeof login_toolTip !== 'undefined') { %>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-          if (<%= login_toolTip %>) {
-              document.querySelector(".tooltip-container ").style.visibility = "visible";
-              setTimeout(()=>{
-                  document.querySelector(".tooltip-container ").style.visibility = "hidden";
-              },5000);
-          }
-      });
-    </script>
-    <% } %> <% if (typeof login_toolTip1 !== 'undefined') { %>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-          if (<%= login_toolTip1 %>) {
-              document.querySelector(".tooltip-container ").style.visibility = "visible";
-              document.querySelector(".tooltiptext").textContent = "User Does not exist ,Kindly SignUp";
-              setTimeout(()=>{
-                  document.querySelector(".tooltip-container ").style.visibility = "hidden";
-              },5000);
-          }
-      });
-    </script>
-    <% } %>
-
-    <!-- yaha pe mera banaya hua login page hai. -->
-    <!-- <body>
-    <div class="Left_Container">
-        <form action="/Login" method="post" class="Form_Responsiveness Form_Style">
-            <div class="login_container_text grossAnnualIncome inputBox">
-                <h2 id="Login_Text">Login</h2>
-                <div class="tooltip-container tipTool">
-                    <img src="/icons/error-circle-regular-24.png" alt="" class="Exclam_mark_circle" >
-                    <span class="tooltiptext">Incorrect Email or Password</span>
-                </div>
-            </div>
-            <div>
-                <label for="Email" aria-placeholder="Email" class="Email_Text Text_responsiveness">Email</label>
-                <input type="text" name="Email" required class="Email_Box" placeholder="Email">
-                <label for="Password" class="Password_Text Text_responsiveness">Password</label>
-                <input type="text" name="Password" required class="Password_Box" placeholder="Password">
-                <input type="submit" value="Login" class="SignIn_Login_button">   
-            </div>
-            <form action="/SignUp" method="post">
-                <a href="SignUp.html" class="SignUp_Link">SignUp</a>
-            </form>
-        </form>
-         <p class="Below_SignInText">OR</p>
-        <div class="SignIn_Using_Apps">
-            <div><a href=""><img src="icons/Google logo.png" alt="Login using Google" class="App_signIn"></a></div>
-            <div><a href=""><img src="icons/insta logo.jpg" alt="Login using Instagram" class="App_signIn"></a></div>
-            <div><a href=""><img src="icons/facebook logo.png" alt="Login using facebook" class="App_signIn"></a></div>
-            <div><a href=""><img src="icons/X logo.jpg" alt="Login using Instagram" class="App_signIn"></a></div>
-            </div> -->
-    <!--     
-    </div>
-<div class="Right_Container">
-    <form action="/SignUp" method="post" class="Form_StyleForSignUp Form_Responsiveness" >
-        <h2 class="SignUp_Text">SignUp</h2>
-            <div class="signUpToolTip">
-                <img src="/icons/error-circle-regular-24.png" alt="" class="Exclam_mark_circle" style="background-color: aliceblue; border-radius: 50%;">
-                <span class="tooltiptext">Email Already Exist's</span>
-            </div>
-        <label for="FullName" aria-placeholder="FullName" class="FullName_Text" id="SignUp_Texts">Full Name</label>
-        <input type="text" name="FullName" class="FullName_Box SignUp_Boxes" placeholder="FullName" required>
-
-        <label for="SignUp_Email" aria-placeholder="SignUp_Email" class="SignUp_Email_Text" id="SignUp_Texts">Email</label>
-        <input type="text" name="SignUp_Email" class="SignUp_Email_Box SignUp_Boxes" placeholder="Email" required>
-
-        <label for="SignUp_Password" aria-placeholder="SignUp_Password" class="SignUp_Password_Text" id="SignUp_Texts">Password</label>
-        <input type="text" name="SignUp_Password" class="SignUp_Password_Box SignUp_Boxes" placeholder="Password" required>
-
-        <label for="Mobile_number" aria-placeholder="Mobile_number" class="Mobile_number_Text" id="SignUp_Texts">Mobile Number</label>
-        <input type="number" name="Mobile_number" class="Mobile_number_Box SignUp_Boxes" placeholder="Mobile_number" required>
-        <input type="submit" class="SignUp_Login_button" value="SignUp">
-    </form>   
-</div> -->
-    <!-- if (typeof signUp_ToolTip !== 'undefined') { %>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            if ( signUp_ToolTip %>) {
-                document.querySelector(".signUpToolTip").style.visibility = "visible";
-                setTimeout(()=>{
-                    document.querySelector(".signUpToolTip").style.visibility = "hidden";
-                },5000);
-            }
-        });
-    </script>
-    } %>
-     if (typeof login_toolTip !== 'undefined') { %>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                if ( login_toolTip %>) {
-                    document.querySelector(".tooltip-container ").style.visibility = "visible";
-                    setTimeout(()=>{
-                        document.querySelector(".tooltip-container ").style.visibility = "hidden";
-                    },5000);
-                }
-            });
-        </script>
-        } %>
-         if (typeof login_toolTip1 !== 'undefined') { %>
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    if ( login_toolTip1 %>) {
-                        document.querySelector(".tooltip-container ").style.visibility = "visible";
-                        document.querySelector(".tooltiptext").textContent = "User Does not exist ,Kindly SignUp";
-                        setTimeout(()=>{
-                            document.querySelector(".tooltip-container ").style.visibility = "hidden";
-                        },5000);
-                    }
-                });
-            </script>
-            } %> -->
   </body>
+  <script>
+     // Global Tooltip System
+    const globalTooltip = {
+      container: null,
+      tooltip: null,
+      messageEl: null,
+      timeout: null,
+      iconEl: null,
+
+      init: function() {
+        this.container = document.getElementById('global-tooltip-container');
+        if (!this.container) return;
+
+        // Make sure container is hidden initially
+        this.container.style.display = 'none';
+
+        this.tooltip = this.container.querySelector('.global-tooltip');
+        this.messageEl = this.container.querySelector('.tooltip-message');
+        this.iconEl = this.container.querySelector('.tooltip-icon i');
+
+        // Add close button to tooltip if it doesn't exist
+        if (!this.tooltip.querySelector('.close-tooltip')) {
+          const closeBtn = document.createElement('button');
+          closeBtn.className = 'close-tooltip';
+          closeBtn.innerHTML = '<i class="bx bx-x"></i>';
+          closeBtn.onclick = () => this.hide();
+          this.tooltip.appendChild(closeBtn);
+        }
+
+        // Initialize any existing tooltips from server conditionally
+        this.checkServerSideTooltips();
+      },
+
+      show: function(message, type = 'error', icon = 'bx-error', duration = 5000) {
+        if (!this.container) this.init();
+        if (!this.container) return;
+
+        // Clear any existing timeout
+        if (this.timeout) {
+          clearTimeout(this.timeout);
+          this.timeout = null;
+        }
+
+        // Update tooltip content
+        this.messageEl.textContent = message;
+
+        // Set icon
+        this.iconEl.className = '';
+        this.iconEl.classList.add('bx', icon);
+
+        // Set tooltip type
+        this.tooltip.className = 'global-tooltip';
+        this.tooltip.classList.add(type);
+
+        // Show tooltip
+        this.container.style.display = 'block';
+
+        // Trigger reflow to ensure animation works
+        void this.tooltip.offsetWidth;
+
+        // Add visible class to animate
+        this.tooltip.classList.add('visible');
+
+        // Auto-hide after duration if specified
+        if (duration > 0) {
+          this.timeout = setTimeout(() => {
+            this.hide();
+          }, duration);
+        }
+
+        return this;
+      },
+
+      hide: function() {
+        if (!this.container || !this.tooltip) return;
+
+        this.tooltip.classList.remove('visible');
+
+        // Hide container after animation completes
+        setTimeout(() => {
+          this.container.style.display = 'none';
+        }, 300);
+
+        return this;
+      },
+
+      checkServerSideTooltips: function() {
+        // Only check for server-side flags if they exist
+        <% if (typeof signUp_ToolTip !== 'undefined' && signUp_ToolTip) { %>
+          this.show('Email Already Exists', 'error', 'bx-error', 5000);
+        <% } %>
+
+        <% if (typeof login_toolTip !== 'undefined' && login_toolTip) { %>
+          this.show('Incorrect Email or Password', 'error', 'bx-error', 5000);
+        <% } %>
+
+        <% if (typeof login_toolTip1 !== 'undefined' && login_toolTip1) { %>
+          this.show('User Does not exist, Kindly Sign Up', 'warning', 'bx-user-x', 5000);
+        <% } %>
+
+        // Check URL parameters for other messages (e.g., from redirects)
+        const urlParams = new URLSearchParams(window.location.search);
+        const status = urlParams.get('status');
+        const message = urlParams.get('message');
+
+        if (status && message) {
+          const decodedMessage = decodeURIComponent(message);
+          const type = status === 'success' ? 'success' : status === 'error' ? 'error' : 'info';
+          const icon = status === 'success' ? 'bx-check-circle' :
+                       status === 'error' ? 'bx-error' : 'bx-info-circle';
+
+          this.show(decodedMessage, type, icon, 5000);
+        }
+      }
+    };
+
+    // Initialize the tooltip system when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      globalTooltip.init();
+    });
+
+    // Convenience method to show tooltips from anywhere in your code
+    function showTooltip(message, type = 'error', icon = 'bx-error', duration = 5000) {
+      return globalTooltip.show(message, type, icon, duration);
+    }
+  </script>
 </html>
