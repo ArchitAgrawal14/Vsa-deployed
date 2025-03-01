@@ -2159,9 +2159,12 @@ app.post("/NewsLetter_Sending", async (req, res) => {
       user: process.env.nodeMailerEmailValidatorEmail, // Your email
       pass: process.env.nodeMailerEmailValidatorPass, // Your email password or app password
     },
+    pool: true, // Use pooled connection
+    maxConnections: 5, // Limit number of simultaneous connections
+    maxMessages: 100, // Limit number of messages per connection
   });
 
-  // Function to send email to each subscriber
+  // Function to send email to a subscriber
   const sendNewsletter = async (email) => {
     const mailOptions = {
       from: process.env.nodeMailerEmailValidatorEmail,
@@ -2170,24 +2173,59 @@ app.post("/NewsLetter_Sending", async (req, res) => {
       text: Description,
     };
 
-    return transporter.sendMail(mailOptions);
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log(`Email sent to: ${email}`);
+      return { email, success: true };
+    } catch (error) {
+      console.error(`Failed to send email to ${email}:`, error);
+      return { email, success: false, error };
+    }
   };
 
   try {
     // Retrieve all newsletter subscribers from the database
     const result = await db.query("SELECT * FROM news_letter_subscriber");
     const subscribers = result.rows;
-
-    // Send the email to each subscriber and wait for all to finish
-    for (const subscriber of subscribers) {
-      await sendNewsletter(subscriber.email); // Send email and await each response
-      console.log(`Email sent to: ${subscriber.email}`);
+    
+    console.log(`Sending newsletter to ${subscribers.length} subscribers...`);
+    
+    // Track progress
+    let sentCount = 0;
+    const batchSize = 10; // Number of emails to send in parallel
+    const results = [];
+    
+    // Process in batches to avoid overwhelming the mail server
+    for (let i = 0; i < subscribers.length; i += batchSize) {
+      const batch = subscribers.slice(i, i + batchSize);
+      
+      // Create an array of promises for this batch
+      const batchPromises = batch.map(subscriber => sendNewsletter(subscriber.email));
+      
+      // Wait for all emails in this batch to be sent
+      const batchResults = await Promise.all(batchPromises);
+      results.push(...batchResults);
+      
+      sentCount += batch.length;
+      console.log(`Progress: ${sentCount}/${subscribers.length} emails processed`);
     }
-
-    // Redirect to dashboard with success parameter
-    res.redirect("/adminDashboard?newsletterStatus=success");
+    
+    // Count successes and failures
+    const successes = results.filter(r => r.success).length;
+    const failures = results.filter(r => !r.success).length;
+    
+    console.log(`Newsletter sending completed. Successes: ${successes}, Failures: ${failures}`);
+    
+    // Redirect with appropriate status
+    if (failures === 0) {
+      res.redirect("/adminDashboard?newsletterStatus=success");
+    } else if (successes === 0) {
+      res.redirect("/adminDashboard?newsletterStatus=failure");
+    } else {
+      res.redirect(`/adminDashboard?newsletterStatus=partial&successes=${successes}&failures=${failures}`);
+    }
   } catch (error) {
-    console.error("Failed to send newsletter:", error);
+    console.error("Failed to process newsletter sending:", error);
     res.redirect("/adminDashboard?newsletterStatus=failure"); // Redirect with failure parameter
   }
 });
@@ -3028,101 +3066,211 @@ app.post("/generateInvoice", authenticateUser, async (req, res) => {
     console.log("cannot get offline customer details", error);
   }
 });
+// app.post("/generateBill", authenticateUser, async (req, res) => {
+//   try {
+//     const { customer_name, customer_email, customer_number } = req.body;
+//     const { items } = req.body; //here items is like the array of objects
+//     // console.log(items);
+//     if (req.user) {
+//       const offlineCustomerCheck = await db.query(
+//         "SELECT * FROM offline_customer WHERE email=$1 AND mobile_number=$2",
+//         [customer_email, customer_number]
+//       );
+//       if (offlineCustomerCheck.rows.length === 0) {
+//         await db.query(
+//           "INSERT INTO offline_customer (full_name,email,mobile_number) VALUES($1,$2,$3)",
+//           [customer_name, customer_email, customer_number]
+//         );
+//         console.log(
+//           "Successfully added offline customer details in the database"
+//         );
+//         const customer_details = await db.query(
+//           "SELECT * FROM offline_customer WHERE email=$1 OR mobile_number=$2",
+//           [customer_email, customer_number]
+//         );
+//         const customer_data = customer_details.rows[0];
+//         const billGenerationComplete = admin.billGeneration(
+//           req,
+//           res,
+//           customer_data,
+//           items
+//         );
+//         if (billGenerationComplete) {
+//           for (const item of items) {
+//             await db.query(
+//               "INSERT INTO orders_offline (email, name, mobile_number, item_name, item_id, item_type, amount, quantity) VALUES($1,$2,$3,$4,$5,$6,$7,$8)",
+//               [
+//                 customer_email,
+//                 customer_name,
+//                 customer_number,
+//                 item.item_name,
+//                 item.item_id,
+//                 item.item_type,
+//                 item.price,
+//                 "1",
+//               ]
+//             );
+//             await db.query(
+//               `UPDATE stock_${item.item_type} SET quantity = quantity - $1 WHERE item_id = $2`,
+//               [1, item.item_id]
+//             );
+//           }
+//           console.log("quantity updated through offline purchase");
+//           console.log("offline purchase complete adding details to database");
+//         }
+//       } else {
+//         const customer_details = await db.query(
+//           "SELECT * FROM offline_customer WHERE email=$1 OR mobile_number=$2",
+//           [customer_email, customer_number]
+//         );
+//         // console.log("Offline Customer already exist");
+//         const customer_data = customer_details.rows[0];
+//         admin.billGeneration(req, res, customer_data, items);
+//         const billGenerationComplete = admin.billGeneration(
+//           req,
+//           res,
+//           customer_data,
+//           items
+//         );
+//         if (billGenerationComplete) {
+//           for (const item of items) {
+//             await db.query(
+//               "INSERT INTO orders_offline (email, name, mobile_number, item_name, item_id, item_type, amount, quantity) VALUES($1,$2,$3,$4,$5,$6,$7,$8)",
+//               [
+//                 customer_email,
+//                 customer_name,
+//                 customer_number,
+//                 item.item_name,
+//                 item.item_id,
+//                 item.item_type,
+//                 item.price,
+//                 "1",
+//               ]
+//             );
+//             await db.query(
+//               `UPDATE stock_${item.item_type} SET quantity = quantity - $1 WHERE item_id = $2`,
+//               [1, item.item_id]
+//             );
+//           }
+//         }
+//       }
+//     } else {
+//       res.render("login.ejs");
+//     }
+//   } catch (error) {
+//     console.log("cannot get offline customer details", error);
+//   }
+// });
+
 app.post("/generateBill", authenticateUser, async (req, res) => {
+  // Create a client from the pool to use for transaction
+  const client = await db.connect();
+  
   try {
+    // Start transaction
+    await client.query('BEGIN');
+    
     const { customer_name, customer_email, customer_number } = req.body;
-    const { items } = req.body; //here items is like the array of objects
-    // console.log(items);
-    if (req.user) {
-      const offlineCustomerCheck = await db.query(
-        "SELECT * FROM offline_customer WHERE email=$1 AND mobile_number=$2",
+    const { items } = req.body; // Array of objects
+    
+    if (!req.user) {
+      await client.query('ROLLBACK');
+      return res.render("login.ejs");
+    }
+    
+    let customer_data;
+    
+    // Check if customer exists
+    const offlineCustomerCheck = await client.query(
+      "SELECT * FROM offline_customer WHERE email=$1 AND mobile_number=$2",
+      [customer_email, customer_number]
+    );
+    
+    if (offlineCustomerCheck.rows.length === 0) {
+      // Add new customer
+      await client.query(
+        "INSERT INTO offline_customer (full_name, email, mobile_number) VALUES($1, $2, $3)",
+        [customer_name, customer_email, customer_number]
+      );
+      
+      console.log("Successfully added offline customer details in the database");
+      
+      const customer_details = await client.query(
+        "SELECT * FROM offline_customer WHERE email=$1 OR mobile_number=$2",
         [customer_email, customer_number]
       );
-      if (offlineCustomerCheck.rows.length === 0) {
-        await db.query(
-          "INSERT INTO offline_customer (full_name,email,mobile_number) VALUES($1,$2,$3)",
-          [customer_name, customer_email, customer_number]
+      
+      customer_data = customer_details.rows[0];
+    } else {
+      // Get existing customer data
+      const customer_details = await client.query(
+        "SELECT * FROM offline_customer WHERE email=$1 OR mobile_number=$2",
+        [customer_email, customer_number]
+      );
+      
+      customer_data = customer_details.rows[0];
+    }
+    
+    // Generate bill
+    const billGenerationComplete = admin.billGeneration(
+      req,
+      res,
+      customer_data,
+      items
+    );
+    
+    if (billGenerationComplete) {
+      // Process each item
+      for (const item of items) {
+        // Insert order record
+        await client.query(
+          "INSERT INTO orders_offline (email, name, mobile_number, item_name, item_id, item_type, amount, quantity) VALUES($1, $2, $3, $4, $5, $6, $7, $8)",
+          [
+            customer_email,
+            customer_name,
+            customer_number,
+            item.item_name,
+            item.item_id,
+            item.item_type,
+            item.price,
+            "1",
+          ]
         );
-        console.log(
-          "Successfully added offline customer details in the database"
+        
+        // Update inventory
+        const updateResult = await client.query(
+          `UPDATE stock_${item.item_type} SET quantity = quantity - $1 WHERE item_id = $2 RETURNING quantity`,
+          [1, item.item_id]
         );
-        const customer_details = await db.query(
-          "SELECT * FROM offline_customer WHERE email=$1 OR mobile_number=$2",
-          [customer_email, customer_number]
-        );
-        const customer_data = customer_details.rows[0];
-        const billGenerationComplete = admin.billGeneration(
-          req,
-          res,
-          customer_data,
-          items
-        );
-        if (billGenerationComplete) {
-          for (const item of items) {
-            await db.query(
-              "INSERT INTO orders_offline (email, name, mobile_number, item_name, item_id, item_type, amount, quantity) VALUES($1,$2,$3,$4,$5,$6,$7,$8)",
-              [
-                customer_email,
-                customer_name,
-                customer_number,
-                item.item_name,
-                item.item_id,
-                item.item_type,
-                item.price,
-                "1",
-              ]
-            );
-            await db.query(
-              `UPDATE stock_${item.item_type} SET quantity = quantity - $1 WHERE item_id = $2`,
-              [1, item.item_id]
-            );
-          }
-          console.log("quantity updated through offline purchase");
-          console.log("offline purchase complete adding details to database");
-        }
-      } else {
-        const customer_details = await db.query(
-          "SELECT * FROM offline_customer WHERE email=$1 OR mobile_number=$2",
-          [customer_email, customer_number]
-        );
-        // console.log("Offline Customer already exist");
-        const customer_data = customer_details.rows[0];
-        admin.billGeneration(req, res, customer_data, items);
-        const billGenerationComplete = admin.billGeneration(
-          req,
-          res,
-          customer_data,
-          items
-        );
-        if (billGenerationComplete) {
-          for (const item of items) {
-            await db.query(
-              "INSERT INTO orders_offline (email, name, mobile_number, item_name, item_id, item_type, amount, quantity) VALUES($1,$2,$3,$4,$5,$6,$7,$8)",
-              [
-                customer_email,
-                customer_name,
-                customer_number,
-                item.item_name,
-                item.item_id,
-                item.item_type,
-                item.price,
-                "1",
-              ]
-            );
-            await db.query(
-              `UPDATE stock_${item.item_type} SET quantity = quantity - $1 WHERE item_id = $2`,
-              [1, item.item_id]
-            );
-          }
+        
+        // Check if we have enough stock
+        if (updateResult.rows.length > 0 && updateResult.rows[0].quantity < 0) {
+          throw new Error(`Insufficient stock for item ${item.item_name} (ID: ${item.item_id})`);
         }
       }
+      
+      console.log("Quantity updated through offline purchase");
+      console.log("Offline purchase complete, adding details to database");
+      
+      // Commit the transaction
+      await client.query('COMMIT');
     } else {
-      res.render("login.ejs");
+      // If bill generation failed, rollback
+      throw new Error("Bill generation failed");
     }
+    
   } catch (error) {
-    console.log("cannot get offline customer details", error);
+    // Rollback transaction in case of error
+    await client.query('ROLLBACK');
+    console.error("Error in generateBill:", error);
+    res.status(500).send(`Error generating bill: ${error.message}`);
+  } finally {
+    // Release the client back to the pool
+    client.release();
   }
 });
+
+
 async function validateIndianZipCode(postalCode) {
   const apiKey = process.env.pinCodeApiKey; // Replace with your actual API key
   try {

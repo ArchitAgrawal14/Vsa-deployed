@@ -317,7 +317,7 @@ export async function downloadOfflineSaleList(req, res, ordersOffline) {
         const doc = new PDFDocument({ margin: 30 });
 
         // Set response headers
-        res.setHeader('Content-disposition', 'attachment; filename=Online_Sale_list_VSA.pdf');
+        res.setHeader('Content-disposition', 'attachment; filename=Offline_Sale_list_VSA.pdf');
         res.setHeader('Content-type', 'application/pdf');
 
         // Pipe the PDF document to the response
@@ -372,7 +372,7 @@ export async function downloadOfflineSaleList(req, res, ordersOffline) {
                 .text(item.name, margin + colWidths.email, y + 5, { width: colWidths.name, align: 'left' })
                 .text(item.mobile_number, margin + colWidths.email + colWidths.name, y + 5, { width: colWidths.mobile, align: 'left' })
                 .text(item.item_id, margin + colWidths.email + colWidths.name + colWidths.mobile, y + 5, { width: colWidths.itemId, align: 'left' })
-                .text(item.price, margin + colWidths.email + colWidths.name + colWidths.mobile + colWidths.itemId, y + 5, { width: colWidths.price, align: 'left' })
+                .text(item.amount, margin + colWidths.email + colWidths.name + colWidths.mobile + colWidths.itemId, y + 5, { width: colWidths.price, align: 'left' })
                 .text(item.quantity, margin + colWidths.email + colWidths.name + colWidths.mobile + colWidths.itemId + colWidths.price, y + 5, { width: colWidths.quantity, align: 'left' })
                 .text(item.created_at.toLocaleDateString(), margin + colWidths.email + colWidths.name + colWidths.mobile + colWidths.itemId + colWidths.price + colWidths.quantity, y + 5, { width: colWidths.purchaseDate, align: 'left' });
         });
@@ -519,409 +519,434 @@ try {
 }
 export async function invoiceGeneration(req, res, customer_data, items) {
   try {
-      const doc = new PDFDocument({
+      const doc = new PDFDocument({ 
           margin: 50,
           size: 'A4'
       });
-      
+
       // Set headers for PDF download
       res.setHeader('Content-disposition', 'attachment; filename=Invoice_VSA.pdf');
       res.setHeader('Content-type', 'application/pdf');
       doc.pipe(res);
+
+      // Add some styling constants for consistent spacing
+      const pageWidth = doc.page.width - 100; // Accounting for margins
+      const lineHeight = 20;
+      const tablePadding = 10;
+
+      // Helper function to draw a bordered box with optional background
+      function drawBox(x, y, width, height, options = {}) {
+          if (options.fill) {
+              doc.fillColor(options.fill)
+                 .rect(x, y, width, height)
+                 .fill();
+          }
+          if (options.stroke) {
+              doc.strokeColor(options.stroke)
+                 .rect(x, y, width, height)
+                 .stroke();
+          } else {
+              doc.strokeColor('#333333')
+                 .rect(x, y, width, height)
+                 .stroke();
+          }
+          doc.fillColor('#000000'); // Reset fill color to black
+      }
+
+      // Add a decorative header with company branding
+      drawBox(50, 50, pageWidth, 80, { fill: '#f0f0f0', stroke: '#cccccc' });
       
-      // Add logo placeholder (you can add your actual logo)
-      doc.fontSize(10)
-         .text('VSA', 50, 50, { align: 'left' });
-      
-      // Invoice title with styling
-      doc.fontSize(28)
+      // Company Logo and Header
+      doc.fontSize(24)
          .font('Helvetica-Bold')
-         .text('INVOICE', 50, 50, { align: 'right' });
+         .fillColor('#2563eb') // Blue color for header
+         .text('Vaibhav Skating Academy', 100, 75, { align: 'center', width: pageWidth - 100 });
       
-      // Add horizontal line
-      doc.moveTo(50, 90)
-         .lineTo(550, 90)
-         .stroke();
+      doc.fontSize(14)
+         .font('Helvetica')
+         .fillColor('#666666') // Dark gray for subtitle
+         .text('Excellence in Skating Education', 100, 105, { align: 'center', width: pageWidth - 100 })
+         .fillColor('#000000'); // Reset to black
       
-      // Customer Details Section
+      // INVOICE title
+      const invoiceY = 160;
+      doc.fontSize(20)
+         .font('Helvetica-Bold')
+         .text('INVOICE', 50, invoiceY, { align: 'center', width: pageWidth })
+         .moveDown();
+
+      // Add invoice details in a box
+      const invoiceDetailsY = invoiceY + 40;
+      const invoiceDetailsHeight = 80;
+      drawBox(50, invoiceDetailsY, pageWidth, invoiceDetailsHeight, { fill: '#f8f9fa', stroke: '#dee2e6' });
+      
+      doc.fontSize(12)
+         .font('Helvetica')
+         .text(`Invoice Date: ${new Date().toLocaleDateString()}`, 70, invoiceDetailsY + 15)
+         .text(`Invoice #: INV-${Date.now().toString().substring(8)}`, 70, invoiceDetailsY + 35)
+         .text(`Payment Method: Direct`, 70, invoiceDetailsY + 55);
+
+      // Create two columns for customer and business details
+      const detailsY = invoiceDetailsY + invoiceDetailsHeight + 30;
+      const detailsHeight = 160;
+      const columnWidth = pageWidth / 2 - 10;
+      
+      // Left Column - Customer Details box
+      drawBox(50, detailsY, columnWidth, detailsHeight, { stroke: '#dee2e6' });
+      
+      doc.fontSize(14)
+         .font('Helvetica-Bold')
+         .text('Customer Details', 70, detailsY + 15, { width: columnWidth - 40 });
+      
+      doc.fontSize(11)
+         .font('Helvetica')
+         .text(`Name: ${customer_data.full_name}`, 70, detailsY + 40, { width: columnWidth - 40 })
+         .text(`Email: ${customer_data.email}`, 70, detailsY + 60, { width: columnWidth - 40 })
+         .text(`Mobile: ${customer_data.mobile_number}`, 70, detailsY + 80, { width: columnWidth - 40 });
+
+      // Right Column - Business Details box
+      const rightColumnX = 50 + columnWidth + 20;
+      drawBox(rightColumnX, detailsY, columnWidth, detailsHeight, { stroke: '#dee2e6' });
+      
+      doc.fontSize(14)
+         .font('Helvetica-Bold')
+         .text('Business Details', rightColumnX + 20, detailsY + 15, { width: columnWidth - 40 });
+      
+      doc.fontSize(10)
+         .font('Helvetica')
+         .text('Vaibhav Skating Academy', rightColumnX + 20, detailsY + 40, { width: columnWidth - 40 })
+         .text('Near Dali Baba Mandir,', rightColumnX + 20, detailsY + 60, { width: columnWidth - 40 })
+         .text('beside Kali Mata Mandir,', rightColumnX + 20, detailsY + 75, { width: columnWidth - 40 })
+         .text('Agrawal Bhawan, Ram Gopal Colony', rightColumnX + 20, detailsY + 90, { width: columnWidth - 40 })
+         .text('Raghurajnagar, Satna', rightColumnX + 20, detailsY + 105, { width: columnWidth - 40 })
+         .text('Phone: +91-9301139998', rightColumnX + 20, detailsY + 125, { width: columnWidth - 40 });
+
+      // Item Details Table
+      const tableY = detailsY + detailsHeight + 40;
       doc.fontSize(16)
          .font('Helvetica-Bold')
-         .text('Bill To:', 50, 110);
-      
-      doc.fontSize(12)
-         .font('Helvetica')
-         .text(customer_data.full_name, 50, 135)
-         .text(`Email: ${customer_data.email}`, 50, 155)
-         .text(`Mobile: ${customer_data.mobile_number}`, 50, 175);
-      
-      // Invoice Details (right side)
-      const currentDate = new Date().toLocaleDateString();
-      doc.fontSize(12)
-         .font('Helvetica')
-         .text(`Invoice Date: ${currentDate}`, 350, 135);
-        //  .text(`Invoice #: INV-${Date.now().toString().slice(-6)}`, 350, 155);
-      
-      // Items Table
-      const tableTop = 230;
+         .text('Item Details', 50, tableY - 30, { underline: true });
+
+      // Table configuration
       const tableHeaders = ['Item Name', 'Item ID', 'Price', 'Total'];
-      const tableColumnWidths = [220, 100, 90, 90]; // Adjusted column widths
-      const tableWidth = tableColumnWidths.reduce((sum, width) => sum + width, 0);
-      
-      // Draw table headers with background
-      doc.fillColor('#2B2B2B')
-         .rect(50, tableTop, tableWidth, 30)
-         .fill();
-      
-      doc.fillColor('white')
-         .fontSize(12)
-         .font('Helvetica-Bold');
-      
-      let xPosition = 50;
+      const columnWidths = [pageWidth * 0.4, pageWidth * 0.2, pageWidth * 0.2, pageWidth * 0.2];
+      let totalAmount = 0;
+
+      // Draw table header background
+      drawBox(50, tableY, pageWidth, lineHeight + tablePadding, { 
+          fill: '#2563eb', 
+          stroke: '#2563eb' 
+      });
+
+      // Draw table headers
+      let xPosition = 40;
       tableHeaders.forEach((header, i) => {
-          doc.text(header, xPosition + 5, tableTop + 10, {
-              width: tableColumnWidths[i] - 10,
-              align: 'center'
-          });
-          xPosition += tableColumnWidths[i];
+          doc.fontSize(12)
+             .font('Helvetica-Bold')
+             .fillColor('#ffffff') // White text for header
+             .text(header, xPosition + tablePadding/2, tableY + tablePadding/2, 
+                  { width: columnWidths[i] - tablePadding, align: 'center' });
+          xPosition += columnWidths[i];
       });
       
-      // Draw table rows
-      let yPosition = tableTop + 30;
-      doc.fillColor('black')
-         .font('Helvetica');
-      
-      let totalAmount = 0;
-      
+      doc.fillColor('#000000'); // Reset to black
+
+      // Draw table rows with alternating background colors
+      let yPosition = tableY + lineHeight + tablePadding;
       items.forEach((item, index) => {
-          const rowHeight = 30;
+          const rowHeight = lineHeight + tablePadding;
+          const isEvenRow = index % 2 === 0;
+          
+          // Draw row background
+          drawBox(50, yPosition, pageWidth, rowHeight, { 
+              fill: isEvenRow ? '#f8f9fa' : '#ffffff',
+              stroke: '#dee2e6'
+          });
+          
           const itemTotal = parseFloat(item.price);
           totalAmount += itemTotal;
           
-          // Add zebra striping
-          if (index % 2 === 0) {
-              doc.fillColor('#f6f6f6')
-                 .rect(50, yPosition, tableWidth, rowHeight)
-                 .fill();
-          }
+          xPosition = 40;
+          doc.fontSize(11)
+             .font('Helvetica')
+             .text(item.item_name, xPosition + tablePadding/2, yPosition + tablePadding/2, 
+                  { width: columnWidths[0] - tablePadding, align: 'left' });
           
-          doc.fillColor('black');
-          xPosition = 50;
+          xPosition += columnWidths[0];
+          doc.text(item.item_id, xPosition + tablePadding/2, yPosition + tablePadding/2, 
+                  { width: columnWidths[1] - tablePadding, align: 'center' });
           
-          // Item Name
-          doc.text(item.item_name, xPosition + 5, yPosition + 10, {
-              width: tableColumnWidths[0] - 10,
-              align: 'left'
-          });
+          xPosition += columnWidths[1];
+          doc.text(`₹${item.price}`, xPosition + tablePadding/2, yPosition + tablePadding/2, 
+                  { width: columnWidths[2] - tablePadding, align: 'right' });
           
-          // Item ID
-          doc.text(item.item_id, xPosition + tableColumnWidths[0] + 5, yPosition + 10, {
-              width: tableColumnWidths[1] - 10,
-              align: 'center'
-          });
-          
-          // Price
-          doc.text(`₹${item.price}`, xPosition + tableColumnWidths[0] + tableColumnWidths[1] + 5, yPosition + 10, {
-              width: tableColumnWidths[2] - 10,
-              align: 'right'
-          });
-          
-          // Total
-          doc.text(`₹${itemTotal.toFixed(2)}`, xPosition + tableColumnWidths[0] + tableColumnWidths[1] + tableColumnWidths[2] + 5, yPosition + 10, {
-              width: tableColumnWidths[3] - 10,
-              align: 'right'
-          });
+          xPosition += columnWidths[2];
+          doc.text(`₹${itemTotal.toFixed(2)}`, xPosition + tablePadding/2, yPosition + tablePadding/2, 
+                  { width: columnWidths[3] - tablePadding, align: 'right' });
           
           yPosition += rowHeight;
       });
-      
-      // Add table border
-      doc.rect(50, tableTop, tableWidth, yPosition - tableTop)
-         .stroke();
-      
-      // Total Amount section with proper alignment
-      const totalSection = {
-          x: 50 + tableWidth - tableColumnWidths[2] - tableColumnWidths[3], // Align with last two columns
-          width: tableColumnWidths[2] + tableColumnWidths[3],
-          y: yPosition + 20
-      };
+
+      // Add total amount with background - ensuring enough space for decimal places
+      const totalY = yPosition + 20;
+      const totalBoxWidth = columnWidths[3] + 10; // Extra padding to ensure text fits
+      drawBox(60 + pageWidth - totalBoxWidth, totalY, totalBoxWidth, lineHeight + tablePadding, {
+          fill: '#f0f0f0',
+          stroke: '#333333'
+      });
       
       doc.fontSize(14)
-         .font('Helvetica-Bold');
-      
-      // Total label (aligned with Price column)
-      doc.text('Total Amount:', 
-          totalSection.x, 
-          totalSection.y, 
-          { width: tableColumnWidths[2], align: 'right' }
-      );
-      
-      // Total value (aligned with Total column)
-      doc.text(`₹${totalAmount.toFixed(2)}`,
-          totalSection.x + tableColumnWidths[2], 
-          totalSection.y,
-          { width: tableColumnWidths[3], align: 'right' }
-      );
-      
-      // Add horizontal line
-      doc.moveTo(50, yPosition + 50)
-         .lineTo(550, yPosition + 50)
-         .stroke();
-      
-      // Business Details
-      const businessDetailsY = yPosition + 70;
-      doc.fontSize(16)
          .font('Helvetica-Bold')
-         .text('Vaibhav Skating Academy', 50, businessDetailsY);
+         .text(`Total: ₹${totalAmount.toFixed(2)}`, 
+              50 + pageWidth - totalBoxWidth + tablePadding/2, 
+              totalY + tablePadding/2, 
+              { width: totalBoxWidth - tablePadding, align: 'right' });
+
+      // Add footer with a subtle divider line
+      const footerY = doc.page.height - 100;
       
-      doc.fontSize(12)
+      doc.moveTo(50, footerY)
+         .lineTo(50 + pageWidth, footerY)
+         .strokeColor('#cccccc')
+         .stroke();
+         
+      doc.fontSize(10)
          .font('Helvetica')
-         .text('Near Dali Baba Mandir, beside Kali Mata Mandir,', 50, businessDetailsY + 25)
-         .text('Agrawal Bhawan, Ram Gopal Colony Raghurajnagar, Satna', 50, businessDetailsY + 40)
-         .text('Phone: +91-9301139998', 50, businessDetailsY + 55)
-         .text('Email: vaibhavskatingacademy@gmail.com', 50, businessDetailsY + 70);
-      
-      // Add "Thank You" message
-      doc.fontSize(14)
-         .font('Helvetica-Bold')
-         .text('Thank you for your business!', 50, businessDetailsY + 100, { align: 'center' });
-      
+         .fillColor('#666666')
+         .text('Thank you for your business!', 50, footerY + 20, { align: 'center', width: pageWidth })
+         .moveDown(0.5)
+         .text('This is a computer-generated invoice.', { align: 'center', width: pageWidth })
+         .moveDown(0.5)
+         .text('For any queries, contact us at vaibhavskatingacademy@gmail.com', { align: 'center', width: pageWidth });
+
       doc.end();
       console.log('PDF generation complete');
-      
+      return true;
+
   } catch (error) {
       console.error('Error generating PDF:', error);
       res.status(500).send('Error generating PDF');
+      return false;
   }
 }
-// export async function billGeneration(req, res, customer_data, items) {
-//     try {
-//         // console.log('Customer Data:', customer_data);
-//         // console.log('Items:', items);
-
-//         const doc = new PDFDocument();
-        
-//         // Set headers for PDF download
-//         res.setHeader('Content-disposition', 'attachment; filename=Bill_VSA.pdf');
-//         res.setHeader('Content-type', 'application/pdf');
-        
-//         // Pipe PDF to response
-//         doc.pipe(res);
-        
-//         // Title
-//         doc.fontSize(24).text('Invoice', { align: 'center' });
-//         doc.moveDown();
-
-//         // Customer Details
-//         doc.fontSize(16).font('Helvetica-Bold').text('Customer Details', { underline: true });
-//         doc.fontSize(12).font('Helvetica').text(`Name: ${customer_data.full_name}`);
-//         doc.text(`Email: ${customer_data.email}`);
-//         doc.text(`Mobile Number: ${customer_data.mobile_number}`);
-//         doc.moveDown();
-
-//         // Item Details Table
-//         doc.fontSize(16).font('Helvetica-Bold').text('Item Details', { underline: true });
-//         doc.moveDown();
-        
-//         const table = {
-//             headers: ['Item Name', 'Item ID', 'Price', 'Total'],
-//             rows: [],
-//         };
-        
-//         let totalAmount = 0;
-        
-//         items.forEach(item => {
-//             const itemTotal = parseFloat(item.price);
-//             totalAmount += itemTotal;
-//             table.rows.push([item.item_name, item.item_id, `₹${item.price}`, `₹${itemTotal.toFixed(2)}`]);
-//         });
-
-//         function drawTable(doc, table, startX, startY) {
-//             const tableWidth = doc.page.width - startX * 2;
-//             const headerHeight = 20;
-//             const rowHeight = 20;
-//             const fontSize = 10;
-//             const cellPadding = 5;
-            
-//             doc.fontSize(fontSize).font('Helvetica-Bold');
-//             table.headers.forEach((header, i) => {
-//                 doc.text(header, startX + (tableWidth / table.headers.length) * i, startY, {
-//                     width: tableWidth / table.headers.length,
-//                     align: 'center',
-//                 });
-//             });
-
-//             doc.moveDown(headerHeight / 2);
-
-//             doc.font('Helvetica');
-//             table.rows.forEach((row, i) => {
-//                 row.forEach((cell, j) => {
-//                     doc.text(cell, startX + (tableWidth / table.headers.length) * j, startY + headerHeight + i * rowHeight, {
-//                         width: tableWidth / table.headers.length,
-//                         align: 'center',
-//                     });
-//                 });
-//                 doc.moveDown(rowHeight);
-//             });
-
-//             // Draw table border
-//             doc.rect(startX, startY - headerHeight, tableWidth, headerHeight + table.rows.length * rowHeight).stroke();
-//         }
-
-//         drawTable(doc, table, 50, doc.y);
-        
-//         doc.moveDown();
-//         doc.fontSize(14).font('Helvetica-Bold').text(`Total Amount: ₹${totalAmount.toFixed(2)}`, { align: 'left' });
-//         doc.moveDown();
-        
-//         // Business Details
-//         doc.fontSize(16).font('Helvetica-Bold').text('Business Details', { underline: true });
-//         doc.fontSize(12).font('Helvetica').text('Business Name: Vaibhav Skating Academy');
-//         doc.text('Address: Near Dali Baba Mandir, beside Kali Mata Mandir, Agrawal Bhawan, Ram Gopal Colony Raghurajnagar, Satna');
-//         doc.text('Phone: +91-9301139998');
-//         doc.text('Email: vaibhavskatingacademy@gmail.com');
-        
-//         doc.end();
-//         console.log('PDF generation complete');
-//         return true;
-//     } catch (error) {
-//         console.error('Error generating PDF:', error);
-//         res.status(500).send('Error generating PDF');
-//         return false;
-//     }
-// }
-
 export async function billGeneration(req, res, customer_data, items) {
-    try {
-        const doc = new PDFDocument({ margin: 50 });
+  try {
+      const doc = new PDFDocument({ 
+          margin: 50,
+          size: 'A4'
+      });
 
-        // Set headers for PDF download
-        res.setHeader('Content-disposition', 'attachment; filename=Bill_VSA.pdf');
-        res.setHeader('Content-type', 'application/pdf');
-        doc.pipe(res);
+      // Set headers for PDF download
+      res.setHeader('Content-disposition', 'attachment; filename=Bill_VSA.pdf');
+      res.setHeader('Content-type', 'application/pdf');
+      doc.pipe(res);
 
-        // Company Logo and Header
-        doc.fontSize(24)
-           .font('Helvetica-Bold')
-           .text('Vaibhav Skating Academy', { align: 'center' });
-        
-        doc.fontSize(20)
-           .font('Helvetica')
-           .text('INVOICE', { align: 'center' })
-           .moveDown();
+      // Add some styling constants for consistent spacing
+      const pageWidth = doc.page.width - 100; // Accounting for margins
+      const lineHeight = 20;
+      const tablePadding = 10;
 
-        // Create two columns for customer and business details
-        const customerStartY = doc.y;
-        
-        // Left Column - Customer Details
-        doc.fontSize(16)
-           .font('Helvetica-Bold')
-           .text('Customer Details', { continued: true, underline: true })
-           .moveDown();
+      // Helper function to draw a bordered box with optional background
+      function drawBox(x, y, width, height, options = {}) {
+          if (options.fill) {
+              doc.fillColor(options.fill)
+                 .rect(x, y, width, height)
+                 .fill();
+          }
+          if (options.stroke) {
+              doc.strokeColor(options.stroke)
+                 .rect(x, y, width, height)
+                 .stroke();
+          } else {
+              doc.strokeColor('#333333')
+                 .rect(x, y, width, height)
+                 .stroke();
+          }
+          doc.fillColor('#000000'); // Reset fill color to black
+      }
 
-        doc.fontSize(12)
-           .font('Helvetica')
-           .text(`Name: ${customer_data.full_name}`)
-           .text(`Email: ${customer_data.email}`)
-           .text(`Mobile: ${customer_data.mobile_number}`)
-           .moveDown();
+      // Add a decorative header with company branding
+      drawBox(50, 50, pageWidth, 80, { fill: '#f0f0f0', stroke: '#cccccc' });
+      
+      // Company Logo and Header
+      doc.fontSize(24)
+         .font('Helvetica-Bold')
+         .fillColor('#2563eb') // Blue color for header
+         .text('Vaibhav Skating Academy', 100, 75, { align: 'center', width: pageWidth - 100 });
+      
+      doc.fontSize(14)
+         .font('Helvetica')
+         .fillColor('#666666') // Dark gray for subtitle
+         .text('Excellence in Skating Education', 100, 105, { align: 'center', width: pageWidth - 100 })
+         .fillColor('#000000'); // Reset to black
+      
+      // INVOICE title
+      const invoiceY = 160;
+      doc.fontSize(20)
+         .font('Helvetica-Bold')
+         .text('INVOICE', 50, invoiceY, { align: 'center', width: pageWidth })
+         .moveDown();
 
-        // Right Column - Business Details
-        doc.fontSize(16)
-           .font('Helvetica-Bold')
-           .text('Business Details', { 
-               underline: true,
-               align: 'right',
-               continued: true
-           })
-           .moveDown();
+      // Add invoice details in a box
+      const invoiceDetailsY = invoiceY + 40;
+      const invoiceDetailsHeight = 80;
+      drawBox(50, invoiceDetailsY, pageWidth, invoiceDetailsHeight, { fill: '#f8f9fa', stroke: '#dee2e6' });
+      
+      doc.fontSize(12)
+         .font('Helvetica')
+         .text(`Invoice Date: ${new Date().toLocaleDateString()}`, 70, invoiceDetailsY + 15)
+         .text(`Invoice #: INV-${Date.now().toString().substring(8)}`, 70, invoiceDetailsY + 35)
+         .text(`Payment Method: Direct`, 70, invoiceDetailsY + 55);
 
-        const rightColumnX = doc.page.width - 200;
-        const currentY = customerStartY + 30;
+      // Create two columns for customer and business details
+      const detailsY = invoiceDetailsY + invoiceDetailsHeight + 30;
+      // FIXED: Increased the height to prevent text overflow
+      const detailsHeight = 160;
+      const columnWidth = pageWidth / 2 - 10;
+      
+      // Left Column - Customer Details box
+      drawBox(50, detailsY, columnWidth, detailsHeight, { stroke: '#dee2e6' });
+      
+      doc.fontSize(14)
+         .font('Helvetica-Bold')
+         .text('Customer Details', 70, detailsY + 15, { width: columnWidth - 40 });
+      
+      doc.fontSize(11)
+         .font('Helvetica')
+         .text(`Name: ${customer_data.full_name}`, 70, detailsY + 40, { width: columnWidth - 40 })
+         .text(`Email: ${customer_data.email}`, 70, detailsY + 60, { width: columnWidth - 40 })
+         .text(`Mobile: ${customer_data.mobile_number}`, 70, detailsY + 80, { width: columnWidth - 40 });
 
-        doc.fontSize(12)
-           .font('Helvetica')
-           .text('Vaibhav Skating Academy', rightColumnX, currentY)
-           .text('Near Dali Baba Mandir,', rightColumnX)
-           .text('beside Kali Mata Mandir,', rightColumnX)
-           .text('Agrawal Bhawan, Ram Gopal Colony', rightColumnX)
-           .text('Raghurajnagar, Satna', rightColumnX)
-           .text('Phone: +91-9301139998', rightColumnX)
-           .text('Email: vaibhavskatingacademy@gmail.com', rightColumnX)
-           .moveDown(2);
+      // Right Column - Business Details box
+      const rightColumnX = 50 + columnWidth + 20;
+      drawBox(rightColumnX, detailsY, columnWidth, detailsHeight, { stroke: '#dee2e6' });
+      
+      doc.fontSize(14)
+         .font('Helvetica-Bold')
+         .text('Business Details', rightColumnX + 20, detailsY + 15, { width: columnWidth - 40 });
+      
+      // FIXED: Reduced font size and added line breaks to prevent text overlap
+      doc.fontSize(10)
+         .font('Helvetica')
+         .text('Vaibhav Skating Academy', rightColumnX + 20, detailsY + 40, { width: columnWidth - 40 })
+         .text('Near Dali Baba Mandir,', rightColumnX + 20, detailsY + 60, { width: columnWidth - 40 })
+         .text('beside Kali Mata Mandir,', rightColumnX + 20, detailsY + 75, { width: columnWidth - 40 })
+         .text('Agrawal Bhawan, Ram Gopal Colony', rightColumnX + 20, detailsY + 90, { width: columnWidth - 40 })
+         .text('Raghurajnagar, Satna', rightColumnX + 20, detailsY + 105, { width: columnWidth - 40 })
+         .text('Phone: +91-9301139998', rightColumnX + 20, detailsY + 125, { width: columnWidth - 40 });
 
-        // Item Details Table
-        doc.fontSize(16)
-           .font('Helvetica-Bold')
-           .text('Item Details', { underline: true })
-           .moveDown();
+      // Item Details Table
+      const tableY = detailsY + detailsHeight + 40;
+      doc.fontSize(16)
+         .font('Helvetica-Bold')
+         .text('Item Details', 50, tableY - 30, { underline: true });
 
-        // Table configuration
-        const tableTop = doc.y;
-        const tableHeaders = ['Item Name', 'Item ID', 'Price', 'Total'];
-        const columnWidths = [200, 100, 100, 100];
-        let totalAmount = 0;
+      // Table configuration
+      const tableHeaders = ['Item Name', 'Item ID', 'Price', 'Total'];
+      const columnWidths = [pageWidth * 0.4, pageWidth * 0.2, pageWidth * 0.2, pageWidth * 0.2];
+      let totalAmount = 0;
 
-        // Draw table headers
-        let xPosition = 50;
-        tableHeaders.forEach((header, i) => {
-            doc.fontSize(12)
-               .font('Helvetica-Bold')
-               .text(header, xPosition, tableTop, { width: columnWidths[i], align: 'center' });
-            xPosition += columnWidths[i];
-        });
+      // Draw table header background
+      drawBox(50, tableY, pageWidth, lineHeight + tablePadding, { 
+          fill: '#2563eb', 
+          stroke: '#2563eb' 
+      });
 
-        // Draw table rows
-        let yPosition = tableTop + 25;
-        items.forEach((item, index) => {
-            const itemTotal = parseFloat(item.price);
-            totalAmount += itemTotal;
-            
-            xPosition = 50;
-            doc.fontSize(11)
-               .font('Helvetica')
-               .text(item.item_name, xPosition, yPosition, { width: columnWidths[0], align: 'center' });
-            
-            xPosition += columnWidths[0];
-            doc.text(item.item_id, xPosition, yPosition, { width: columnWidths[1], align: 'center' });
-            
-            xPosition += columnWidths[1];
-            doc.text(`₹${item.price}`, xPosition, yPosition, { width: columnWidths[2], align: 'center' });
-            
-            xPosition += columnWidths[2];
-            doc.text(`₹${itemTotal.toFixed(2)}`, xPosition, yPosition, { width: columnWidths[3], align: 'center' });
-            
-            yPosition += 20;
-        });
+      // Draw table headers
+      let xPosition = 50;
+      tableHeaders.forEach((header, i) => {
+          doc.fontSize(12)
+             .font('Helvetica-Bold')
+             .fillColor('#ffffff') // White text for header
+             .text(header, xPosition + tablePadding/2, tableY + tablePadding/2, 
+                  { width: columnWidths[i] - tablePadding, align: 'center' });
+          xPosition += columnWidths[i];
+      });
+      
+      doc.fillColor('#000000'); // Reset to black
 
-        // Draw table borders
-        doc.rect(50, tableTop - 5, sum(columnWidths), (items.length + 1) * 20 + 10).stroke();
+      // Draw table rows with alternating background colors
+      let yPosition = tableY + lineHeight + tablePadding;
+      items.forEach((item, index) => {
+          const rowHeight = lineHeight + tablePadding;
+          const isEvenRow = index % 2 === 0;
+          
+          // Draw row background
+          drawBox(50, yPosition, pageWidth, rowHeight, { 
+              fill: isEvenRow ? '#f8f9fa' : '#ffffff',
+              stroke: '#dee2e6'
+          });
+          
+          const itemTotal = parseFloat(item.price);
+          totalAmount += itemTotal;
+          
+          xPosition = 40;
+          doc.fontSize(11)
+             .font('Helvetica')
+             .text(item.item_name, xPosition + tablePadding/2, yPosition + tablePadding/2, 
+                  { width: columnWidths[0] - tablePadding, align: 'left' });
+          
+          xPosition += columnWidths[0];
+          doc.text(item.item_id, xPosition + tablePadding/2, yPosition + tablePadding/2, 
+                  { width: columnWidths[1] - tablePadding, align: 'center' });
+          
+          xPosition += columnWidths[1];
+          doc.text(`₹${item.price}`, xPosition + tablePadding/2, yPosition + tablePadding/2, 
+                  { width: columnWidths[2] - tablePadding, align: 'right' });
+          
+          xPosition += columnWidths[2];
+          doc.text(`₹${itemTotal.toFixed(2)}`, xPosition + tablePadding/2, yPosition + tablePadding/2, 
+                  { width: columnWidths[3] - tablePadding, align: 'right' });
+          
+          yPosition += rowHeight;
+      });
 
-        // Add total amount
-        doc.moveDown(2)
-           .fontSize(14)
-           .font('Helvetica-Bold')
-           .text(`Total Amount: ₹${totalAmount.toFixed(2)}`, { align: 'right' });
+      // FIXED: Increased the total box width and padding to fit total amount with decimals
+      const totalY = yPosition + 20;
+      // Extra padding to ensure the total amount doesn't overflow
+      const totalBoxWidth = columnWidths[3] + 12;
+      drawBox(60 + pageWidth - totalBoxWidth, totalY, totalBoxWidth, lineHeight + tablePadding, {
+          fill: '#f0f0f0',
+          stroke: '#333333'
+      });
+      
+      doc.fontSize(14)
+         .font('Helvetica-Bold')
+         .text(`Total: ₹${totalAmount.toFixed(2)}`, 
+              50 + pageWidth - totalBoxWidth + tablePadding/2, 
+              totalY + tablePadding/2, 
+              { width: totalBoxWidth - tablePadding, align: 'right' });
 
-        // Add footer
-        doc.fontSize(10)
-           .font('Helvetica')
-           .text('Thank you for your business!', { align: 'center' })
-           .moveDown()
-           .text('This is a computer-generated invoice', { align: 'center' });
+      // Add footer with a subtle divider line
+      const footerY = doc.page.height - 100;
+      
+      doc.moveTo(50, footerY)
+         .lineTo(50 + pageWidth, footerY)
+         .strokeColor('#cccccc')
+         .stroke();
+         
+      doc.fontSize(10)
+         .font('Helvetica')
+         .fillColor('#666666')
+         .text('Thank you for your business!', 50, footerY + 20, { align: 'center', width: pageWidth })
+         .moveDown(0.5)
+         .text('This is a computer-generated invoice.', { align: 'center', width: pageWidth })
+         .moveDown(0.5)
+         .text('For any queries, contact us at vaibhavskatingacademy@gmail.com', { align: 'center', width: pageWidth });
 
-        doc.end();
-        return true;
+      doc.end();
+      return true;
 
-    } catch (error) {
-        console.error('Error generating PDF:', error);
-        res.status(500).send('Error generating PDF');
-        return false;
-    }
+  } catch (error) {
+      console.error('Error generating PDF:', error);
+      res.status(500).send('Error generating PDF');
+      return false;
+  }
 }
 
-// Helper function to sum array values
+// Helper function to sum array values (needed for table width calculation)
 function sum(arr) {
-    return arr.reduce((a, b) => a + b, 0);
+  return arr.reduce((a, b) => a + b, 0);
 }
 // export async function addingNewItemInShop(itemsImage,itemsImage1,itemsImage2,itemsName,itemsDescription,itemsItemId,itemsPrice,itemsQuantity,itemsItemType) {
 //     try {
@@ -1010,7 +1035,7 @@ export async function attendanceDetails(req, res, studentData) {
     const rowHeight = 20;
 
     // Draw table headers
-    doc.fontSize(12).font('Helvetica-Bold')
+    doc.fontSize(11).font('Helvetica-Bold')
       .text('Student ID', 30, tableTop, { width: studIdWidth, align: 'left' })
       .text('Student Name', 30 + studIdWidth, tableTop, { width: nameWidth, align: 'left' })
       .text('Mother\'s Name', 30 + studIdWidth + nameWidth, tableTop, { width: motherNameWidth, align: 'left' })
