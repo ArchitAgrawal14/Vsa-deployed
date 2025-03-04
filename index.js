@@ -3270,7 +3270,6 @@ app.post("/generateBill", authenticateUser, async (req, res) => {
   }
 });
 
-
 async function validateIndianZipCode(postalCode) {
   const apiKey = process.env.pinCodeApiKey; // Replace with your actual API key
   try {

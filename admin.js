@@ -784,7 +784,7 @@ export async function billGeneration(req, res, customer_data, items) {
       const invoiceY = 160;
       doc.fontSize(20)
          .font('Helvetica-Bold')
-         .text('INVOICE', 50, invoiceY, { align: 'center', width: pageWidth })
+         .text('Bill', 50, invoiceY, { align: 'center', width: pageWidth })
          .moveDown();
 
       // Add invoice details in a box
