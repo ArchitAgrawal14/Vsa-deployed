@@ -2597,6 +2597,11 @@ app.post('/update-student/:id', async (req, res) => {
           'last_fees_paid_on'
       ];
 
+      // Fetch current student data before update
+      const currentStudentQuery = 'SELECT * FROM students WHERE stud_id = $1';
+      const currentStudentResult = await db.query(currentStudentQuery, [studentId]);
+      const currentStudentData = currentStudentResult.rows[0];
+
       // Dynamically build update object
       validFields.forEach(field => {
           // Trim string values and check for empty strings
@@ -2606,9 +2611,17 @@ app.post('/update-student/:id', async (req, res) => {
           }
       });
 
-      // If fees are modified, automatically update last_fees_paid_on
+      // Check if fees are actually modified
+      let generateInvoice = false;
       if (updateFields.feepaid !== undefined) {
-          updateFields.last_fees_paid_on = new Date();
+          // Compare new fee paid with existing fee paid
+          const newFeePaid = parseFloat(updateFields.feepaid);
+          const currentFeePaid = parseFloat(currentStudentData.feepaid || 0);
+          
+          if (newFeePaid !== currentFeePaid) {
+              updateFields.last_fees_paid_on = new Date();
+              generateInvoice = true;
+          }
       }
 
       // Check if there are any fields to update
@@ -2638,29 +2651,32 @@ app.post('/update-student/:id', async (req, res) => {
           console.warn(`No student found with ID: ${studentId}`);
           return res.status(404).send('Student not found');
       }
-       // Fetch student details
-    const studentQuery = 'SELECT * FROM students WHERE stud_id = $1';
-    const studentResult = await db.query(studentQuery, [studentId]);
-    const studentData = studentResult.rows[0];
 
-    // Prepare invoice items
-    const invoiceItems = [{
-      item_name: 'Skating Course Fee',
-      item_id: `COURSE-${studentId}`,
-      price: studentData.feestructure
-    }];
+      // Only generate invoice if fees were meaningfully modified
+      if (generateInvoice) {
+        // Fetch updated student details
+        const studentQuery = 'SELECT * FROM students WHERE stud_id = $1';
+        const studentResult = await db.query(studentQuery, [studentId]);
+        const studentData = studentResult.rows[0];
 
-    // Generate invoice
-    await admin.generateFeesInvoice(res, studentData, invoiceItems);
+        // Prepare invoice items
+        const invoiceItems = [{
+          item_name: 'Skating Course Fee',
+          item_id: `COURSE-${studentId}`,
+          price: studentData.feestructure
+        }];
 
-      // res.redirect('/manageStudents');
+        // Generate invoice
+        await admin.generateFeesInvoice(res, studentData, invoiceItems);
+      } else {
+        // If no invoice generation, redirect normally
+        res.redirect('/manageStudents');
+      }
   } catch (error) {
       console.error("Error updating student:", error);
       res.status(500).send("Error updating student details");
   }
 });
-
-// Attendance part ends from Here.
 app.get("/downloadOfflineSaleList", async (req, res) => {
   try {
     const data = await db.query(

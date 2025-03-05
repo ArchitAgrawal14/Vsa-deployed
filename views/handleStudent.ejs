@@ -47,9 +47,15 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="groupAdded" class="form-label">Group <span class="optional-edit">(Optional)</span></label>
-                                    <input type="text" class="form-control" id="groupAdded" name="groupaddedon" 
-                                           value="<%= student.groupaddedon %>">
+                                    <select class="form-control" id="groupAdded" name="groupaddedon">
+                                        <option value="<%= student.groupaddedon %>" selected><%= student.groupaddedon %></option>
+                                        <option value="High_performance-1">High_performance-1</option>
+                                        <option value="High_performance-2">High_performance-2</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Beginner">Beginner</option>
+                                    </select>
                                 </div>
+                                
                             </div>
 
                             <div class="row">
