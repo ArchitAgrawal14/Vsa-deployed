@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Details - <%= student.student_name %></title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .form-label {
+            font-weight: bold;
+        }
+        .optional-edit {
+            color: #6c757d;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Edit Student Details</h4>
+                    </div>
+                    <div class="card-body">
+                        <form id="studentForm" action="/update-student/<%= student.stud_id %>" method="POST">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="studentName" class="form-label">Student Name <span class="optional-edit">(Optional)</span></label>
+                                    <input type="text" class="form-control" id="studentName" name="student_name" 
+                                           value="<%= student.student_name %>">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="studentId" class="form-label">Student ID</label>
+                                    <input type="text" class="form-control" id="studentId" name="stud_id" 
+                                           value="<%= student.stud_id %>" readonly>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="motherName" class="form-label">Mother's Name <span class="optional-edit">(Optional)</span></label>
+                                    <input type="text" class="form-control" id="motherName" name="mother_name" 
+                                           value="<%= student.mother_name %>">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="groupAdded" class="form-label">Group <span class="optional-edit">(Optional)</span></label>
+                                    <input type="text" class="form-control" id="groupAdded" name="groupaddedon" 
+                                           value="<%= student.groupaddedon %>">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="totalFees" class="form-label">Total Fees <span class="optional-edit">(Optional)</span></label>
+                                    <input type="number" class="form-control" id="totalFees" name="feestructure" 
+                                           value="<%= student.feestructure %>" min="0">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="feePaid" class="form-label">Fees Paid <span class="optional-edit">(Optional)</span></label>
+                                    <input type="number" class="form-control" id="feePaid" name="feepaid" 
+                                           value="<%= student.feepaid %>" min="0" 
+                                           max="<%= student.feestructure %>">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="lastFeePaidDate" class="form-label">Last Fees Paid Date</label>
+                                    <input type="text" class="form-control" id="lastFeePaidDate" name="feepaid_date" readonly
+                                           value="<%= student.last_fees_paid_on%>">
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="pendingFees" class="form-label">Pending Fees</label>
+                                    <input type="number" class="form-control" id="pendingFees" 
+                                           value="<%= student.feestructure - student.feepaid %>" readonly>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <a href="/manageStudents" class="btn btn-secondary">Back to List</a>
+                                <button type="submit" class="btn btn-primary">Update Student Details</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('studentForm');
+            const feesTotal = document.getElementById('totalFees');
+            const feesPaid = document.getElementById('feePaid');
+            const pendingFees = document.getElementById('pendingFees');
+            const lastFeePaidDate = document.getElementById('lastFeePaidDate');
+
+            // Update pending fees dynamically
+            function updatePendingFees() {
+                const total = parseFloat(feesTotal.value) || 0;
+                const paid = parseFloat(feesPaid.value) || 0;
+                pendingFees.value = Math.max(0, total - paid);
+            }
+
+            // Auto-update last fees paid date when fees are modified
+            function updateLastFeePaidDate() {
+                const today = new Date().toISOString().split('T')[0];
+                lastFeePaidDate.value = today;
+            }
+
+            feesTotal.addEventListener('input', updatePendingFees);
+            feesPaid.addEventListener('input', function() {
+                updatePendingFees();
+                updateLastFeePaidDate();
+            });
+
+            // Form validation
+            form.addEventListener('submit', function(event) {
+                const totalFees = parseFloat(feesTotal.value);
+                const feesPaidValue = parseFloat(feesPaid.value);
+
+                if (feesPaidValue > totalFees) {
+                    event.preventDefault();
+                    alert('Fees paid cannot be more than total fees');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

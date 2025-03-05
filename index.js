@@ -2536,6 +2536,130 @@ app.post("/studentAttendanceDetails", authenticateUser, async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
+// Below is the endpoint for Student management like groups and fees
+app.get("/manageStudents", authenticateUser, async (req, res) => {
+  try {
+    if (req.user) {
+      const firstName = req.user.fullName.split(" ")[0];
+
+      // Execute the query properly using `await db.query()`
+      const result = await db.query(
+        "SELECT * FROM students ORDER BY (feestructure - feepaid) DESC"
+      );
+
+      const students = result.rows; // `rows` contain the actual data in PostgreSQL
+
+      res.render("manageStudent.ejs", {
+        students: students,
+        Login: firstName,
+      });
+    } else {
+      res.redirect("/newLogin");
+    }
+  } catch (error) {
+    console.error("Error fetching students:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+app.get('/handleStudents', async (req, res) => {  
+  try {
+    // Extract the student id from the query parameter
+    const stud_id = req.query.stud_id;
+    
+    // Execute the query and store the result
+    const result = await db.query("SELECT * FROM students WHERE stud_id = $1", [stud_id]);
+    
+    // Check if any rows were returned
+    if (result.rows.length > 0) {
+      // Render the handleStudent.ejs view with the first student row
+      res.render("handleStudent.ejs", { student: result.rows[0] });
+    } else {
+      res.status(404).send("Student not found");
+    }
+  } catch (error) {
+    console.log("Error in /handleStudents", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+app.post('/update-student/:id', async (req, res) => {
+  try {
+      const studentId = req.params.id;
+      const updateFields = {};
+      const validFields = [
+          'student_name', 
+          'mother_name', 
+          'groupaddedon', 
+          'feestructure', 
+          'feepaid', 
+          'last_fees_paid_on'
+      ];
+
+      // Dynamically build update object
+      validFields.forEach(field => {
+          // Trim string values and check for empty strings
+          if (req.body[field] !== undefined && 
+              (typeof req.body[field] !== 'string' || req.body[field].trim() !== '')) {
+              updateFields[field] = req.body[field];
+          }
+      });
+
+      // If fees are modified, automatically update last_fees_paid_on
+      if (updateFields.feepaid !== undefined) {
+          updateFields.last_fees_paid_on = new Date();
+      }
+
+      // Check if there are any fields to update
+      if (Object.keys(updateFields).length === 0) {
+          return res.redirect('/manageStudents');
+      }
+
+      // Construct dynamic update query
+      const setClauses = Object.keys(updateFields)
+          .map((key, index) => `"${key}" = $${index + 1}`)
+          .join(', ');
+      
+      const values = Object.values(updateFields);
+      values.push(studentId);
+
+      const query = `
+          UPDATE students 
+          SET ${setClauses}
+          WHERE stud_id = $${values.length}
+      `;
+
+      // Execute the update
+      const result = await db.query(query, values);
+
+      // Check if any rows were actually updated
+      if (result.rowCount === 0) {
+          console.warn(`No student found with ID: ${studentId}`);
+          return res.status(404).send('Student not found');
+      }
+       // Fetch student details
+    const studentQuery = 'SELECT * FROM students WHERE stud_id = $1';
+    const studentResult = await db.query(studentQuery, [studentId]);
+    const studentData = studentResult.rows[0];
+
+    // Prepare invoice items
+    const invoiceItems = [{
+      item_name: 'Skating Course Fee',
+      item_id: `COURSE-${studentId}`,
+      price: studentData.feestructure
+    }];
+
+    // Generate invoice
+    await admin.generateFeesInvoice(res, studentData, invoiceItems);
+
+      // res.redirect('/manageStudents');
+  } catch (error) {
+      console.error("Error updating student:", error);
+      res.status(500).send("Error updating student details");
+  }
+});
+
 // Attendance part ends from Here.
 app.get("/downloadOfflineSaleList", async (req, res) => {
   try {

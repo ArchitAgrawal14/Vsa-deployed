@@ -2,9 +2,12 @@ import express from "express";
 import bodyParser from "body-parser";
 import pg from "pg";
 import PDFDocument from 'pdfkit';
+import nodemailer from 'nodemailer';
 import fs from 'fs';
+import path from 'path';
+
 import cookieParser from "cookie-parser";
-import sendNewsletter from "./SendMail.js";
+// import sendNewsletter from "./SendMail.js";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
@@ -943,6 +946,318 @@ export async function billGeneration(req, res, customer_data, items) {
       return false;
   }
 }
+
+export async function generateFeesInvoice(res, studentData, invoiceItems) {
+  try {
+    // Create a new PDF document
+    const doc = new PDFDocument({ 
+      margin: 50,
+      size: 'A4'
+    });
+ // Collect PDF in a buffer instead of directly piping to response
+ const buffers = [];
+ doc.on('data', buffers.push.bind(buffers));
+ doc.on('end', async () => {
+   const pdfBuffer = Buffer.concat(buffers);
+
+   // Send PDF via email if student email exists
+   if (studentData.email) {
+     await sendInvoiceEmail(studentData, pdfBuffer);
+   }
+
+   // Send PDF as download
+   res.setHeader('Content-disposition', 'attachment; filename=Fee_Invoice_VSA.pdf');
+   res.setHeader('Content-type', 'application/pdf');
+   res.send(pdfBuffer);
+ });
+    // Styling and layout constants
+    const pageWidth = doc.page.width - 100;
+    const lineHeight = 20;
+    const tablePadding = 10;
+
+    // Helper function for drawing boxes
+    function drawStyledBox(x, y, width, height, options = {}) {
+      const defaultOptions = {
+        fillColor: '#ffffff',
+        strokeColor: '#cccccc',
+        strokeWidth: 1
+      };
+      
+      const finalOptions = { ...defaultOptions, ...options };
+
+      // Fill if fill color is provided
+      if (finalOptions.fillColor) {
+        doc.fillColor(finalOptions.fillColor)
+           .rect(x, y, width, height)
+           .fill();
+      }
+
+      // Stroke with specified color and width
+      doc.strokeColor(finalOptions.strokeColor)
+         .lineWidth(finalOptions.strokeWidth)
+         .rect(x, y, width, height)
+         .stroke();
+
+      // Reset to default
+      doc.fillColor('#000000').lineWidth(1);
+    }
+
+    // Decorative Header
+    drawStyledBox(50, 50, pageWidth, 80, { 
+      fillColor: '#f0f0f0', 
+      strokeColor: '#2563eb',
+      strokeWidth: 2
+    });
+    
+    // Company Branding
+    doc.fontSize(24)
+       .font('Helvetica-Bold')
+       .fillColor('#2563eb')
+       .text('Vaibhav Skating Academy', 100, 75, { 
+         align: 'center', 
+         width: pageWidth - 100 
+       });
+    
+    doc.fontSize(14)
+       .font('Helvetica')
+       .fillColor('#666666')
+       .text('Fee Invoice', 100, 105, { 
+         align: 'center', 
+         width: pageWidth - 100 
+       });
+
+    // Invoice Details Section
+    const invoiceDetailsY = 180;
+    const invoiceDetailsHeight = 120; // Increased height to accommodate new fields
+    drawStyledBox(50, invoiceDetailsY, pageWidth, invoiceDetailsHeight, { 
+      fillColor: '#f8f9fa', 
+      strokeColor: '#dee2e6' 
+    });
+
+    // Generate a unique invoice number
+    const invoiceNumber = `INV-${Date.now().toString().slice(-8)}`;
+    
+    // Calculate pending amount
+    const feeStructure = parseFloat(studentData.feestructure || 0);
+    const feePaid = parseFloat(studentData.feepaid || 0);
+    const pendingAmount = feeStructure - feePaid;
+    
+    doc.fontSize(12)
+       .font('Helvetica')
+       .fillColor('#000000')
+       .text(`Invoice Date: ${new Date().toLocaleDateString()}`, 70, invoiceDetailsY + 20)
+       .text(`Invoice Number: ${invoiceNumber}`, 70, invoiceDetailsY + 40)
+       .text(`Student ID: ${studentData.stud_id || 'N/A'}`, 70, invoiceDetailsY + 60)
+       .text(`Total Fee Structure: ₹${feeStructure.toFixed(2)}`, 70, invoiceDetailsY + 80)
+       .text(`Fee Paid: ₹${feePaid.toFixed(2)}`, 70, invoiceDetailsY + 100)
+       .text(`Payment Method: Direct Payment`, 250, invoiceDetailsY + 100);
+
+    // Student Details Section
+    const studentDetailsY = invoiceDetailsY + invoiceDetailsHeight + 30;
+    const detailsHeight = 150;
+    const columnWidth = pageWidth / 2 - 20;
+
+    // Student Details Box
+    drawStyledBox(50, studentDetailsY, columnWidth, detailsHeight, { 
+      strokeColor: '#2563eb' 
+    });
+    
+    doc.fontSize(14)
+       .font('Helvetica-Bold')
+       .text('Student Details', 70, studentDetailsY + 15);
+    
+    doc.fontSize(12)
+       .font('Helvetica')
+       .text(`Name: ${studentData.student_name || 'N/A'}`, 70, studentDetailsY + 40)
+       .text(`Group: ${studentData.groupaddedon || 'N/A'}`, 70, studentDetailsY + 60)
+       .text(`Contact: ${studentData.mobile_number || 'N/A'}`, 70, studentDetailsY + 80)
+       .text(`Email: ${studentData.email || 'N/A'}`, 70, studentDetailsY + 100);
+
+    // Academy Details Box
+    const academyDetailsX = 50 + columnWidth + 20;
+    drawStyledBox(academyDetailsX, studentDetailsY, columnWidth, detailsHeight, { 
+      strokeColor: '#2563eb' 
+    });
+    
+    doc.fontSize(14)
+       .font('Helvetica-Bold')
+       .text('Academy Details', academyDetailsX + 20, studentDetailsY + 15);
+    
+    doc.fontSize(12)
+       .font('Helvetica')
+       .text('Vaibhav Skating Academy', academyDetailsX + 20, studentDetailsY + 40)
+       .text('Near Dali Baba Mandir', academyDetailsX + 20, studentDetailsY + 60)
+       .text('Ram Gopal Colony, Satna', academyDetailsX + 20, studentDetailsY + 80)
+       .text('Contact: +91-9301139998', academyDetailsX + 20, studentDetailsY + 100);
+
+    // Fee Details Table
+    const tableY = studentDetailsY + detailsHeight + 30;
+    doc.fontSize(16)
+       .font('Helvetica-Bold')
+       .text('Fee Details', 50, tableY - 20, { underline: true });
+
+    // Table Headers
+    const tableHeaders = ['Description', 'Amount', 'Total'];
+    const columnWidths = [pageWidth * 0.5, pageWidth * 0.25, pageWidth * 0.25];
+
+    // Table Header Background
+    drawStyledBox(50, tableY, pageWidth, lineHeight + tablePadding, { 
+      fillColor: '#2563eb', 
+      strokeColor: '#2563eb' 
+    });
+
+    // Draw Table Headers
+    let xPosition = 50;
+    tableHeaders.forEach((header, i) => {
+      doc.fontSize(12)
+         .font('Helvetica-Bold')
+         .fillColor('#ffffff')
+         .text(header, xPosition + tablePadding/2, tableY + tablePadding/2, { 
+           width: columnWidths[i] - tablePadding, 
+           align: 'center' 
+         });
+      xPosition += columnWidths[i];
+    });
+
+    // Calculate Total Amount
+    let totalAmount = 0;
+    let yPosition = tableY + lineHeight + tablePadding;
+
+    // Draw Invoice Items
+    invoiceItems.forEach((item, index) => {
+      const rowHeight = lineHeight + tablePadding;
+      const isEvenRow = index % 2 === 0;
+      
+      // Row Background
+      drawStyledBox(50, yPosition, pageWidth, rowHeight, { 
+        fillColor: isEvenRow ? '#f8f9fa' : '#ffffff',
+        strokeColor: '#dee2e6'
+      });
+
+      const itemTotal = parseFloat(item.price);
+      totalAmount += itemTotal;
+
+      // Reset x position
+      xPosition = 50;
+
+      // Description Column
+      doc.fontSize(11)
+         .font('Helvetica')
+         .text(item.item_name, xPosition + tablePadding/2, yPosition + tablePadding/2, { 
+           width: columnWidths[0] - tablePadding, 
+           align: 'left' 
+         });
+
+      // Amount Column
+      xPosition += columnWidths[0];
+      doc.text(`₹${itemTotal.toFixed(2)}`, xPosition + tablePadding/2, yPosition + tablePadding/2, { 
+        width: columnWidths[1] - tablePadding, 
+        align: 'right' 
+      });
+
+      // Total Column
+      xPosition += columnWidths[1];
+      doc.text(`₹${itemTotal.toFixed(2)}`, xPosition + tablePadding/2, yPosition + tablePadding/2, { 
+        width: columnWidths[2] - tablePadding, 
+        align: 'right' 
+      });
+
+      yPosition += rowHeight;
+    });
+
+    // Total Amount Box
+    const totalY = yPosition + 20;
+    const totalBoxWidth = pageWidth * 0.4; // Increased width to accommodate more text
+    drawStyledBox(60 + pageWidth - totalBoxWidth, totalY, totalBoxWidth, (lineHeight + tablePadding) * 2, {
+      fillColor: '#f0f0f0',
+      strokeColor: '#333333'
+    });
+    
+    doc.fontSize(12)
+       .font('Helvetica-Bold')
+       .text(`Total Amount: ₹${totalAmount.toFixed(2)}`, 
+         50 + pageWidth - totalBoxWidth + tablePadding/2, 
+         totalY + tablePadding/2, 
+         { width: totalBoxWidth - tablePadding, align: 'right' })
+       .text(`Pending Amount: ₹${pendingAmount.toFixed(2)}`, 
+         50 + pageWidth - totalBoxWidth + tablePadding/2, 
+         totalY + lineHeight + tablePadding/2, 
+         { width: totalBoxWidth - tablePadding, align: 'right' });
+
+    // Footer
+    const footerY = doc.page.height - 100;
+    
+    doc.moveTo(50, footerY)
+       .lineTo(50 + pageWidth, footerY)
+       .strokeColor('#cccccc')
+       .stroke();
+         
+    doc.fontSize(10)
+       .font('Helvetica')
+       .fillColor('#666666')
+       .text('Thank you for your payment!', 50, footerY + 20, { align: 'center', width: pageWidth })
+       .moveDown(0.5)
+       .text('This is a computer-generated invoice.', { align: 'center', width: pageWidth })
+       .moveDown(0.5)
+       .text('For queries, contact vaibhavskatingacademy@gmail.com', { align: 'center', width: pageWidth });
+
+    // Finalize PDF
+    doc.end();
+    return true;
+
+  } catch (error) {
+    console.error('Error generating fees invoice:', error);
+    res.status(500).send('Error generating fees invoice');
+    return false;
+  }
+}
+
+// Email sending function
+export async function sendInvoiceEmail(studentData, pdfBuffer) {
+  try {
+    // Create a transporter using Gmail service
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.nodeMailerEmailValidatorEmail,
+        pass: process.env.nodeMailerEmailValidatorPass,
+      },
+    });
+
+    // Prepare email options
+    const mailOptions = {
+      from: process.env.nodeMailerEmailValidatorEmail,
+      to: studentData.email,
+      subject: `Fee Invoice - Vaibhav Skating Academy`,
+      html: `<div style="font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+          <h2 style="color: #3498db; text-align: center;">Fee Invoice</h2>
+          <p style="font-size: 16px; color: #333333; text-align: center;">Dear ${studentData.student_name},</p>
+          <p style="font-size: 16px; color: #333333; text-align: center;">Please find attached your fee invoice from Vaibhav Skating Academy.</p>
+          <footer style="font-size: 12px; color: #aaaaaa; text-align: center; margin-top: 30px;">
+            <p>Best regards,</p>
+            <p>Vaibhav Skating Academy Team</p>
+          </footer>
+        </div>
+      </div>`,
+      attachments: [
+        {
+          filename: 'Fee_Invoice_VSA.pdf',
+          content: pdfBuffer
+        }
+      ]
+    };
+
+    // Send email
+    await transporter.sendMail(mailOptions);
+    console.log(`Invoice email sent to ${studentData.email}`);
+    return true;
+  } catch (error) {
+    console.error('Error sending invoice email:', error);
+    return false;
+  }
+}
+
 
 // Helper function to sum array values (needed for table width calculation)
 function sum(arr) {
