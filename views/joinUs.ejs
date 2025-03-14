@@ -10,140 +10,203 @@
   <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
   <style>
-      :root {
-          --primary-color: #3498db;
-          --secondary-color: #2ecc71;
-          --bg-light: #f4f6f7;
-      }
-
-      body {
-          background: linear-gradient(135deg, var(--bg-light), #e0e8f0);
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      }
-
-      .form-container {
-          background: white;
-          border-radius: 15px;
-          box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-          padding: 40px;
-          max-width: 600px;
-          margin: 50px auto;
-      }
-
-      .form-group {
-          margin-bottom: 20px;
-      }
-
-      .btn-submit {
-          background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-          border: none;
-          color: white;
-          padding: 12px 20px;
-          border-radius: 25px;
-          width: 100%;
-          transition: all 0.3s ease;
-      }
-
-      .btn-submit:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08);
-      }
-
-      .popup {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba(0,0,0,0.5);
-          display: none;
-          justify-content: center;
-          align-items: center;
-          z-index: 1000;
-      }
-
-      .popup-content {
-          background: white;
-          border-radius: 10px;
-          padding: 30px;
-          max-width: 500px;
-          max-height: 80vh;
-          overflow-y: auto;
-          position: relative;
-      }
-
-      .close-btn {
-          position: absolute;
-          top: 10px;
-          right: 10px;
-      }
-  </style>
+    :root {
+        --primary-color: #3498db;
+        --secondary-color: #2ecc71;
+        --accent-color: #e74c3c;
+        --bg-light: #f4f6f7;
+    }
+    
+    body {
+        background: linear-gradient(135deg, var(--bg-light), #e0e8f0);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .form-container {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        padding: 40px;
+        max-width: 600px;
+        margin: 50px auto;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .btn-submit {
+        background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+        border: none;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 25px;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08);
+    }
+    
+    .popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    
+    .popup-content {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        max-width: 500px;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+    }
+    
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+    
+    /* New styles for the links */
+    .info-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin: 15px 0;
+        gap: 10px;
+    }
+    
+    .info-link {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 15px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .terms-link {
+        background-color: #f8f9fa;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+    }
+    
+    .fees-link {
+        background-color: #f8f9fa;
+        color: var(--accent-color);
+        border: 1px solid var(--accent-color);
+    }
+    
+    .info-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .terms-link:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .fees-link:hover {
+        background-color: var(--accent-color);
+        color: white;
+    }
+    
+    .info-link i {
+        margin-right: 8px;
+    }
+    
+    @media (max-width: 576px) {
+        .info-links {
+            flex-direction: column;
+        }
+        
+        .info-link {
+            width: 100%;
+            text-align: center;
+            justify-content: center;
+        }
+    }
+</style>
 </head>
 <body>
-  <div class="container">
-      <div class="form-container">
-          <h1 class="text-center mb-4">Join Our Academy</h1>
-          
-          <form action="/joinUsStudentRegistered" method="post">
-              <div class="row">
-                  <div class="col-md-6 form-group">
-                      <label for="studentName">Student Name</label>
-                      <input type="text" id="studentName" class="form-control" name="Student_Name" required />
-                  </div>
-                  <div class="col-md-6 form-group">
-                      <label for="mobileNumber">Mobile Number</label>
-                      <input type="text" id="mobileNumber" class="form-control" name="mobile_number" required />
-                  </div>
-              </div>
-
-              <div class="row">
-                  <div class="col-md-6 form-group">
-                      <label for="motherName">Mother's Name</label>
-                      <input type="text" id="motherName" class="form-control" name="Mother_name" required />
-                  </div>
-                  <div class="col-md-6 form-group">
-                      <label for="fatherName">Father's Name</label>
-                      <input type="text" id="fatherName" class="form-control" name="Father_name" required />
-                  </div>
-              </div>
-
-              <div class="form-group">
-                  <label for="email">Email</label>
-                  <input type="email" id="email" class="form-control" name="email" required />
-              </div>
-
-              <div class="form-group">
-                  <label for="feeStructure">Fee Structure</label>
-                  <select id="feeStructure" name="feeStructure" class="form-select" required>
-                      <option value="1_month">Monthly Plan : 2000/-</option>
-                      <option value="3_month">Quaterly Plan : 5500/-</option>
-                      <option value="6_month">Half-Yearly Plan : 10000/-</option>
-                      <option value="11_month">Yearly Plan : 16000/-</option>
-                  </select>
-              </div>
-
-              <div class="form-group">
-                  <div class="form-check">
-                      <input type="checkbox" class="form-check-input" id="terms" name="terms" required />
-                      <label class="form-check-label" for="terms">
-                          I accept the 
-                          <a href="#" id="termsAndConditionLink">Terms and Conditions</a>
-                      </label>
-                  </div>
-                  <div class="form-check">
-                      <label class="form-check-label">
-                          <a href="#" id="feesStructureLink">View Fees Structure</a>
-                      </label>
-                  </div>
-              </div>
-
-              <button type="submit" class="btn-submit transition" id="razorpay-payment-button">
-                  Register - Fees: ₹2000
-              </button>
-          </form>
-      </div>
-  </div>
-
+    <div class="container">
+        <div class="form-container">
+            <h1 class="text-center mb-4">Join Our Academy</h1>
+            <form action="/joinUsStudentRegistered" method="post">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label for="studentName">Student Name</label>
+                        <input type="text" id="studentName" class="form-control" name="Student_Name" required />
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label for="mobileNumber">Mobile Number</label>
+                        <input type="text" id="mobileNumber" class="form-control" name="mobile_number" required />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label for="motherName">Mother's Name</label>
+                        <input type="text" id="motherName" class="form-control" name="Mother_name" required />
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label for="fatherName">Father's Name</label>
+                        <input type="text" id="fatherName" class="form-control" name="Father_name" required />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" class="form-control" name="email" required />
+                </div>
+                <div class="form-group">
+                    <label for="feeStructure">Fee Structure</label>
+                    <select id="feeStructure" name="feeStructure" class="form-select" required>
+                        <option value="1_month">Monthly Plan : 2000/-</option>
+                        <option value="3_month">Quaterly Plan : 5500/-</option>
+                        <option value="6_month">Half-Yearly Plan : 10000/-</option>
+                        <option value="11_month">Yearly Plan : 16000/-</option>
+                    </select>
+                </div>
+                <hr>
+                
+                <!-- Important Information Links -->
+                <div class="info-links">
+                    <a href="#" id="termsAndConditionLink" class="info-link terms-link">
+                        <i class="fas fa-file-contract"></i> Terms and Conditions
+                    </a>
+                    <a href="#" id="feesStructureLink" class="info-link fees-link">
+                        <i class="fas fa-money-bill-wave"></i> View Fees Structure
+                    </a>
+                </div>
+                
+                <div class="form-group mt-3">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="terms" name="terms" required />
+                        <label class="form-check-label" for="terms">
+                            I accept the Terms and Conditions
+                        </label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-submit transition" id="razorpay-payment-button">
+                    Register - Fees: ₹2000
+                </button>
+            </form>
+        </div>
+    </div>
   <!-- Terms and Conditions Popup -->
   <div id="termsAndConditionPopup" class="popup">
       <div class="popup-content">
