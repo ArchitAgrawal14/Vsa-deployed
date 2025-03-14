@@ -14,6 +14,38 @@
     />
     <!--https://boxicons.com/ -->
     <title>Login</title>
+    <style>     
+      .google-btn {
+        display: inline-flex;             /* keeps icon & text side by side */
+        align-items: center;             /* vertically center icon & text   */
+        justify-content: center;
+        padding: 10px 16px;             /* spacing around the content       */
+        background-color: #fff;          /* white background                 */
+        color: #444;                     /* dark gray text color             */
+        font-size: 14px;                 /* adjust to your preference        */
+        font-weight: 500;                /* slightly bold                    */
+        border: 1px solid #ddd;          /* light gray border                */
+        border-radius: 4px;             /* slight rounding of corners       */
+        text-decoration: none;           /* remove default link underline    */
+        margin: 5px;                     /* small margin                     */
+        cursor: pointer;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* subtle shadow           */
+        transition: background-color 0.2s ease;
+      }
+  
+      .google-btn img {
+        width: 20px;      /* G icon size */
+        height: 20px;
+        margin-right: 8px; /* space between icon & text */
+      }
+  
+      .google-btn:hover {
+        background-color: #f7f7f7; /* slightly darker on hover */
+      }
+  
+      /* If you want a more rounded look (like a pill shape), 
+         you can do: border-radius: 25px; instead of 4px above */
+    </style>
   </head>
   <body>
     <div class="container" id="container">
@@ -25,16 +57,26 @@
         >
           <h1 class="SignUp_Text">Create Account</h1>
 
-          <div class="social-icons">
-            <div class="g-signin2" data-onsuccess="onSignIn">
+          <!-- <div class="social-icons"> -->
+            <!-- <div class="g-signin2" data-onsuccess="onSignIn">
               <a href="/auth/google" class="btn btn-block icons" role="button">
                 <i class="bx bxl-google"></i>
               </a>
+            </div> -->
+            <div class="g-signin2" data-onsuccess="onSignIn">
+              <a href="/auth/google" class="google-btn" role="button">
+                <img
+                  src="/icons/googleLogo.jfif"
+                  alt="Google logo"
+                />
+                Sign up with Google
+              </a>
             </div>
+            
             <!-- <a href="#" class="icons"><i class='bx bxl-facebook'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-github'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-linkedin'></i></a> -->
-          </div>
+          <!-- </div> -->
           <span>Register with E-mail</span>          
           <input
             type="text"
@@ -86,18 +128,27 @@
           class="Form_Responsiveness Form_Style"
         >
           <h1 id="Login_Text">Sign In</h1>
-          <div
+          <!-- <div
             class="social-icons login_container_text grossAnnualIncome inputBox"
-          >
-            <div class="g-signin2" data-onsuccess="onSignIn">
+          > -->
+            <!-- <div class="g-signin2" data-onsuccess="onSignIn">
               <a href="/auth/google" class="btn btn-block icons" role="button">
                 <i class="bx bxl-google"></i>
+              </a>
+            </div> -->
+            <div class="g-signin2" data-onsuccess="onSignIn">
+              <a href="/auth/google" class="google-btn" role="button">
+                <img
+                  src="/icons/googleLogo.jfif"
+                  alt="Google logo"
+                />
+                Sign up with Google
               </a>
             </div>
             <!-- <a href="#" class="icons"><i class='bx bxl-facebook'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-github'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-linkedin'></i></a> -->
-          </div>
+          <!-- </div> -->
           <span>Login With Email & Password</span>
           <input
             type="email"
