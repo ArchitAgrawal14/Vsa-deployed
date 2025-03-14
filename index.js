@@ -21,8 +21,6 @@ import passport from "passport";
 
 dotenv.config();
 
-// import mysql from 'mysql2';
-
 const app = express();
 const _dirname = dirname(fileURLToPath(import.meta.url));
 const port = process.env.SERVER_PORT;
@@ -2061,41 +2059,6 @@ app.get("/aboutUs",(req,res)=>{
   res.render("aboutUsPage.ejs");
 })
 //yaha pe newsletter ka hai
-// app.post("/subscribedToNewsLetter", authenticateUser, async (req, res) => {
-//     if (req.user) {
-//       try {
-//         const {Email} = req.body;
-//         console.log(Email);
-//         if (Email) {
-//           const checkDuplicateEmail_forNewsLetter = await db.query(
-//             "SELECT * FROM news_letter_subscriber WHERE email=$1",
-//             [Email]
-//           );
-//           if (checkDuplicateEmail_forNewsLetter.rows.length>0) {
-//             // res.render("/");
-//             res.send("Email already exist");
-//             console.log("Email already exist");
-//           } else {
-//             await db.query(
-//               "INSERT INTO news_letter_subscriber(email) VALUES($1)",
-//               [Email]
-//             );
-//             res.redirect("/");
-//             console.log("Email successfully added for news letter");
-//            }
-//         }
-//       } catch (error) {
-//         res.redirect("/");
-//         console.log("Failed to get email subscribe news letter route", error);
-//       }
-//     } else {
-//       res.redirect("/newLogin");
-//       console.log(
-//         "User not logged in and trying to subscribe to newsLetter that is why redirected to login page"
-//       );
-//     }
-// });
-
 app.post("/subscribedToNewsLetter", authenticateUser, async (req, res) => {
   if (req.user) {
     try {
@@ -2453,11 +2416,24 @@ app.get("/markingAttendance", authenticateUser, async (req, res) => {
   }
 });
 app.post("/confirmAttendance", async (req, res) => {
-  const attendanceData = req.body; // This should contain attendance_<student_id>
+  const attendanceData = req.body; // This contains attendance_<student_id> and selectedDate
   console.log("Received Attendance Data:", attendanceData); // Check the structure
+
+  // Get the selected date from the form or default to today
+  const selectedDate = attendanceData.selectedDate ? new Date(attendanceData.selectedDate) : new Date();
+  
+  // Format the date to ensure it's just the date part (no time)
+  const formattedDate = selectedDate.toISOString().split('T')[0];
+  
+  console.log("Using date for attendance:", formattedDate);
 
   try {
     for (const key in attendanceData) {
+      // Skip the selectedDate field and any other non-attendance fields
+      if (!key.startsWith('attendance_')) {
+        continue;
+      }
+
       // Extract the student ID from the key
       const studentId = key.split("_")[1]; // Get the ID from the key
 
@@ -2469,33 +2445,38 @@ app.post("/confirmAttendance", async (req, res) => {
 
       const attendanceStatus = attendanceData[key]; // Get the corresponding status
 
-      // Check if attendance for the student already exists for today
+      // Check if attendance for the student already exists for the selected date
       const existingRecord = await db.query(
         `SELECT * FROM attendance WHERE student_id = $1 AND attendance_date::date = $2`,
-        [studentId, new Date()]
+        [studentId, formattedDate]
       );
 
-      // If a record exists, skip the insertion for this student
       if (existingRecord.rows.length > 0) {
         console.log(
-          `Attendance already recorded for student ${studentId} on this date.`
+          `Attendance already recorded for student ${studentId} on ${formattedDate}. Updating record.`
         );
-        continue; // Skip inserting if attendance already exists
+        
+        // Update the existing record instead of skipping
+        await db.query(
+          `UPDATE attendance SET status = $1 WHERE student_id = $2 AND attendance_date::date = $3`,
+          [attendanceStatus, studentId, formattedDate]
+        );
+      } else {
+        // Insert the new attendance record with the selected date
+        await db.query(
+          `INSERT INTO attendance (student_id, status, attendance_date) VALUES ($1, $2, $3)`,
+          [studentId, attendanceStatus, formattedDate]
+        );
       }
-
-      // Insert the new attendance record
-      await db.query(
-        `INSERT INTO attendance (student_id, status, attendance_date) VALUES ($1, $2, $3)`,
-        [studentId, attendanceStatus, new Date()]
-      );
     }
 
     res.redirect("/adminDashboard");
   } catch (error) {
-    console.error("Error inserting attendance data:", error);
+    console.error("Error managing attendance data:", error);
     res.redirect("/markingAttendance");
   }
 });
+
 app.get("/monthlyAttendance", authenticateUser, async (req, res) => {
   try {
     if (req.user) {
@@ -2677,6 +2658,7 @@ app.post('/update-student/:id', async (req, res) => {
       res.status(500).send("Error updating student details");
   }
 });
+
 app.get("/downloadOfflineSaleList", async (req, res) => {
   try {
     const data = await db.query(
@@ -3206,101 +3188,6 @@ app.post("/generateInvoice", authenticateUser, async (req, res) => {
     console.log("cannot get offline customer details", error);
   }
 });
-// app.post("/generateBill", authenticateUser, async (req, res) => {
-//   try {
-//     const { customer_name, customer_email, customer_number } = req.body;
-//     const { items } = req.body; //here items is like the array of objects
-//     // console.log(items);
-//     if (req.user) {
-//       const offlineCustomerCheck = await db.query(
-//         "SELECT * FROM offline_customer WHERE email=$1 AND mobile_number=$2",
-//         [customer_email, customer_number]
-//       );
-//       if (offlineCustomerCheck.rows.length === 0) {
-//         await db.query(
-//           "INSERT INTO offline_customer (full_name,email,mobile_number) VALUES($1,$2,$3)",
-//           [customer_name, customer_email, customer_number]
-//         );
-//         console.log(
-//           "Successfully added offline customer details in the database"
-//         );
-//         const customer_details = await db.query(
-//           "SELECT * FROM offline_customer WHERE email=$1 OR mobile_number=$2",
-//           [customer_email, customer_number]
-//         );
-//         const customer_data = customer_details.rows[0];
-//         const billGenerationComplete = admin.billGeneration(
-//           req,
-//           res,
-//           customer_data,
-//           items
-//         );
-//         if (billGenerationComplete) {
-//           for (const item of items) {
-//             await db.query(
-//               "INSERT INTO orders_offline (email, name, mobile_number, item_name, item_id, item_type, amount, quantity) VALUES($1,$2,$3,$4,$5,$6,$7,$8)",
-//               [
-//                 customer_email,
-//                 customer_name,
-//                 customer_number,
-//                 item.item_name,
-//                 item.item_id,
-//                 item.item_type,
-//                 item.price,
-//                 "1",
-//               ]
-//             );
-//             await db.query(
-//               `UPDATE stock_${item.item_type} SET quantity = quantity - $1 WHERE item_id = $2`,
-//               [1, item.item_id]
-//             );
-//           }
-//           console.log("quantity updated through offline purchase");
-//           console.log("offline purchase complete adding details to database");
-//         }
-//       } else {
-//         const customer_details = await db.query(
-//           "SELECT * FROM offline_customer WHERE email=$1 OR mobile_number=$2",
-//           [customer_email, customer_number]
-//         );
-//         // console.log("Offline Customer already exist");
-//         const customer_data = customer_details.rows[0];
-//         admin.billGeneration(req, res, customer_data, items);
-//         const billGenerationComplete = admin.billGeneration(
-//           req,
-//           res,
-//           customer_data,
-//           items
-//         );
-//         if (billGenerationComplete) {
-//           for (const item of items) {
-//             await db.query(
-//               "INSERT INTO orders_offline (email, name, mobile_number, item_name, item_id, item_type, amount, quantity) VALUES($1,$2,$3,$4,$5,$6,$7,$8)",
-//               [
-//                 customer_email,
-//                 customer_name,
-//                 customer_number,
-//                 item.item_name,
-//                 item.item_id,
-//                 item.item_type,
-//                 item.price,
-//                 "1",
-//               ]
-//             );
-//             await db.query(
-//               `UPDATE stock_${item.item_type} SET quantity = quantity - $1 WHERE item_id = $2`,
-//               [1, item.item_id]
-//             );
-//           }
-//         }
-//       }
-//     } else {
-//       res.render("login.ejs");
-//     }
-//   } catch (error) {
-//     console.log("cannot get offline customer details", error);
-//   }
-// });
 
 app.post("/generateBill", authenticateUser, async (req, res) => {
   // Create a client from the pool to use for transaction

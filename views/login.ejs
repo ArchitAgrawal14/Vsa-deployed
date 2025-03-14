@@ -35,7 +35,7 @@
                     <a href="#" class="icons"><i class='bx bxl-github'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-linkedin'></i></a> -->
           </div>
-          <span>Register with E-mail</span>
+          <span>Register with E-mail</span>          
           <input
             type="text"
             name="FullName"
@@ -53,14 +53,17 @@
             required
           />
 
-          <input
-            type="password"
-            name="SignUp_Password"
-            class="SignUp_Password_Box SignUp_Boxes"
-            placeholder="Password"
-            required
-            minlength="8"
-          />
+          <div class="password-container" style="position: relative; width: 100%;">
+            <input
+              type="password"
+              name="SignUp_Password"
+              class="SignUp_Password_Box SignUp_Boxes"
+              placeholder="Password"
+              required
+              minlength="8"
+            />
+            <i class="bx bx-hide password-toggle" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+          </div>
 
           <input
             type="number"
@@ -73,6 +76,7 @@
             Sign Up
           </button>
         </form>
+        
       </div>
 
       <div class="form-container sign-in">
@@ -103,14 +107,17 @@
             placeholder="Email"
             autofocus
           />
-          <input
-            type="password"
-            name="Password"
-            required
-            class="Password_Box"
-            placeholder="Password"
-          />
-          <a href="/forgetPassword">Forget Password?</a>
+          <div class="password-container" style="position: relative; width: 100%;">
+            <input
+              type="password"
+              name="Password"
+              required
+              class="Password_Box"
+              placeholder="Password"
+            />
+            <i class="bx bx-hide password-toggle" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+          </div>
+          <a href="/forgetPassword" style="color: red;">Forget Password?</a>
           <button type="submit" value="Login" class="SignIn_Login_button">
             Login
           </button>
@@ -120,7 +127,7 @@
       <div class="toggle-container">
         <div class="toggle">
           <div class="toggle-panel toggle-left">
-            <h1>Sign in With ID & Passowrd <br /></h1>
+            <h1>Sign in With ID & Password <br /></h1>
             <button class="hidden" id="login">Sign In</button>
           </div>
           <div class="toggle-panel toggle-right">
@@ -155,6 +162,7 @@
         </div>
       </div>
     </div>
+
     <div id="global-tooltip-container" style="display: none">
       <div class="global-tooltip">
         <div class="tooltip-icon">
@@ -207,8 +215,8 @@
       });
     </script>
   </body>
+  <!-- Global Tooltip System -->
   <script>
-     // Global Tooltip System
     const globalTooltip = {
       container: null,
       tooltip: null,
@@ -332,5 +340,32 @@
     function showTooltip(message, type = 'error', icon = 'bx-error', duration = 5000) {
       return globalTooltip.show(message, type, icon, duration);
     }
+  </script>
+
+  <!-- Below script is for toggling the eye in password input box -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const toggleButtons = document.querySelectorAll('.password-toggle');
+      
+      toggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          // Get the parent container
+          const container = this.parentElement;
+          // Get the password input field
+          const passwordField = container.querySelector('input');
+          
+          // Toggle between password and text type
+          if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            this.classList.remove('bx-hide');
+            this.classList.add('bx-show');
+          } else {
+            passwordField.type = 'password';
+            this.classList.remove('bx-show');
+            this.classList.add('bx-hide');
+          }
+        });
+      });
+    });
   </script>
 </html>

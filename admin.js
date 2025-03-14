@@ -32,14 +32,10 @@ export async function adminRole(req, res, firstName) {
   });
 }
 export async function createNewsLetterAdmin(req, res) {
-  //   const adminCheck=await db.query("SELECT * FROM users WHERE email=$1",[Email]);
   try {
-    // if(adminCheck.rows.length>0 && adminCheck.rows[0].admin===true){
     res.render("CreateNewsLetter.ejs");
     console.log("User is the admin hence opening news letter creation page");
-    // }else{
-    //   console.log("User is not the admin");
-    // }
+
   } catch (error) {
     console.log("news letter page error:", error);
   }
@@ -417,6 +413,7 @@ try {
         });    
 }
 }
+
 export async function editMeetOurCoachText(req,res,editMeetOurCoachText,firstName) {
     const result=await db.query("SELECT * FROM home_page_data")
     const data=result.rows[0];
@@ -441,6 +438,7 @@ try {
         });    
 }
 }
+
 export async function getOrderDetails(req, res, order_data) {
     try {
       // Create a new PDF document
@@ -486,6 +484,7 @@ export async function getOrderDetails(req, res, order_data) {
       res.status(500).send('Error generating PDF');
     }
 }
+
 export async function changeOrderStatus(req,res,newStatus,orderId) {
 try {
     if(newStatus && orderId){
@@ -520,6 +519,7 @@ try {
     })
 }    
 }
+
 export async function invoiceGeneration(req, res, customer_data, items) {
   try {
       const doc = new PDFDocument({ 
@@ -720,7 +720,7 @@ export async function invoiceGeneration(req, res, customer_data, items) {
          .moveDown(0.5)
          .text('This is a computer-generated invoice.', { align: 'center', width: pageWidth })
          .moveDown(0.5)
-         .text('For any queries, contact us at vaibhavskatingacademy@gmail.com', { align: 'center', width: pageWidth });
+         .text('For any queries, contact us at info@vaibhavskatingacademy.com', { align: 'center', width: pageWidth });
 
       doc.end();
       console.log('PDF generation complete');
@@ -732,6 +732,7 @@ export async function invoiceGeneration(req, res, customer_data, items) {
       return false;
   }
 }
+
 export async function billGeneration(req, res, customer_data, items) {
   try {
       const doc = new PDFDocument({ 
@@ -935,7 +936,7 @@ export async function billGeneration(req, res, customer_data, items) {
          .moveDown(0.5)
          .text('This is a computer-generated invoice.', { align: 'center', width: pageWidth })
          .moveDown(0.5)
-         .text('For any queries, contact us at vaibhavskatingacademy@gmail.com', { align: 'center', width: pageWidth });
+         .text('For any queries, contact us at info@vaibhavskatingacademy.com', { align: 'center', width: pageWidth });
 
       doc.end();
       return true;
@@ -1199,7 +1200,7 @@ export async function generateFeesInvoice(res, studentData, invoiceItems) {
        .moveDown(0.5)
        .text('This is a computer-generated invoice.', { align: 'center', width: pageWidth })
        .moveDown(0.5)
-       .text('For queries, contact vaibhavskatingacademy@gmail.com', { align: 'center', width: pageWidth });
+       .text('For queries, contact info@vaibhavskatingacademy.com', { align: 'center', width: pageWidth });
 
     // Finalize PDF
     doc.end();

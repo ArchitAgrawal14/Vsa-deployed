@@ -16,20 +16,43 @@
         .mark-all-btns {
             margin-bottom: 20px;
         }
+        .date-selector {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2 class="text-center">Mark Attendance</h2>
+        
+        <!-- Date Selector -->
+        <div class="date-selector row justify-content-center">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Select Date</span>
+                    </div>
+                    <input type="date" class="form-control" id="attendanceDate" name="attendanceDate">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" onclick="loadAttendanceForDate()">Load</button>
+                    </div>
+                </div>
+                <small class="form-text text-muted text-center">If no date is selected, today's date will be used.</small>
+            </div>
+        </div>
 
-        <!-- Buttons to mark all as Present or Absent -->
+        <!-- Buttons to mark all as Present, Absent or Sick -->
         <div class="mark-all-btns text-center">
             <button type="button" class="btn btn-success" onclick="markAll('present')">Mark All Present</button>
             <button type="button" class="btn btn-danger" onclick="markAll('absent')">Mark All Absent</button>
+            <button type="button" class="btn btn-warning" onclick="markAll('sick')">Mark All Sick</button>
         </div>
 
         <!-- Attendance table -->
         <form id="attendanceForm" action="/confirmAttendance" method="POST">
+            <!-- Hidden input for date -->
+            <input type="hidden" id="selectedDateHidden" name="selectedDate">
+            
             <table class="table table-bordered">
                 <thead class="thead-dark">
                     <tr>
@@ -52,6 +75,7 @@
                                 <td>
                                     <input type="radio" name="attendance_<%= stud.stud_id %>" value="Present"> Present
                                     <input type="radio" name="attendance_<%= stud.stud_id %>" value="Absent"> Absent
+                                    <input type="radio" name="attendance_<%= stud.stud_id %>" value="Sick"> Sick
                                 </td>
                                 
                             </tr>
@@ -89,23 +113,53 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     
     <script>
-        // Load stored attendance from localStorage on page load
+        // Set default date to today
         window.onload = function() {
-            const currentDate = new Date().toLocaleDateString();
+            const today = new Date();
+            const todayFormatted = today.toISOString().slice(0, 10); // Format: YYYY-MM-DD
+            document.getElementById('attendanceDate').value = todayFormatted;
+            document.getElementById('selectedDateHidden').value = todayFormatted;
+            
+            // Load any saved attendance for today
+            loadSavedAttendance(todayFormatted);
+        }
+        
+        // Load saved attendance for selected date
+        function loadSavedAttendance(dateString) {
             const savedDate = localStorage.getItem('attendanceDate');
             const savedAttendance = localStorage.getItem('attendanceData');
 
-            // If the saved date matches today's date, populate the form with the saved attendance
-            if (savedDate === currentDate && savedAttendance) {
+            // If the saved date matches the selected date, populate the form
+            if (savedDate === dateString && savedAttendance) {
                 const attendanceData = JSON.parse(savedAttendance);
                 for (const studentId in attendanceData) {
                     const attendance = attendanceData[studentId];
-                    document.querySelector(`input[name="attendance[${studentId}]"][value="${attendance}"]`).checked = true;
+                    const selector = `input[name="attendance_${studentId}"][value="${attendance}"]`;
+                    const radioButton = document.querySelector(selector);
+                    if (radioButton) {
+                        radioButton.checked = true;
+                    }
                 }
             }
         }
+        
+        // Function to load attendance for selected date
+        function loadAttendanceForDate() {
+            const selectedDate = document.getElementById('attendanceDate').value;
+            if (selectedDate) {
+                document.getElementById('selectedDateHidden').value = selectedDate;
+                
+                // You would typically make an AJAX call here to fetch attendance data for the selected date
+                // For now, we'll just try to load from localStorage
+                loadSavedAttendance(selectedDate);
+                
+                // Update the form action to include the date
+                const form = document.getElementById('attendanceForm');
+                form.action = `/confirmAttendance?date=${selectedDate}`;
+            }
+        }
 
-        // Mark all students as present or absent
+        // Mark all students as present, absent, or sick
         function markAll(status) {
             const radios = document.querySelectorAll('input[type="radio"]');
             radios.forEach((radio) => {
@@ -113,12 +167,21 @@
                     radio.checked = true;
                 } else if (status === 'absent' && radio.value === 'Absent') {
                     radio.checked = true;
+                } else if (status === 'sick' && radio.value === 'Sick') {
+                    radio.checked = true;
                 }
             });
         }
 
-        // Show toast notification after form is submitted
+        // Show toast notification and prepare form data before submitting
         document.getElementById("attendanceForm").onsubmit = function() {
+            const selectedDate = document.getElementById('selectedDateHidden').value || new Date().toISOString().slice(0, 10);
+            
+            // Make sure the selected date is included in the form submission
+            if (!document.getElementById('selectedDateHidden').value) {
+                document.getElementById('selectedDateHidden').value = selectedDate;
+            }
+            
             $('#attendanceToast').toast('show');
         };
     </script>
