@@ -953,11 +953,11 @@ app.get("/productDetails", authenticateUser, async (req, res) => {
     );
     
     // Fetch additional product details
-    const variantData = await db.query(
-      `SELECT img, size, color FROM product_details WHERE item_id=$1`,
-      [item_id]
-    );
-    
+    // Fetch additional product details
+const variantData = await db.query(
+  `SELECT img, img1, img2, size, color FROM product_details WHERE item_id=$1`,
+  [item_id]
+);
     const productResult = productData.rows;
     const variantResult = variantData.rows;
     
@@ -967,10 +967,13 @@ app.get("/productDetails", authenticateUser, async (req, res) => {
     }
     
     // Prepare the combined data object
-    const combinedItemDetails = {
-      ...productResult,  // Basic product details
-      variants: variantResult  // Array of variants with size, color, and images
-    };
+    const combinedItemDetails = [
+      {
+        ...productResult[0],  // Basic product details (first item in array)
+        variants: variantResult  // Array of variants
+      }
+    ];
+    
     
     console.log(combinedItemDetails);
     // Get user's first name if logged in
@@ -2847,11 +2850,17 @@ app.post("/completeAddingNewItem", authenticateUser, uploadMultiple, async (req,
       itemsItemId, 
       itemsPrice, 
       itemsItemType,
-      color 
+      color,
+      short_description,
+      detailed_description,
+      why_choose
     } = req.body;
 
-    const sizes = req.body.sizes;
-    const quantities = req.body.quantities;
+    // Extract arrays
+    const sizes = Array.isArray(req.body.sizes) ? req.body.sizes : [req.body.sizes];
+    const quantities = Array.isArray(req.body.quantities) ? req.body.quantities : [req.body.quantities];
+    const features = Array.isArray(req.body.features) ? req.body.features.filter(Boolean) : 
+                     (req.body.features ? [req.body.features] : []);
 
     // Validate sizes and quantities
     if (!sizes || !quantities || sizes.length !== quantities.length) {
@@ -2867,7 +2876,7 @@ app.post("/completeAddingNewItem", authenticateUser, uploadMultiple, async (req,
     const item_type_id = `${itemsItemType.substring(0, 3)}${Date.now()}`;
 
     // Calculate total quantity
-    const totalQuantity = quantities.reduce((sum, qty) => sum + parseInt(qty), 0);
+    const totalQuantity = quantities.reduce((sum, qty) => sum + parseInt(qty || 0), 0);
 
     // 1. First, insert into stocks table
     await client.query(
@@ -2877,11 +2886,12 @@ app.post("/completeAddingNewItem", authenticateUser, uploadMultiple, async (req,
     );
     console.log("Item added to stocks table");
 
-    // 2. Then, insert into stock_[type] table
+    // 2. Then, insert into stock_[type] table with additional fields
     await client.query(
       `INSERT INTO stock_${itemsItemType} 
-       (img, name, description, item_id, price, quantity, item_type, item_type_id) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+ (img, name, description, item_id, price, quantity, item_type, item_type_id,
+  short_description, detailed_description, why_choose, features) 
+ VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12::text[])`,
       [
         imagePath,  // Using the first image as the main image
         itemsName,
@@ -2890,9 +2900,14 @@ app.post("/completeAddingNewItem", authenticateUser, uploadMultiple, async (req,
         itemsPrice,
         totalQuantity,
         itemsItemType,
-        item_type_id
+        item_type_id,
+        short_description || null,
+        detailed_description || null,
+        why_choose || null,
+        features.length > 0 ? features : null
       ]
     );
+    
     console.log(`Item added to stock_${itemsItemType} table`);
 
     // 3. Insert product details - one entry per size with all images

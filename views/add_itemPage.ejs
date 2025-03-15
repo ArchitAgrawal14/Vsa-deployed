@@ -97,27 +97,22 @@
                 <input type="text" name="itemsName" placeholder=" " required pattern="[A-Za-z0-9\s]+" title="Only letters, numbers, and spaces allowed">
                 <label>Product Name</label>
             </div>
-
+    
             <div class="floating-label">
                 <textarea name="itemsDescription" placeholder=" " required></textarea>
                 <label>Product Description</label>
             </div>
-
+    
             <div class="floating-label">
                 <input type="text" name="itemsItemId" placeholder=" " required pattern="[A-Za-z0-9]+" title="Only letters and numbers allowed">
                 <label>Product ID</label>
             </div>
-
+    
             <div class="floating-label">
                 <input type="number" name="itemsPrice" placeholder=" " required min="0">
                 <label>Price (₹)</label>
             </div>
-
-            <!-- <div class="floating-label">
-                <input type="number" name="itemsQuantity" placeholder=" " required min="1">
-                <label>Quantity in Stock</label>
-            </div> -->
-
+    
             <div class="floating-label">
                 <select name="itemsItemType" required>
                     <option value="" disabled selected>Select Item Type</option>
@@ -130,9 +125,53 @@
                 <label>Product Category</label>
             </div>
         </div>
-
-        <!-- Variant Information -->
+    
+        <!-- Additional Information (based on product_details EJS) -->
         <div class="form-section">
+            <h3>Additional Information</h3>
+            <div class="floating-label">
+                <textarea name="short_description" placeholder=" "></textarea>
+                <label>Overview (Short Description)</label>
+            </div>
+    
+            <div class="floating-label">
+                <textarea name="detailed_description" placeholder=" "></textarea>
+                <label>Details (Detailed Description)</label>
+            </div>
+    
+            <div class="floating-label">
+                <textarea name="why_choose" placeholder=" "></textarea>
+                <label>Why Choose This</label>
+            </div>
+    
+            <!-- Features (Multiple) -->
+            <div class="features-container">
+                <h4>Features</h4>
+                <div class="feature-row">
+                    <div class="floating-label">
+                        <input type="text" name="features[]" placeholder=" ">
+                        <label>Feature 1</label>
+                    </div>
+                </div>
+                <div class="feature-row">
+                    <div class="floating-label">
+                        <input type="text" name="features[]" placeholder=" ">
+                        <label>Feature 2</label>
+                    </div>
+                </div>
+                <div class="feature-row">
+                    <div class="floating-label">
+                        <input type="text" name="features[]" placeholder=" ">
+                        <label>Feature 3</label>
+                    </div>
+                </div>
+                <button type="button" id="add-feature" class="btn btn-outline-secondary">Add More Features</button>
+            </div>
+        </div>
+    
+        <!-- Size and Quantity Information (Original Style) -->
+        <div class="form-section">
+            <h3>Size and Quantity</h3>
             <div class="size-quantity-container">
                 <div class="size-quantity-row">
                     <div class="floating-label">
@@ -189,13 +228,13 @@
                     </div>
                 </div>
             </div>
-
+    
             <div class="floating-label">
                 <input type="text" name="color" placeholder=" " required>
                 <label>Color</label>
             </div>
         </div>
-
+    
         <!-- Product Images -->
         <div class="form-section">
             <h3>Product Images</h3>
@@ -203,12 +242,12 @@
                 <input type="file" name="itemsImage" accept="image/*" required>
                 <label>Main Product Image</label>
             </div>
-
+    
             <div class="floating-label">
                 <input type="file" name="itemsImage1" accept="image/*" required>
                 <label>Additional Image 1</label>
             </div>
-
+    
             <div class="floating-label">
                 <input type="file" name="itemsImage2" accept="image/*" required>
                 <label>Additional Image 2</label>
@@ -216,27 +255,48 @@
             
             <div class="image-preview" id="imagePreview"></div>
         </div>
-
+    
         <input type="submit" value="Add Product">
     </form>
-
+    
     <script>
-        // Add image preview functionality
-        document.querySelectorAll('input[type="file"]').forEach(input => {
-            input.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add more feature fields
+        document.getElementById('add-feature').addEventListener('click', function() {
+            const featuresContainer = document.querySelector('.features-container');
+            const featureCount = featuresContainer.querySelectorAll('.feature-row').length + 1;
+            
+            const newFeatureRow = document.createElement('div');
+            newFeatureRow.className = 'feature-row';
+            newFeatureRow.innerHTML = `
+                <div class="floating-label">
+                    <input type="text" name="features[]" placeholder=" ">
+                    <label>Feature ${featureCount}</label>
+                </div>
+            `;
+            
+            featuresContainer.insertBefore(newFeatureRow, this);
+        });
+        
+        // Image preview functionality
+        const imageInputs = document.querySelectorAll('input[type="file"]');
+        const imagePreview = document.getElementById('imagePreview');
+        
+        imageInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         const img = document.createElement('img');
                         img.src = e.target.result;
-                        const previewDiv = document.getElementById('imagePreview');
-                        previewDiv.appendChild(img);
+                        img.className = 'preview-image';
+                        imagePreview.appendChild(img);
                     }
-                    reader.readAsDataURL(file);
+                    reader.readAsDataURL(this.files[0]);
                 }
             });
         });
+    });
     </script>
 </body>
 </html>

@@ -207,6 +207,7 @@
         <% if (itemDetails) { %>
             <div class="product-container flex animate__animated animate__fadeIn">
                 <!-- Product Image Section -->
+                <!-- Product Image Section -->
                 <div class="product-image w-full md:w-1/2">
                     <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
@@ -214,15 +215,34 @@
                             <div class="carousel-item active">
                                 <img src="<%= itemDetails[0].img %>" alt="<%= itemDetails[0].name %>">
                             </div>
+                            
                             <!-- Variant images from product_details table -->
-                            <% if (itemDetails.variants && itemDetails.variants.length > 0) { %>
-                                <% itemDetails.variants.forEach(variant => { %>
-                                    <div class="carousel-item">
-                                        <img src="<%= variant.img %>" alt="<%= itemDetails[0].name %>">
-                                    </div>
+                            <% if (itemDetails[0].variants && itemDetails[0].variants.length > 0) { %>
+                                <% itemDetails[0].variants.forEach(variant => { %>
+                                    <!-- Primary variant image -->
+                                    <% if (variant.img && variant.img !== itemDetails[0].img) { %>
+                                        <div class="carousel-item">
+                                            <img src="<%= variant.img %>" alt="<%= itemDetails[0].name %> Variant">
+                                        </div>
+                                    <% } %>
+                                    
+                                    <!-- Second variant image -->
+                                    <% if (variant.img1) { %>
+                                        <div class="carousel-item">
+                                            <img src="<%= variant.img1 %>" alt="<%= itemDetails[0].name %> Variant">
+                                        </div>
+                                    <% } %>
+                                    
+                                    <!-- Third variant image -->
+                                    <% if (variant.img2) { %>
+                                        <div class="carousel-item">
+                                            <img src="<%= variant.img2 %>" alt="<%= itemDetails[0].name %> Variant">
+                                        </div>
+                                    <% } %>
                                 <% }); %>
                             <% } %>
                         </div>
+                        
                         <!-- Carousel Controls -->
                         <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -232,9 +252,31 @@
                             <span class="carousel-control-next-icon" aria-hidden="true"></span>
                             <span class="visually-hidden">Next</span>
                         </button>
+                        
+                        <!-- Carousel Indicators -->
+                        <div class="carousel-indicators">
+                            <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                            
+                            <% if (itemDetails[0].variants && itemDetails[0].variants.length > 0) { %>
+                                <% let slideIndex = 1; %>
+                                <% itemDetails[0].variants.forEach(variant => { %>
+                                    <% if (variant.img && variant.img !== itemDetails[0].img) { %>
+                                        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="<%= slideIndex %>" aria-label="Slide <%= slideIndex + 1 %>"></button>
+                                        <% slideIndex++; %>
+                                    <% } %>
+                                    <% if (variant.img1) { %>
+                                        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="<%= slideIndex %>" aria-label="Slide <%= slideIndex + 1 %>"></button>
+                                        <% slideIndex++; %>
+                                    <% } %>
+                                    <% if (variant.img2) { %>
+                                        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="<%= slideIndex %>" aria-label="Slide <%= slideIndex + 1 %>"></button>
+                                        <% slideIndex++; %>
+                                    <% } %>
+                                <% }); %>
+                            <% } %>
+                        </div>
                     </div>
                 </div>
-    
                 <!-- Product Details Section -->
                 <div class="product-details w-full md:w-1/2">
                     <h1 class="text-3xl font-bold mb-4"><%= itemDetails[0].name %></h1>
@@ -248,31 +290,56 @@
                     </div>
     
                     <!-- Size Selection -->
-                    <div class="mb-4">
-                        <h3 class="text-xl font-semibold mb-2">Select Size</h3>
-                        <div class="size-selector">
-                            <% if (itemDetails.variants && itemDetails.variants.length > 0) { %>
-                                <% const uniqueSizes = [...new Set(itemDetails.variants.map(v => v.size))]; %>
-                                <% uniqueSizes.forEach(size => { %>
-                                    <button class="size-button btn btn-outline-secondary" data-size="<%= size %>">
-                                        <%= size %>
-                                    </button>
-                                <% }); %>
-                            <% } else { %>
-                                <button class="size-button btn btn-outline-secondary" disabled>No sizes available</button>
-                            <% } %>
-                        </div>
-                    </div>
+                    <!-- Size Selection -->
+<div class="mb-4">
+    <h3 class="text-xl font-semibold mb-2">Select Size</h3>
+    <div class="size-selector">
+        <% if (itemDetails[0].variants && itemDetails[0].variants.length > 0) { %>
+            <% 
+                const uniqueSizes = [...new Set(itemDetails[0].variants
+                    .map(v => v.size)
+                    .filter(size => size && size.trim() !== ''))]; 
+            %>
+            <% if (uniqueSizes.length > 0) { %>
+                <% uniqueSizes.forEach(size => { %>
+                    <button class="size-button btn btn-outline-secondary" data-size="<%= size %>">
+                        <%= size %>
+                    </button>
+                <% }); %>
+            <% } else { %>
+                <button class="size-button btn btn-outline-secondary selected" data-size="OneSize">
+                    One Size
+                </button>
+            <% } %>
+        <% } else { %>
+            <button class="size-button btn btn-outline-secondary selected" data-size="OneSize">
+                One Size
+            </button>
+        <% } %>
+    </div>
+</div>
     
                     <!-- Color Selection -->
                     <div class="mb-4">
                         <h3 class="text-xl font-semibold mb-2">Select Color</h3>
                         <div class="color-selector">
-                            <% if (itemDetails.variants && itemDetails.variants.length > 0) { %>
-                                <% const uniqueColors = [...new Set(itemDetails.variants.map(v => v.color).filter(Boolean))]; %>
-                                <% uniqueColors.forEach(color => { %>
-                                    <div class="color-button" style="background-color: <%= color %>;"></div>
-                                <% }); %>
+                            <% if (itemDetails[0].variants && itemDetails[0].variants.length > 0) { %>
+                                <% 
+                                    const uniqueColors = [...new Set(itemDetails[0].variants
+                                        .map(v => v.color)
+                                        .filter(color => color && color.trim() !== ''))]; 
+                                %>
+                                <% if (uniqueColors.length > 0) { %>
+                                    <% uniqueColors.forEach((color, index) => { %>
+                                        <div class="color-button <%= index === 0 ? 'selected' : '' %>" 
+                                             style="background-color: <%= color %>;" 
+                                             data-color="<%= color %>"></div>
+                                    <% }); %>
+                                <% } else { %>
+                                    <div class="color-button selected" style="background-color: #000000;" data-color="#000000"></div>
+                                <% } %>
+                            <% } else { %>
+                                <div class="color-button selected" style="background-color: #000000;" data-color="#000000"></div>
                             <% } %>
                         </div>
                     </div>
@@ -283,7 +350,12 @@
                             <p class="text-gray-600"><%= itemDetails[0].short_description %></p>
                         </div>
                     <% } %>
-
+                    <% if (itemDetails[0].description) { %>
+                        <div class="mb-4">
+                            <h3 class="text-xl font-semibold mb-2">Description</h3>
+                            <p class="text-gray-600"><%= itemDetails[0].description %></p>
+                        </div>
+                    <% } %>
                     <% if (itemDetails[0].detailed_description) { %>
                         <div class="mb-4">
                             <h3 class="text-xl font-semibold mb-2">Details</h3>
@@ -448,37 +520,75 @@
         });
     });
     </script> -->
-    
-    <script>
+    <!-- <script>
     document.addEventListener("DOMContentLoaded", () => {
+        // Initialize size and color buttons
+        const sizeButtons = document.querySelectorAll('.size-button');
+        const colorButtons = document.querySelectorAll('.color-button');
+        
+        // Add click event handlers for size buttons
+        sizeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all size buttons
+                sizeButtons.forEach(btn => btn.classList.remove('active', 'selected'));
+                // Add active class to clicked button
+                this.classList.add('active', 'selected');
+            });
+        });
+        
+        // Add click event handlers for color buttons
+        colorButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove selected class from all color buttons
+                colorButtons.forEach(btn => btn.classList.remove('selected'));
+                // Remove borders from all color buttons
+                colorButtons.forEach(btn => btn.style.border = '2px solid transparent');
+                // Add selected class and border to clicked button
+                this.classList.add('selected');
+                this.style.border = '2px solid var(--primary-color)';
+            });
+        });
+        
+        // Auto-select first size and color if available
+        if (sizeButtons.length > 0) {
+            sizeButtons[0].classList.add('active', 'selected');
+        }
+        
+        if (colorButtons.length > 0) {
+            colorButtons[0].classList.add('selected');
+            colorButtons[0].style.border = '2px solid var(--primary-color)';
+        }
+        
+        // Handle cart and checkout buttons
         const cartButtons = document.querySelectorAll(".addItemsToCart, .buyNow");
         
         cartButtons.forEach(button => {
             button.addEventListener("click", async (event) => {
                 event.preventDefault();
                 
-                // Validation
-                const selectedSizeElement = document.querySelector('.size-button.active');
-                const selectedColorElement = document.querySelector('.color-button[style*="border: 2px solid"]');
+                // Get selected size and color
+                const selectedSizeElement = document.querySelector('.size-button.selected') || document.querySelector('.size-button.active');
+                const selectedColorElement = document.querySelector('.color-button.selected') || document.querySelector('.color-button[style*="border: 2px solid"]');
                 const quantityInput = document.getElementById("quantity-input");
                 
+                // Validate selections
                 if (!selectedSizeElement) {
                     alert("Please select a size");
                     return;
                 }
                 
-                // if (!selectedColorElement) {
-                //     alert("Please select a color");
-                //     return;
-                // }
-                
+                // Prepare payload
                 const payload = {
                     item_id: button.getAttribute("data-item-id"),
                     item_type: button.getAttribute("data-item-type"),
                     quantity: quantityInput.value,
-                    size: selectedSizeElement.getAttribute('data-size'),
-                    color: selectedColorElement.style.backgroundColor
+                    size: selectedSizeElement.getAttribute('data-size')
                 };
+                
+                // Add color to payload if available
+                if (selectedColorElement) {
+                    payload.color = selectedColorElement.getAttribute('data-color') || selectedColorElement.style.backgroundColor;
+                }
                 
                 const endpoint = button.classList.contains('addItemsToCart') ? "/AddToCart" : "/CheckOut";
                 
@@ -499,7 +609,7 @@
                             const successToast = new bootstrap.Toast(document.getElementById('toast'));
                             successToast.show();
                         } else {
-                            window.location.href = `/checkOutPage?item_id=${payload.item_id}&item_type=${payload.item_type}&quantity=${payload.quantity}`;
+                            window.location.href = `/checkOutPage?item_id=${payload.item_id}&item_type=${payload.item_type}&quantity=${payload.quantity}&size=${payload.size}${payload.color ? `&color=${encodeURIComponent(payload.color)}` : ''}`;
                         }
                     } else {
                         console.error("Operation failed:", data.message);
@@ -510,16 +620,18 @@
             });
         });
     });
-    </script>
- 
+    </script> -->
 <!-- This below script is for everything -->
- <script>
-    document.addEventListener("DOMContentLoaded", () => {
-    // Quantity control functionality
+ <!-- <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Initialize size and color buttons
+    const sizeButtons = document.querySelectorAll('.size-button');
+    const colorButtons = document.querySelectorAll('.color-button');
     const quantityInput = document.getElementById("quantity-input");
     const decrementBtn = document.getElementById("decrement-btn");
     const incrementBtn = document.getElementById("increment-btn");
     
+    // Quantity control functionality
     if (decrementBtn && incrementBtn && quantityInput) {
         decrementBtn.addEventListener("click", () => {
             const currentValue = parseInt(quantityInput.value);
@@ -544,83 +656,112 @@
             if (value > max) quantityInput.value = max;
         });
     }
-
-    // Size selection functionality
-    const sizeButtons = document.querySelectorAll(".size-button");
+    
+    // Add click event handlers for size buttons
     sizeButtons.forEach(button => {
-        button.addEventListener("click", () => {
-            if (!button.disabled) {
-                sizeButtons.forEach(b => b.classList.remove("selected"));
-                button.classList.add("selected");
-            }
+        button.addEventListener('click', function() {
+            // Remove active class from all size buttons
+            sizeButtons.forEach(btn => {
+                btn.classList.remove('active', 'selected');
+            });
+            // Add active class to clicked button
+            this.classList.add('active', 'selected');
         });
     });
-
-    // Color selection functionality
-    const colorButtons = document.querySelectorAll(".color-button");
+    
+    // Add click event handlers for color buttons
     colorButtons.forEach(button => {
-        button.addEventListener("click", () => {
-            colorButtons.forEach(b => b.classList.remove("selected"));
-            button.classList.add("selected");
+        button.addEventListener('click', function() {
+            // Remove selected class from all color buttons
+            colorButtons.forEach(btn => {
+                btn.classList.remove('selected');
+                btn.style.border = '2px solid transparent';
+            });
+            // Add selected class and border to clicked button
+            this.classList.add('selected');
+            this.style.border = '2px solid var(--primary-color)';
         });
     });
-
-    // Add to Cart functionality
-    const addToCartButton = document.querySelector(".addItemsToCart");
-    if (addToCartButton) {
-        addToCartButton.addEventListener("click", async (event) => {
+    
+    // Auto-select first size and color if available
+    if (sizeButtons.length > 0) {
+        sizeButtons[0].classList.add('active', 'selected');
+    }
+    
+    if (colorButtons.length > 0) {
+        colorButtons[0].classList.add('selected');
+        colorButtons[0].style.border = '2px solid var(--primary-color)';
+    }
+    
+    // Handle cart and checkout buttons - SINGLE EVENT HANDLER FOR BOTH BUTTONS
+    const cartButtons = document.querySelectorAll(".addItemsToCart, .buyNow");
+    
+    cartButtons.forEach(button => {
+        button.addEventListener("click", async (event) => {
             event.preventDefault();
-
-            // Get selected options
-            const item_id = addToCartButton.getAttribute("data-item-id");
-            const item_type = addToCartButton.getAttribute("data-item-type");
-            const quantity = document.getElementById("quantity-input").value;
-            const selectedSize = document.querySelector(".size-button.selected");
-            const selectedColor = document.querySelector(".color-button.selected");
-
-            // Get size and color values
-            const size = selectedSize ? selectedSize.getAttribute("data-size") : "M";
-            const color = selectedColor ? 
-                         window.getComputedStyle(selectedColor).backgroundColor : 
-                         "#0000FF";
-
+            
+            // Get selected size and color
+            const selectedSizeElement = document.querySelector('.size-button.selected');
+            const selectedColorElement = document.querySelector('.color-button.selected');
+            
+            // Validate selections
+            if (!selectedSizeElement) {
+                alert("Please select a size");
+                return;
+            }
+            
+            if (!selectedColorElement) {
+                alert("Please select a color");
+                return;
+            }
+            
+            // Get color value - FIX: properly extract the color
+            let colorValue;
+            if (selectedColorElement.hasAttribute('data-color')) {
+                colorValue = selectedColorElement.getAttribute('data-color');
+            } else {
+                const computedStyle = window.getComputedStyle(selectedColorElement);
+                colorValue = computedStyle.backgroundColor;
+            }
+            
+            // Prepare payload
+            const payload = {
+                item_id: button.getAttribute("data-item-id"),
+                item_type: button.getAttribute("data-item-type"),
+                quantity: quantityInput.value,
+                size: selectedSizeElement.getAttribute('data-size'),
+                color: colorValue
+            };
+            
+            const endpoint = button.classList.contains('addItemsToCart') ? "/AddToCart" : "/CheckOut";
+            
             try {
-                const response = await fetch("/AddToCart", {
+                const response = await fetch(endpoint, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        item_id,
-                        item_type,
-                        quantity,
-                        size,
-                        color,
-                    }),
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
                 });
-
+                
                 const data = await response.json();
-
+                
                 if (response.status === 401) {
-                    // Show login required toast
-                    const loginToast = new bootstrap.Toast(
-                        document.getElementById("toast-login")
-                    );
+                    const loginToast = new bootstrap.Toast(document.getElementById('toast-login'));
                     loginToast.show();
                 } else if (data.success) {
-                    // Show success toast
-                    const successToast = new bootstrap.Toast(
-                        document.getElementById("toast")
-                    );
-                    successToast.show();
+                    if (endpoint === "/AddToCart") {
+                        const successToast = new bootstrap.Toast(document.getElementById('toast'));
+                        successToast.show();
+                    } else {
+                        window.location.href = `/checkOutPage?item_id=${payload.item_id}&item_type=${payload.item_type}&quantity=${payload.quantity}&size=${payload.size}&color=${encodeURIComponent(payload.color)}`;
+                    }
                 } else {
-                    console.error("Unexpected response:", data);
+                    console.error("Operation failed:", data.message);
                 }
             } catch (error) {
-                console.error("Failed to add item to cart:", error);
+                console.error("Request failed:", error);
             }
         });
-    }
+    });
 
     // Initialize carousel if it exists
     const carousel = document.getElementById('productCarousel');
@@ -631,8 +772,162 @@
         });
     }
 });
-  </script>
+</script> -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+  // Initialize size and color buttons
+  const sizeButtons = document.querySelectorAll('.size-button');
+  const colorButtons = document.querySelectorAll('.color-button');
+  const quantityInput = document.getElementById("quantity-input");
+  const decrementBtn = document.getElementById("decrement-btn");
+  const incrementBtn = document.getElementById("increment-btn");
+  
+  // Quantity control functionality
+  if (decrementBtn && incrementBtn && quantityInput) {
+      decrementBtn.addEventListener("click", () => {
+          const currentValue = parseInt(quantityInput.value);
+          if (currentValue > 1) {
+              quantityInput.value = currentValue - 1;
+          }
+      });
 
+      incrementBtn.addEventListener("click", () => {
+          const currentValue = parseInt(quantityInput.value);
+          const maxQuantity = parseInt(quantityInput.getAttribute("max"));
+          if (currentValue < maxQuantity) {
+              quantityInput.value = currentValue + 1;
+          }
+      });
+
+      // Ensure direct input stays within bounds
+      quantityInput.addEventListener("change", () => {
+          const value = parseInt(quantityInput.value);
+          const max = parseInt(quantityInput.getAttribute("max"));
+          if (value < 1) quantityInput.value = 1;
+          if (value > max) quantityInput.value = max;
+      });
+  }
+  
+  // Add click event handlers for size buttons
+  sizeButtons.forEach(button => {
+      button.addEventListener('click', function() {
+          // Remove active class from all size buttons
+          sizeButtons.forEach(btn => {
+              btn.classList.remove('active', 'selected');
+          });
+          // Add active class to clicked button
+          this.classList.add('active', 'selected');
+      });
+  });
+  
+  // Add click event handlers for color buttons
+  colorButtons.forEach(button => {
+      button.addEventListener('click', function() {
+          // Remove selected class from all color buttons
+          colorButtons.forEach(btn => {
+              btn.classList.remove('selected');
+              btn.style.border = '2px solid transparent';
+          });
+          // Add selected class and border to clicked button
+          this.classList.add('selected');
+          this.style.border = '2px solid #000';
+          
+          // Debug log to check the color value
+          console.log("Selected color:", this.getAttribute('data-color'));
+      });
+  });
+  
+  // Auto-select first size and color if available
+  if (sizeButtons.length > 0) {
+      sizeButtons[0].classList.add('active', 'selected');
+  }
+  
+  if (colorButtons.length > 0) {
+      colorButtons[0].classList.add('selected');
+      colorButtons[0].style.border = '2px solid #000';
+  }
+  
+  // Handle cart and checkout buttons - SINGLE EVENT HANDLER FOR BOTH BUTTONS
+  const cartButtons = document.querySelectorAll(".addItemsToCart, .buyNow");
+  
+  cartButtons.forEach(button => {
+      button.addEventListener("click", async (event) => {
+          event.preventDefault();
+          
+          // Get selected size and color
+          const selectedSizeElement = document.querySelector('.size-button.selected');
+          const selectedColorElement = document.querySelector('.color-button.selected');
+          
+          // Validate selections
+          if (!selectedSizeElement) {
+              alert("Please select a size");
+              return;
+          }
+          
+          if (!selectedColorElement) {
+              alert("Please select a color");
+              return;
+          }
+          
+          // Get color value from data-color attribute
+          let colorValue = selectedColorElement.getAttribute('data-color');
+          
+          // Log color value for debugging
+          console.log("Color value being sent:", colorValue);
+          
+          // Prepare payload
+          const payload = {
+              item_id: button.getAttribute("data-item-id"),
+              item_type: button.getAttribute("data-item-type"),
+              quantity: quantityInput.value,
+              size: selectedSizeElement.getAttribute('data-size'),
+              color: colorValue
+          };
+          
+          console.log("Sending payload:", payload);
+          
+          const endpoint = button.classList.contains('addItemsToCart') ? "/AddToCart" : "/CheckOut";
+          
+          try {
+              const response = await fetch(endpoint, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(payload)
+              });
+              
+              const data = await response.json();
+              
+              if (response.status === 401) {
+                  const loginToast = new bootstrap.Toast(document.getElementById('toast-login'));
+                  loginToast.show();
+              } else if (data.success) {
+                  if (endpoint === "/AddToCart") {
+                      const successToast = new bootstrap.Toast(document.getElementById('toast'));
+                      successToast.show();
+                  } else {
+                      window.location.href = `/checkOutPage?item_id=${payload.item_id}&item_type=${payload.item_type}&quantity=${payload.quantity}&size=${payload.size}&color=${encodeURIComponent(payload.color)}`;
+                  }
+              } else {
+                  console.error("Operation failed:", data.message);
+                  alert("Operation failed: " + (data.message || "Unknown error"));
+              }
+          } catch (error) {
+              console.error("Request failed:", error);
+              alert("Request failed. Please try again.");
+          }
+      });
+  });
+
+  // Initialize carousel if it exists
+  const carousel = document.getElementById('productCarousel');
+  if (carousel) {
+      new bootstrap.Carousel(carousel, {
+          interval: 3000, // Change slides every 3 seconds
+          wrap: true     // Continue from last to first slide
+      });
+  }
+});
+</script>
     
 </body>
 </html>
