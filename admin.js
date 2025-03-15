@@ -310,83 +310,100 @@ export async function downloadOnlineSaleList(req, res, ordersOnline) {
         res.status(500).send('Error generating PDF');
     }
 }
+
 export async function downloadOfflineSaleList(req, res, ordersOffline) {
-    try {
-        // Create a new PDF document with a margin of 30
-        const doc = new PDFDocument({ margin: 30 });
+  try {
+      // Create a new PDF document with a margin of 30
+      const doc = new PDFDocument({ margin: 30 });
 
-        // Set response headers
-        res.setHeader('Content-disposition', 'attachment; filename=Offline_Sale_list_VSA.pdf');
-        res.setHeader('Content-type', 'application/pdf');
+      // Set response headers
+      res.setHeader('Content-disposition', 'attachment; filename=Offline_Sale_list_VSA.pdf');
+      res.setHeader('Content-type', 'application/pdf');
 
-        // Pipe the PDF document to the response
-        doc.pipe(res);
+      // Pipe the PDF document to the response
+      doc.pipe(res);
 
-        // Add title to the PDF
-        doc.fontSize(20).text('Available Online Sale List VSA', { align: 'center' }).moveDown(1);
+      // Add title to the PDF
+      doc.fontSize(20).text('Available Online Sale List VSA', { align: 'center' }).moveDown(1);
 
-        // Add date
-        doc.fontSize(12).text(`Date: ${new Date().toLocaleDateString()}`, { align: 'right' }).moveDown(1);
+      // Add date
+      doc.fontSize(12).text(`Date: ${new Date().toLocaleDateString()}`, { align: 'right' }).moveDown(1);
 
-        // Define table settings with reduced column widths
-        const tableTop = 120;
-        const colWidths = {
-            email: 130,
-            name: 70,
-            mobile: 90,
-            itemId: 50,
-            price: 50,
-            quantity: 50,
-            purchaseDate: 90
-        };
-        const rowHeight = 20;
-        const margin = 30;
+      // Define table settings with reduced column widths
+      const tableTop = 120;
+      const colWidths = {
+          email: 130,
+          name: 70,
+          mobile: 90,
+          itemId: 50,
+          price: 50,
+          quantity: 50,
+          purchaseDate: 90
+      };
+      const rowHeight = 20;
+      const margin = 30;
 
-        // Calculate total table width
-        const tableWidth = Object.values(colWidths).reduce((a, b) => a + b, 0);
+      // Calculate total table width
+      const tableWidth = Object.values(colWidths).reduce((a, b) => a + b, 0);
 
-        // Draw table headers with smaller font size
-        doc.fontSize(8).font('Helvetica-Bold')
-            .text('Email', margin, tableTop, { width: colWidths.email, align: 'left' })
-            .text('Name', margin + colWidths.email, tableTop, { width: colWidths.name, align: 'left' })
-            .text('Mobile', margin + colWidths.email + colWidths.name, tableTop, { width: colWidths.mobile, align: 'left' })
-            .text('Item Id', margin + colWidths.email + colWidths.name + colWidths.mobile, tableTop, { width: colWidths.itemId, align: 'left' })
-            .text('Price', margin + colWidths.email + colWidths.name + colWidths.mobile + colWidths.itemId, tableTop, { width: colWidths.price, align: 'left' })
-            .text('Quantity', margin + colWidths.email + colWidths.name + colWidths.mobile + colWidths.itemId + colWidths.price, tableTop, { width: colWidths.quantity, align: 'left' })
-            .text('Date', margin + colWidths.email + colWidths.name + colWidths.mobile + colWidths.itemId + colWidths.price + colWidths.quantity, tableTop, { width: colWidths.purchaseDate, align: 'left' });
+      // Draw table headers with smaller font size
+      doc.fontSize(8).font('Helvetica-Bold')
+          .text('Email', margin, tableTop, { width: colWidths.email, align: 'left' })
+          .text('Name', margin + colWidths.email, tableTop, { width: colWidths.name, align: 'left' })
+          .text('Mobile', margin + colWidths.email + colWidths.name, tableTop, { width: colWidths.mobile, align: 'left' })
+          .text('Item Id', margin + colWidths.email + colWidths.name + colWidths.mobile, tableTop, { width: colWidths.itemId, align: 'left' })
+          .text('Price', margin + colWidths.email + colWidths.name + colWidths.mobile + colWidths.itemId, tableTop, { width: colWidths.price, align: 'left' })
+          .text('Quantity', margin + colWidths.email + colWidths.name + colWidths.mobile + colWidths.itemId + colWidths.price, tableTop, { width: colWidths.quantity, align: 'left' })
+          .text('Date', margin + colWidths.email + colWidths.name + colWidths.mobile + colWidths.itemId + colWidths.price + colWidths.quantity, tableTop, { width: colWidths.purchaseDate, align: 'left' });
 
-        // Draw header underline
-        doc.moveTo(margin, tableTop + rowHeight).lineTo(margin + tableWidth, tableTop + rowHeight).stroke();
+      // Draw header underline
+      doc.moveTo(margin, tableTop + rowHeight).lineTo(margin + tableWidth, tableTop + rowHeight).stroke();
 
-        // Draw rows
-        ordersOffline.forEach((item, i) => {
-            const y = tableTop + (i + 1) * rowHeight;
-            const fillColor = i % 2 === 0 ? '#f0f0f0' : '#ffffff';
+      // Draw rows
+      ordersOffline.forEach((item, i) => {
+          const y = tableTop + (i + 1) * rowHeight;
+          const fillColor = i % 2 === 0 ? '#f0f0f0' : '#ffffff';
 
-            // Draw row background color
-            doc.rect(margin, y, tableWidth, rowHeight).fill(fillColor).stroke();
+          // Draw row background color
+          doc.rect(margin, y, tableWidth, rowHeight).fill(fillColor).stroke();
 
-            doc.fontSize(8).font('Helvetica').fillColor('#000000')
-                .text(item.email, margin, y + 5, { width: colWidths.email, align: 'left' })
-                .text(item.name, margin + colWidths.email, y + 5, { width: colWidths.name, align: 'left' })
-                .text(item.mobile_number, margin + colWidths.email + colWidths.name, y + 5, { width: colWidths.mobile, align: 'left' })
-                .text(item.item_id, margin + colWidths.email + colWidths.name + colWidths.mobile, y + 5, { width: colWidths.itemId, align: 'left' })
-                .text(item.amount, margin + colWidths.email + colWidths.name + colWidths.mobile + colWidths.itemId, y + 5, { width: colWidths.price, align: 'left' })
-                .text(item.quantity, margin + colWidths.email + colWidths.name + colWidths.mobile + colWidths.itemId + colWidths.price, y + 5, { width: colWidths.quantity, align: 'left' })
-                .text(item.created_at.toLocaleDateString(), margin + colWidths.email + colWidths.name + colWidths.mobile + colWidths.itemId + colWidths.price + colWidths.quantity, y + 5, { width: colWidths.purchaseDate, align: 'left' });
-        });
+          doc.fontSize(8).font('Helvetica').fillColor('#000000')
+              .text(item.email, margin, y + 5, { width: colWidths.email, align: 'left' })
+              .text(item.name, margin + colWidths.email, y + 5, { width: colWidths.name, align: 'left' })
+              .text(item.mobile_number, margin + colWidths.email + colWidths.name, y + 5, { width: colWidths.mobile, align: 'left' })
+              .text(item.item_id, margin + colWidths.email + colWidths.name + colWidths.mobile, y + 5, { width: colWidths.itemId, align: 'left' })
+              .text(item.amount, margin + colWidths.email + colWidths.name + colWidths.mobile + colWidths.itemId, y + 5, { width: colWidths.price, align: 'left' })
+              .text(item.quantity, margin + colWidths.email + colWidths.name + colWidths.mobile + colWidths.itemId + colWidths.price, y + 5, { width: colWidths.quantity, align: 'left' })
+              .text(item.created_at.toLocaleDateString(), margin + colWidths.email + colWidths.name + colWidths.mobile + colWidths.itemId + colWidths.price + colWidths.quantity, y + 5, { width: colWidths.purchaseDate, align: 'left' });
+      });
 
-        // Add footer
-        const footerText = 'Generated by VSA Inventory System';
-        doc.fontSize(10).fillColor('#888888')
-            .text(footerText, margin, doc.page.height - 30, { align: 'center' });
+      // Calculate total sale amount
+      const totalSaleAmount = ordersOffline.reduce((total, item) => {
+          // Convert to number and multiply by quantity
+          const itemTotal = parseFloat(item.amount) * parseInt(item.quantity);
+          return total + (isNaN(itemTotal) ? 0 : itemTotal);
+      }, 0);
 
-        // Finalize the PDF and end the stream
-        doc.end();
-    } catch (error) {
-        console.error('Error generating PDF:', error);
-        res.status(500).send('Error generating PDF');
-    }
+      // Add some space after the table
+      const totalSectionY = tableTop + (ordersOffline.length + 1) * rowHeight + 20;
+
+      // Draw total amount section with background
+      doc.rect(margin, totalSectionY, tableWidth, 30).fill('#e8e8e8').stroke();
+      doc.fontSize(10).font('Helvetica-Bold').fillColor('#000000')
+          .text('Total Sale Amount:', margin + 10, totalSectionY + 10, { width: 150, align: 'left' })
+          .text(`₹${totalSaleAmount.toFixed(2)}`, margin + 160, totalSectionY + 10, { width: 150, align: 'left' });
+
+      // Add footer
+      const footerText = 'Generated by VSA Inventory System';
+      doc.fontSize(10).fillColor('#888888')
+          .text(footerText, margin, doc.page.height - 30, { align: 'center' });
+
+      // Finalize the PDF and end the stream
+      doc.end();
+  } catch (error) {
+      console.error('Error generating PDF:', error);
+      res.status(500).send('Error generating PDF');
+  }
 }
 
 export async function editAchievementsText(req,res,editTextForAchievements,firstName) {
@@ -1340,8 +1357,20 @@ export async function attendanceDetails(req, res, studentData) {
     // Add date
     doc.fontSize(12).text(`Date: ${new Date().toLocaleDateString()}`, { align: 'right' }).moveDown(1);
 
+    // Calculate attendance statistics
+    const attendanceStats = calculateAttendanceStats(studentData);
+
+    // Display attendance summary
+    doc.fontSize(14).font('Helvetica-Bold').text('Attendance Summary', { align: 'left' }).moveDown(0.5);
+    doc.fontSize(12).font('Helvetica')
+      .text(`Total Days Present: ${attendanceStats.present}`, { align: 'left' })
+      .text(`Total Days Absent: ${attendanceStats.absent}`, { align: 'left' })
+      .text(`Total Days Sick: ${attendanceStats.sick}`, { align: 'left' })
+      .text(`Total Days Recorded: ${attendanceStats.total}`, { align: 'left' })
+      .moveDown(1);
+
     // Define table settings
-    const tableTop = 120;
+    const tableTop = 200; // Increased to accommodate the summary
     const studIdWidth = 100;
     const nameWidth = 150;
     const motherNameWidth = 150;
@@ -1364,6 +1393,14 @@ export async function attendanceDetails(req, res, studentData) {
     // Draw rows
     studentData.forEach((attendance, i) => {
       const y = tableTop + (i + 1) * rowHeight;
+      
+      // Check if we need to create a new page
+      if (y > doc.page.height - 50) {
+        doc.addPage();
+        // Reset the y position for the new page
+        y = 50; // Adjust as needed
+      }
+      
       const fillColor = i % 2 === 0 ? '#f0f0f0' : '#ffffff';
 
       // Draw row background color
@@ -1381,6 +1418,82 @@ export async function attendanceDetails(req, res, studentData) {
         .text(formattedDate, 30 + studIdWidth + nameWidth + motherNameWidth + statusWidth, y + 5, { width: dateWidth, align: 'left' });
     });
 
+    // Add per-student statistics if student data is grouped by student
+    if (studentData.length > 0) {
+      // Group attendance data by student
+      const studentStats = groupAttendanceByStudent(studentData);
+      
+      // Add a new page for individual student statistics
+      doc.addPage();
+      
+      // Add title for individual statistics
+      doc.fontSize(16).font('Helvetica-Bold').text('Individual Student Attendance Statistics', { align: 'center' }).moveDown(1);
+      
+      // Define the table for individual statistics
+      const statsTableTop = 100;
+      const idWidth = 80;
+      const studentNameWidth = 150;
+      const presentWidth = 80;
+      const absentWidth = 80;
+      const sickWidth = 80;
+      const totalWidth = 80;
+      const statsTableWidth = idWidth + studentNameWidth + presentWidth + absentWidth + sickWidth + totalWidth;
+      
+      // Draw table headers for individual statistics
+      doc.fontSize(11).font('Helvetica-Bold')
+        .text('Student ID', 30, statsTableTop, { width: idWidth, align: 'left' })
+        .text('Student Name', 30 + idWidth, statsTableTop, { width: studentNameWidth, align: 'left' })
+        .text('Present', 30 + idWidth + studentNameWidth, statsTableTop, { width: presentWidth, align: 'center' })
+        .text('Absent', 30 + idWidth + studentNameWidth + presentWidth, statsTableTop, { width: absentWidth, align: 'center' })
+        .text('Sick', 30 + idWidth + studentNameWidth + presentWidth + absentWidth, statsTableTop, { width: sickWidth, align: 'center' })
+        .text('Total', 30 + idWidth + studentNameWidth + presentWidth + absentWidth + sickWidth, statsTableTop, { width: totalWidth, align: 'center' });
+      
+      // Draw header underline
+      doc.moveTo(30, statsTableTop + rowHeight).lineTo(30 + statsTableWidth, statsTableTop + rowHeight).stroke();
+      
+      // Draw rows for individual statistics
+      let index = 0;
+      for (const [studId, stats] of Object.entries(studentStats)) {
+        const y = statsTableTop + (index + 1) * rowHeight;
+        
+        // Check if we need to create a new page
+        if (y > doc.page.height - 50) {
+          doc.addPage();
+          statsTableTop = 50;
+          index = 0;
+          
+          // Redraw headers on new page
+          doc.fontSize(11).font('Helvetica-Bold')
+            .text('Student ID', 30, statsTableTop, { width: idWidth, align: 'left' })
+            .text('Student Name', 30 + idWidth, statsTableTop, { width: studentNameWidth, align: 'left' })
+            .text('Present', 30 + idWidth + studentNameWidth, statsTableTop, { width: presentWidth, align: 'center' })
+            .text('Absent', 30 + idWidth + studentNameWidth + presentWidth, statsTableTop, { width: absentWidth, align: 'center' })
+            .text('Sick', 30 + idWidth + studentNameWidth + presentWidth + absentWidth, statsTableTop, { width: sickWidth, align: 'center' })
+            .text('Total', 30 + idWidth + studentNameWidth + presentWidth + absentWidth + sickWidth, statsTableTop, { width: totalWidth, align: 'center' });
+          
+          // Draw header underline
+          doc.moveTo(30, statsTableTop + rowHeight).lineTo(30 + statsTableWidth, statsTableTop + rowHeight).stroke();
+        }
+        
+        const fillColor = index % 2 === 0 ? '#f0f0f0' : '#ffffff';
+        
+        // Draw row background color
+        doc.rect(30, y, statsTableWidth, rowHeight).fill(fillColor).stroke();
+        
+        // Draw the student statistics
+        doc.fontSize(12).font('Helvetica')
+          .fillColor('#000000')
+          .text(studId, 30, y + 5, { width: idWidth, align: 'left' })
+          .text(stats.student_name, 30 + idWidth, y + 5, { width: studentNameWidth, align: 'left' })
+          .text(stats.present, 30 + idWidth + studentNameWidth, y + 5, { width: presentWidth, align: 'center' })
+          .text(stats.absent, 30 + idWidth + studentNameWidth + presentWidth, y + 5, { width: absentWidth, align: 'center' })
+          .text(stats.sick, 30 + idWidth + studentNameWidth + presentWidth + absentWidth, y + 5, { width: sickWidth, align: 'center' })
+          .text(stats.total, 30 + idWidth + studentNameWidth + presentWidth + absentWidth + sickWidth, y + 5, { width: totalWidth, align: 'center' });
+        
+        index++;
+      }
+    }
+
     // Add footer
     const footerText = 'Generated by VSA Inventory System';
     doc.fontSize(10).fillColor('#888888')
@@ -1393,3 +1506,67 @@ export async function attendanceDetails(req, res, studentData) {
     res.status(500).send('Error generating PDF');
   }
 }
+
+// Helper function to calculate attendance statistics
+function calculateAttendanceStats(attendanceData) {
+  const stats = {
+    present: 0,
+    absent: 0,
+    sick: 0,
+    total: attendanceData.length
+  };
+
+  attendanceData.forEach(record => {
+    switch (record.status.toLowerCase()) {
+      case 'present':
+        stats.present++;
+        break;
+      case 'absent':
+        stats.absent++;
+        break;
+      case 'sick':
+        stats.sick++;
+        break;
+    }
+  });
+
+  return stats;
+}
+
+// Helper function to group attendance by student
+function groupAttendanceByStudent(attendanceData) {
+  const studentStats = {};
+
+  attendanceData.forEach(record => {
+    const studId = record.stud_id;
+    
+    if (!studentStats[studId]) {
+      studentStats[studId] = {
+        student_name: record.student_name,
+        present: 0,
+        absent: 0,
+        sick: 0,
+        total: 0
+      };
+    }
+    
+    // Increment the appropriate status counter
+    switch (record.status.toLowerCase()) {
+      case 'present':
+        studentStats[studId].present++;
+        break;
+      case 'absent':
+        studentStats[studId].absent++;
+        break;
+      case 'sick':
+        studentStats[studId].sick++;
+        break;
+    }
+    
+    // Increment total counter
+    studentStats[studId].total++;
+  });
+
+  return studentStats;
+}
+
