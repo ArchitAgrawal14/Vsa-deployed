@@ -389,28 +389,39 @@ app.get("/newLogin", (req, res) => {
   console.log("Successfully rendered login page");
 });
 
-
 const authenticateUser = (req, res, next) => {
   const token = req.cookies.token;
-
+  
   if (!token) {
     console.log("Token not found");
     req.user = null;
-    // return res.status(401).send("Not authenticated");
     return next();
   }
-
+  
   jwt.verify(token, Secret_key, (err, decoded) => {
     if (err) {
       console.error("Token verification failed:", err);
+      
+      // Check if the error is specifically a token expiration
+      if (err.name === "TokenExpiredError") {
+        // Clear the expired token cookie
+        res.clearCookie('token');
+        
+        // Redirect to home page and do NOT call next()
+        req.user = null;
+        return res.redirect("/");
+      }
+      
+      // Handle other JWT errors
       return res.status(401).send("Invalid token");
     }
-
+    
     // Attach decoded user information to the request object
     req.user = decoded;
     next();
   });
 };
+
 app.get("/forgetPassword",async(req,res)=>{  
     // const firstName = req.user.fullName.split(" ")[0];    
     res.render("forgetPasswordPage.ejs");
